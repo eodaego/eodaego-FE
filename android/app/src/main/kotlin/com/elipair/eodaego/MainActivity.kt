@@ -1,4 +1,4 @@
-package com.example.eodaego
+package com.elipair.eodaego
 
 import io.flutter.embedding.android.FlutterActivity
 
