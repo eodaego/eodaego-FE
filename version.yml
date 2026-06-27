@@ -35,20 +35,19 @@
 # - 버전은 항상 높은 버전으로 자동 동기화됩니다
 # ===================================================================
 
-version: "1.0.0"
-version_code: 1  # app build number
-project_types: ["flutter"]   # 멀티타입 배열 — 첫 항목이 primary, 직접 편집 가능
-project_type: "flutter"  # project_types[0] 자동 미러 — 직접 수정 금지 (spring, flutter, next, react, react-native, react-native-expo, node, python, basic)
-project_paths:                # 타입별 프로젝트 폴더 (레포 루트 기준 상대경로)
-  flutter: "."   # pubspec.yaml
+version: "1.0.1"
+version_code: 2 # app build number
+project_types: ["flutter"] # 멀티타입 배열 — 첫 항목이 primary, 직접 편집 가능
+project_type: "flutter" # project_types[0] 자동 미러 — 직접 수정 금지 (spring, flutter, next, react, react-native, react-native-expo, node, python, basic)
+project_paths: # 타입별 프로젝트 폴더 (레포 루트 기준 상대경로)
+  flutter: "." # pubspec.yaml
 metadata:
-  last_updated: "2026-06-27 11:53:18"
-  last_updated_by: "template_integrator"
+  last_updated: "2026-06-27 11:59:00"
+  last_updated_by: "EM-H20"
   default_branch: "main"
   integrated_from: "SUH-DEVOPS-TEMPLATE"
   integration_date: "2026-06-27"
-
-deploy:                          # 마법사가 기억하는 배포 설정 (비민감 / 직접 수정 가능)
+deploy: # 마법사가 기억하는 배포 설정 (비민감 / 직접 수정 가능)
   flutter:
     APP_ARTIFACT_NAME: "eodaego-FE"
     JAVA_VERSION: "17"
