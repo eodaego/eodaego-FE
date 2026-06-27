@@ -61,7 +61,7 @@ dependencies:
   qr_flutter: ^4.1.0 # QR 코드 생성
   mobile_scanner: ^7.2.0 # QR 및 바코드 스캔
   # 광고
-  google_mobile_ads: ^7.0.0 # Google AdMob 광고
+  # google_mobile_ads: ^7.0.0 # Google AdMob 광고 (AdMob App ID 설정 전까지 임시 제외 — GADApplicationIdentifier 없으면 런치 크래시)
 dev_dependencies:
   # 테스트 및 코드 품질
   flutter_test: # Flutter 테스트 프레임워크
