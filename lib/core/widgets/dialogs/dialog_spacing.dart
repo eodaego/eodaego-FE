@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 /// AppDialog.show(
 ///   context: context,
 ///   title: '게임 규칙',
-///   spacing: DialogSpacing(toContent: AppSpacing.vertical12),
+///   spacing: DialogSpacing(toContent: AppSpacing.md),
 ///   customContent: Column(...),
 /// );
 /// ```
@@ -23,16 +23,16 @@ class DialogSpacing {
     this.toButtons,
   });
 
-  /// 아바타 <-> 타이틀 간격 (기본: AppSpacing.vertical16)
+  /// 아바타 <-> 타이틀 간격 (기본: AppSpacing.base)
   final double? avatarToTitle;
 
-  /// 타이틀 <-> 메시지 간격 (기본: AppSpacing.vertical12)
+  /// 타이틀 <-> 메시지 간격 (기본: AppSpacing.md)
   final double? titleToMessage;
 
   /// 메시지/타이틀 <-> 커스텀 콘텐츠 간격
-  /// (기본: message 있으면 AppSpacing.vertical12, 없으면 AppSpacing.vertical20)
+  /// (기본: message 있으면 AppSpacing.md, 없으면 AppSpacing.lg)
   final double? toContent;
 
-  /// 콘텐츠/메시지 <-> 버튼 간격 (기본: AppSpacing.vertical20)
+  /// 콘텐츠/메시지 <-> 버튼 간격 (기본: AppSpacing.lg)
   final double? toButtons;
 }

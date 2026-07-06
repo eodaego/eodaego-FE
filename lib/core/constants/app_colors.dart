@@ -37,4 +37,7 @@ class AppColors {
   // Border / Semantic
   static const Color line = Color(0xFFEBE7DC);
   static const Color danger = Color(0xFFA32D2D);
+
+  /// 모달 스크림(딤 배경). 잉크색 기반 반투명 — 다이얼로그/바텀시트 배경 어둡게.
+  static const Color scrim = Color(0x8A2B2B28);
 }
