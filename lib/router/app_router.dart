@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -23,7 +22,7 @@ final GlobalKey<NavigatorState> rootNavigatorKey =
 /// auth 상태 변경 시 redirect 재평가를 위한 Listenable
 class _AuthRefreshNotifier extends ChangeNotifier {
   _AuthRefreshNotifier(this._ref) {
-    _ref.listen(authNotifierProvider, (_, __) => notifyListeners());
+    _ref.listen(authNotifierProvider, (_, _) => notifyListeners());
   }
   final Ref _ref;
 }
@@ -44,7 +43,6 @@ GoRouter router(Ref ref) {
         final path = state.uri.path;
 
         final publicPaths = [
-          RoutePaths.splash,
           RoutePaths.login,
           RoutePaths.maintenance,
           RoutePaths.forceUpdate,
@@ -66,6 +64,7 @@ GoRouter router(Ref ref) {
 
         if (path == RoutePaths.login) return RoutePaths.home;
         if (path == RoutePaths.agreement) return RoutePaths.home;
+        if (path == RoutePaths.splash) return RoutePaths.home;
         return null;
       } catch (e, stack) {
         debugPrint('🚨 [GoRouter redirect] 예외: $e\n$stack');
