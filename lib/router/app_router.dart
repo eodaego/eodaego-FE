@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -19,28 +21,53 @@ part 'app_router.g.dart';
 final GlobalKey<NavigatorState> rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
 
-/// auth 상태 변경 시 redirect 재평가를 위한 Listenable
-class _AuthRefreshNotifier extends ChangeNotifier {
-  _AuthRefreshNotifier(this._ref) {
+/// 스플래시 화면 최소 노출 시간 (앱 시작 시 1회)
+const Duration _minSplashDuration = Duration(milliseconds: 1800);
+
+/// auth 상태 변경 + 최소 스플래시 시간 경과 시 redirect 재평가를 위한 Listenable
+class _RouterRefreshNotifier extends ChangeNotifier {
+  _RouterRefreshNotifier(this._ref) {
     _ref.listen(authNotifierProvider, (_, _) => notifyListeners());
+    _splashTimer = Timer(_minSplashDuration, () {
+      minSplashElapsed = true;
+      notifyListeners();
+    });
   }
   final Ref _ref;
+  Timer? _splashTimer;
+
+  /// 최소 스플래시 노출 시간이 지났는지 여부
+  bool minSplashElapsed = false;
+
+  @override
+  void dispose() {
+    _splashTimer?.cancel();
+    super.dispose();
+  }
 }
 
 @riverpod
 GoRouter router(Ref ref) {
+  final refresh = _RouterRefreshNotifier(ref);
   return GoRouter(
     navigatorKey: rootNavigatorKey,
     initialLocation: RoutePaths.splash,
-    refreshListenable: _AuthRefreshNotifier(ref),
+    refreshListenable: refresh,
     redirect: (context, state) {
+      final path = state.uri.path;
+
+      // 스플래시 최소 노출 시간 보장: auth 로딩/에러와 무관하게 최상단에서 적용.
+      // (auth.value가 에러를 rethrow하면 아래 catch로 빠지므로, 게이트를 try 밖에 둬야 유효)
+      if (path == RoutePaths.splash && !refresh.minSplashElapsed) {
+        return null;
+      }
+
       try {
         final auth = ref.read(authNotifierProvider);
         if (auth.isLoading) return null;
 
         final user = auth.value;
         final isAuthenticated = user != null;
-        final path = state.uri.path;
 
         final publicPaths = [
           RoutePaths.login,
