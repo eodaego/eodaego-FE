@@ -71,48 +71,65 @@ GoRouter router(Ref ref) {
         return RoutePaths.login;
       }
     },
+    // 화면 전환 애니메이션 없음: 모든 라우트를 NoTransitionPage로 즉시 전환
     routes: [
       GoRoute(
         path: RoutePaths.splash,
         name: RoutePaths.splashName,
-        builder: (context, state) => const SplashPage(),
+        pageBuilder: (context, state) =>
+            NoTransitionPage(key: state.pageKey, child: const SplashPage()),
       ),
       GoRoute(
         path: RoutePaths.login,
         name: RoutePaths.loginName,
-        builder: (context, state) => const LoginPage(),
+        pageBuilder: (context, state) =>
+            NoTransitionPage(key: state.pageKey, child: const LoginPage()),
       ),
       GoRoute(
         path: RoutePaths.onboarding,
         name: RoutePaths.onboardingName,
-        builder: (context, state) => const OnboardingPage(),
+        pageBuilder: (context, state) => NoTransitionPage(
+          key: state.pageKey,
+          child: const OnboardingPage(),
+        ),
       ),
       GoRoute(
         path: RoutePaths.nicknameSetup,
         name: RoutePaths.nicknameSetupName,
-        builder: (context, state) => NicknameSetupPage(
-          initialNickname: state.uri.queryParameters['nickname'],
+        pageBuilder: (context, state) => NoTransitionPage(
+          key: state.pageKey,
+          child: NicknameSetupPage(
+            initialNickname: state.uri.queryParameters['nickname'],
+          ),
         ),
       ),
       GoRoute(
         path: RoutePaths.agreement,
         name: RoutePaths.agreementName,
-        builder: (context, state) => const AgreementPage(),
+        pageBuilder: (context, state) =>
+            NoTransitionPage(key: state.pageKey, child: const AgreementPage()),
       ),
       GoRoute(
         path: RoutePaths.home,
         name: RoutePaths.homeName,
-        builder: (context, state) => const HomePage(),
+        pageBuilder: (context, state) =>
+            NoTransitionPage(key: state.pageKey, child: const HomePage()),
       ),
       GoRoute(
         path: RoutePaths.maintenance,
         name: RoutePaths.maintenanceName,
-        builder: (context, state) => const MaintenancePage(),
+        pageBuilder: (context, state) => NoTransitionPage(
+          key: state.pageKey,
+          child: const MaintenancePage(),
+        ),
       ),
       GoRoute(
         path: RoutePaths.forceUpdate,
         name: RoutePaths.forceUpdateName,
-        builder: (context, state) => const ForceUpdatePage(),
+        pageBuilder: (context, state) => NoTransitionPage(
+          key: state.pageKey,
+          child: const ForceUpdatePage(),
+        ),
       ),
     ],
   );
