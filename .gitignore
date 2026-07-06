@@ -69,7 +69,3 @@ android/app/keystore/
 
 # Play Store CI/CD - 민감한 파일 (자동 생성됨)
 .env.*.local
-
-# Firebase 설정 (CI에서 시크릿으로 주입 — 커밋 금지)
-android/app/google-services.json
-ios/Runner/GoogleService-Info.plist

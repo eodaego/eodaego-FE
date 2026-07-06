@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "294662201113",
+    "project_id": "eodaego-6e6fe",
+    "storage_bucket": "eodaego-6e6fe.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:294662201113:android:0e0076287a9b941506af88",
+        "android_client_info": {
+          "package_name": "com.elipair.eodaego"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "294662201113-g11qokkmlq5ris9n58b26gg721b52dde.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.elipair.eodaego",
+            "certificate_hash": "734a0dafbac6617a2120fe18ba3094c64cd8dec3"
+          }
+        },
+        {
+          "client_id": "294662201113-mbnm8e0odlknqth4c810k5dgp8gt17qv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.elipair.eodaego",
+            "certificate_hash": "f90235cd19adf6ef8e751670132829c7a058bd4a"
+          }
+        },
+        {
+          "client_id": "294662201113-idjtmocvsoagato85hso98bsnp0100cu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDqfPeknHQbsJRQyaA5oZCae5iDWkmqhpU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "294662201113-idjtmocvsoagato85hso98bsnp0100cu.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "294662201113-rnr5lb8hqt71cr7ovdjjcjedj2jtnv8e.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.elipair.eodaego"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
