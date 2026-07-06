@@ -8,6 +8,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'core/config/env_config.dart';
 import 'core/constants/app_colors.dart';
+import 'core/services/fcm/firebase_messaging_service.dart';
+import 'core/services/fcm/local_notifications_service.dart';
 import 'core/storage/secure_token_storage.dart';
 import 'router/app_router.dart';
 
@@ -62,6 +64,24 @@ void main() async {
       };
     } catch (e) {
       debugPrint('❌ Crashlytics setup failed: $e');
+    }
+  }
+
+  // 로컬 알림 (Firebase 독립)
+  try {
+    await LocalNotificationsService.instance().init();
+    debugPrint('✅ Local notifications initialized');
+  } catch (e) {
+    debugPrint('❌ Local notifications init failed: $e');
+  }
+
+  // FCM (Firebase 의존)
+  if (isFirebaseInitialized) {
+    try {
+      await FirebaseMessagingService.instance().init();
+      debugPrint('✅ FCM initialized');
+    } catch (e) {
+      debugPrint('❌ FCM init failed: $e');
     }
   }
 
