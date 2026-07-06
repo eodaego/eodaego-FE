@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import '../device/device_info_service.dart';
@@ -19,73 +18,6 @@ class FirebaseMessagingService {
   // Factory constructor to provide singleton instance
   // 싱글톤 인스턴스를 제공하는 팩토리 생성자
   factory FirebaseMessagingService.instance() => _instance;
-
-  // ═══════════════════════════════════════════════════════════════════════
-  // 콘텐츠 완료 알림 Stream (NotificationScreen용)
-  // ═══════════════════════════════════════════════════════════════════════
-
-  /// 콘텐츠 분석 완료 알림을 위한 StreamController
-  ///
-  /// 백엔드에서 FCM 메시지로 다음과 같은 형식을 보냅니다:
-  /// ```json
-  /// {
-  ///   "data": {
-  ///     "type": "content_completed",
-  ///     "id": "f95d2a71-e8ec-4ef1-b283-298deea9cf6b"
-  ///   }
-  /// }
-  /// ```
-  ///
-  /// NotificationScreen에서 이 Stream을 구독하여 UI를 업데이트합니다.
-  static final _contentCompletedController =
-      StreamController<String>.broadcast();
-
-  /// 콘텐츠 분석 완료 알림 Stream
-  ///
-  /// **사용 예시** (NotificationScreen):
-  /// ```dart
-  /// _fcmSubscription = FirebaseMessagingService.contentCompletedStream.listen(
-  ///   (contentId) => _handleContentCompleted(contentId),
-  /// );
-  /// ```
-  static Stream<String> get contentCompletedStream =>
-      _contentCompletedController.stream;
-
-  // ═══════════════════════════════════════════════════════════════════════
-  // 게임 시스템 이벤트 알림 Stream (STOMP 좀비 연결 자동 복구용)
-  // ═══════════════════════════════════════════════════════════════════════
-
-  /// 백엔드에서 게임 진행 중 발생하는 시스템 이벤트의 FCM data.type 값 집합.
-  ///
-  /// BE PR #84의 SystemEventType.name() 결과와 일치한다.
-  /// (ARREST, ESCAPE, GAME_OVER, ROBBER_LOCATION_REVEAL, POLICE_MOVE_START, PLAYER_LEFT)
-  ///
-  /// 이 set은 포그라운드(`_onForegroundMessage`)와 알림탭/콜드스타트(`_onMessageOpenedApp`)
-  /// 발행 경로에서 STOMP 좀비 연결 자동 복구 트리거로 사용된다.
-  /// 백그라운드 핸들러(`onBackgroundMessage`)는 스트림을 발행하지 않으므로 즉시 복구는 아니다.
-  static const Set<String> _gameSystemEventTypes = {
-    'ARREST',
-    'ESCAPE',
-    'GAME_OVER',
-    'ROBBER_LOCATION_REVEAL',
-    'POLICE_MOVE_START',
-    'PLAYER_LEFT',
-  };
-
-  /// 게임 시스템 이벤트 FCM 도착 시 발행되는 StreamController.
-  ///
-  /// 페이로드는 `data.type` 값(`ARREST` 등)을 그대로 전달한다.
-  /// 구독자(GameEventNotifier)는 이 신호를 받아 STOMP 좀비 연결 시
-  /// 자동 재연결을 트리거한다.
-  static final _gameSystemEventController =
-      StreamController<String>.broadcast();
-
-  /// 게임 시스템 이벤트 알림 Stream
-  ///
-  /// FCM이 도착했다는 것은 디바이스 푸시 채널이 살아있다는 신호이므로,
-  /// 같은 시점에 STOMP가 dead 상태라면 재연결을 시도할 좋은 트리거다.
-  static Stream<String> get gameSystemEventStream =>
-      _gameSystemEventController.stream;
 
   /// 백엔드 등록용 FCM 토큰을 가져옵니다
   ///
@@ -283,73 +215,22 @@ class FirebaseMessagingService {
   /// 정책: 앱이 포그라운드일 때는 시스템 배너·진동을 띄우지 않는다.
   /// - iOS: setForegroundNotificationPresentationOptions(false) 로 차단
   /// - Android: 로컬 알림 표시·진동 호출을 생략
-  /// 단, data 페이로드는 정상 처리하여 인앱 처리(콘텐츠 알림 Stream,
-  /// 게임 이벤트 Stream 등)는 그대로 동작시킨다.
   void _onForegroundMessage(RemoteMessage message) {
     // FCM 페이로드는 notification(제목/본문)과 data(커스텀 키-값)로 분리되어 있어 둘 다 출력
     debugPrint('[FCM] Foreground message received');
     debugPrint('  notification.title: ${message.notification?.title}');
     debugPrint('  notification.body : ${message.notification?.body}');
     debugPrint('  data: ${message.data}');
-
-    final messageType = message.data['type'];
-
-    // 콘텐츠 분석 완료 알림 처리
-    if (messageType == 'content_completed') {
-      final contentId = message.data['id'];
-      if (contentId != null) {
-        debugPrint('[FCM] 콘텐츠 분석 완료 알림 수신: $contentId');
-        _contentCompletedController.add(contentId);
-      }
-    }
-
-    // 게임 시스템 이벤트(BE PR #84) — Stream으로 발행하여
-    // GameEventNotifier가 STOMP 좀비 연결 자동 복구 트리거로 활용한다.
-    if (messageType != null && _gameSystemEventTypes.contains(messageType)) {
-      debugPrint('[FCM] 게임 시스템 이벤트 수신: $messageType');
-      _gameSystemEventController.add(messageType);
-    }
   }
 
   /// Handles notification taps when app is opened from the background or terminated state
   /// 앱이 백그라운드 또는 종료 상태에서 알림 탭으로 열렸을 때 처리합니다
-  ///
-  /// `getInitialMessage()`로 종료 상태에서 진입한 경우에도 동일하게 호출되므로,
-  /// 포그라운드 핸들러와 동일한 Stream 발행을 수행해 STOMP 좀비 연결
-  /// 자동 복구 트리거가 누락되지 않도록 한다.
   void _onMessageOpenedApp(RemoteMessage message) {
     // 알림 탭 시 notification 페이로드(제목/본문)와 data 페이로드를 분리해서 출력
     debugPrint('[FCM] Notification tapped (app opened)');
     debugPrint('  notification.title: ${message.notification?.title}');
     debugPrint('  notification.body : ${message.notification?.body}');
     debugPrint('  data: ${message.data}');
-
-    // 백엔드 메시지 타입 확인 (data.type)
-    final messageType = message.data['type'];
-
-    // 콘텐츠 분석 완료 알림 처리
-    if (messageType == 'content_completed') {
-      final contentId = message.data['id'];
-      if (contentId != null) {
-        debugPrint('[FCM] 백그라운드에서 앱 열림 - contentId: $contentId');
-        _contentCompletedController.add(contentId); // ✅ Stream으로 브로드캐스트
-      }
-    }
-
-    // 게임 시스템 이벤트(BE PR #84) — 포그라운드 진입 시점에도 동일하게 발행하여
-    // GameEventNotifier가 STOMP 좀비 연결을 자동 복구할 수 있게 한다.
-    if (messageType != null && _gameSystemEventTypes.contains(messageType)) {
-      debugPrint('[FCM] 게임 시스템 이벤트 수신(알림 탭): $messageType');
-      _gameSystemEventController.add(messageType);
-    }
-  }
-
-  /// StreamController 정리
-  ///
-  /// 앱 종료 시 호출하여 메모리 누수를 방지합니다.
-  static void dispose() {
-    _contentCompletedController.close();
-    _gameSystemEventController.close();
   }
 }
 

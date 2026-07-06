@@ -411,7 +411,7 @@ class _AppDialogState extends State<AppDialog>
                 borderRadius: BorderRadius.circular(AppRadius.xl.r),
               ),
               child: Material(
-                color: Colors.transparent,
+                color: AppColors.transparent,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [

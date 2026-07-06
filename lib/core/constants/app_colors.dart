@@ -40,4 +40,7 @@ class AppColors {
 
   /// 모달 스크림(딤 배경). 잉크색 기반 반투명 — 다이얼로그/바텀시트 배경 어둡게.
   static const Color scrim = Color(0x8A2B2B28);
+
+  /// 완전 투명 (Material ink/splash 배경용)
+  static const Color transparent = Color(0x00000000);
 }
