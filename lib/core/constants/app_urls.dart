@@ -13,9 +13,15 @@ class AppUrls {
     return 'https://apps.apple.com/app/idTODO';
   }
 
-  // TODO(eodaego): 어대GO 약관/정책 페이지 URL로 교체
-  static const String privacyPolicy = 'https://example.com/eodaego/privacy';
-  static const String termsOfService = 'https://example.com/eodaego/terms';
-  static const String locationTerms = 'https://example.com/eodaego/location';
-  static const String marketingConsent = 'https://example.com/eodaego/marketing';
+  // 약관/정책 페이지 (Google Sites 호스팅)
+  static const String privacyPolicy =
+      'https://sites.google.com/view/eodaego-pp/%ED%99%88';
+  static const String termsOfService =
+      'https://sites.google.com/view/eodaego-tos/%ED%99%88';
+  static const String locationTerms =
+      'https://sites.google.com/view/eodaego-lt/%ED%99%88';
+
+  // TODO(eodaego): 마케팅 수신 동의 페이지 URL 확정 시 교체
+  static const String marketingConsent =
+      'https://example.com/eodaego/marketing';
 }

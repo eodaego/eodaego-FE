@@ -3,10 +3,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../constants/app_colors.dart';
 import '../../constants/spacing_and_radius.dart';
 import '../../constants/text_styles.dart';
+import '../../utils/url_launcher_util.dart';
 
 /// 이용약관·개인정보처리방침·위치정보 약관 등 법적 문서 열람 페이지.
 ///
@@ -23,6 +25,7 @@ class LegalDocumentPage extends StatefulWidget {
     super.key,
     required this.title,
     required this.assetPath,
+    this.externalUrl,
   });
 
   /// 앱바 제목.
@@ -30,6 +33,9 @@ class LegalDocumentPage extends StatefulWidget {
 
   /// JSON 자산 경로 (예: `assets/legals/terms_of_service.json`).
   final String assetPath;
+
+  /// 웹 원문 URL. 지정 시 앱바에 "웹에서 보기" 버튼 표시.
+  final String? externalUrl;
 
   @override
   State<LegalDocumentPage> createState() => _LegalDocumentPageState();
@@ -74,6 +80,22 @@ class _LegalDocumentPageState extends State<LegalDocumentPage> {
           widget.title,
           style: AppTextStyles.display19.copyWith(color: AppColors.ink),
         ),
+        actions: [
+          if (widget.externalUrl != null)
+            IconButton(
+              tooltip: '웹에서 보기',
+              onPressed: () => launchExternalUrl(widget.externalUrl!),
+              icon: SvgPicture.asset(
+                'assets/icons/icon_link.svg',
+                width: 22.w,
+                height: 22.w,
+                colorFilter: const ColorFilter.mode(
+                  AppColors.ink,
+                  BlendMode.srcIn,
+                ),
+              ),
+            ),
+        ],
       ),
       body: SafeArea(
         child: _isLoading

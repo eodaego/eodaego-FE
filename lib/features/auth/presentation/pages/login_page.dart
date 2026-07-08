@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_urls.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/network/dio_client.dart';
@@ -52,13 +53,23 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   void initState() {
     super.initState();
     _privacyRecognizer = TapGestureRecognizer()
-      ..onTap = () =>
-          _openLegal('개인정보처리방침', 'assets/legals/privacy_policy.json');
+      ..onTap = () => _openLegal(
+        '개인정보처리방침',
+        'assets/legals/privacy_policy.json',
+        AppUrls.privacyPolicy,
+      );
     _termsRecognizer = TapGestureRecognizer()
-      ..onTap = () => _openLegal('이용약관', 'assets/legals/terms_of_service.json');
+      ..onTap = () => _openLegal(
+        '이용약관',
+        'assets/legals/terms_of_service.json',
+        AppUrls.termsOfService,
+      );
     _locationRecognizer = TapGestureRecognizer()
-      ..onTap = () =>
-          _openLegal('위치정보 이용약관', 'assets/legals/location_terms.json');
+      ..onTap = () => _openLegal(
+        '위치정보 이용약관',
+        'assets/legals/location_terms.json',
+        AppUrls.locationTerms,
+      );
 
     // 로그아웃 리다이렉트 등, 진입 시점에 이미 대기 중인 안내 키를 1회 소비.
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -88,10 +99,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     ref.read(loginNoticeKeyProvider.notifier).state = null;
   }
 
-  void _openLegal(String title, String assetPath) {
+  void _openLegal(String title, String assetPath, String url) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => LegalDocumentPage(title: title, assetPath: assetPath),
+        builder: (_) => LegalDocumentPage(
+          title: title,
+          assetPath: assetPath,
+          externalUrl: url,
+        ),
       ),
     );
   }
