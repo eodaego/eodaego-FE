@@ -75,7 +75,7 @@ class AuthNotifier extends _$AuthNotifier {
         await firebaseDataSource.signOut();
         await ref.read(secureTokenStorageProvider).clearTokens();
         if (messageKey != null) {
-          ref.read(forceLogoutMessageKeyProvider.notifier).state = messageKey;
+          ref.read(loginNoticeKeyProvider.notifier).state = messageKey;
         }
         forceLogout();
       });

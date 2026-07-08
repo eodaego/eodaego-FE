@@ -14,11 +14,10 @@ part 'dio_client.g.dart';
 /// 강제 로그아웃 사유를 식별자(messageKey)로 전달. UI에서 i18n 변환.
 typedef ForceLogoutFn = Future<void> Function({String? messageKey});
 
-/// 강제 로그아웃 사유 messageKey (login_page에서 errorByKey로 변환)
+/// 로그인 화면에 띄울 안내 키 (로그아웃 완료/강제 로그아웃 사유/예상 밖 오류 등)
 ///
-/// reissue 실패 시 원인을 식별하는 키를 저장합니다.
-/// 로그인 화면에서 1회 소비(consume) 후 null로 초기화됩니다.
-final forceLogoutMessageKeyProvider = StateProvider<String?>((ref) => null);
+/// 로그인 화면 mount 시 1회 소비(consume)하여 AppSnackbar로 표시 후 null로 초기화됩니다.
+final loginNoticeKeyProvider = StateProvider<String?>((ref) => null);
 
 /// 강제 로그아웃 콜백 Provider
 ///

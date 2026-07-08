@@ -25,12 +25,12 @@ class LoginPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // 강제 로그아웃 사유 1회 소비 → 스낵바
-    ref.listen(forceLogoutMessageKeyProvider, (prev, next) {
+    ref.listen(loginNoticeKeyProvider, (prev, next) {
       if (next != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(_forceLogoutMessage(next))),
         );
-        ref.read(forceLogoutMessageKeyProvider.notifier).state = null;
+        ref.read(loginNoticeKeyProvider.notifier).state = null;
       }
     });
 
