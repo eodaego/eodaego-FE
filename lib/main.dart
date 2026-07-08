@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,6 +13,7 @@ import 'core/constants/app_colors.dart';
 import 'firebase_options.dart';
 import 'core/services/fcm/firebase_messaging_service.dart';
 import 'core/services/fcm/local_notifications_service.dart';
+import 'core/services/remote_config/remote_config_service.dart';
 import 'core/storage/secure_token_storage.dart';
 import 'router/app_router.dart';
 
@@ -87,6 +90,12 @@ void main() async {
     } catch (e) {
       debugPrint('❌ FCM init failed: $e');
     }
+  }
+
+  // Remote Config (Firebase 의존, 비차단 fetch — 버전/점검 파라미터 준비)
+  // 첫 프레임을 막지 않도록 unawaited. 버전 게이트 라우팅은 추후 배선.
+  if (isFirebaseInitialized) {
+    unawaited(RemoteConfigService.instance.initialize());
   }
 
   runApp(

@@ -9,18 +9,15 @@ import '../../../../core/constants/text_styles.dart';
 class SplashPage extends ConsumerWidget {
   const SplashPage({super.key});
 
-  // TODO(eodaego): Firebase Remote Config(어대GO 프로젝트) 설정 확정 후 스플래시에서 버전 체크 배선.
-  //   RemoteConfigService.instance.initialize() → AppVersionChecker.check()
+  // TODO(eodaego): 버전 게이트 배선 — AppVersionChecker.check()
   //   → UpdateDialogHelper.handleResult(context, result) 로 /maintenance·/force-update 유도.
-  //   (services는 lib/core/services/remote_config/ 에 포팅 완료, 호출부만 미배선.)
+  //   (initialize()는 main.dart 부팅 시퀀스에서 배선됨. check→라우팅만 미배선.)
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: AppColors.canvas,
-      body: Center(
-        child: Text('어대GO', style: AppTextStyles.display34),
-      ),
+      body: Center(child: Text('어대GO', style: AppTextStyles.display34)),
     );
   }
 }
