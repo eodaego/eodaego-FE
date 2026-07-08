@@ -170,16 +170,14 @@ class AuthNotifier extends _$AuthNotifier {
     state = const AsyncValue.loading();
     try {
       await ref.read(signOutUseCaseProvider).execute();
-      state = const AsyncValue.data(null);
-    } catch (e, stack) {
-      state = AsyncValue.error(
-        AuthException(
-          message: 'logout failed',
-          messageKey: 'errorLogoutFailed',
-          originalException: e,
-        ),
-        stack,
-      );
+      ref.read(loginNoticeKeyProvider.notifier).state = 'logoutSuccess';
+    } catch (e) {
+      // repo가 로컬 정리를 best-effort로 이미 수행함(토큰삭제 실행).
+      // 여기 도달 = 토큰삭제 자체 실패 등 극히 드문 경우 → 안내만.
+      debugPrint('⚠️ 로그아웃 중 예상 밖 오류: $e');
+      ref.read(loginNoticeKeyProvider.notifier).state = 'logoutUnexpected';
+    } finally {
+      state = const AsyncValue.data(null); // 항상 로그아웃 완료 상태
     }
   }
 
