@@ -69,3 +69,6 @@ android/app/keystore/
 
 # Play Store CI/CD - 민감한 파일 (자동 생성됨)
 .env.*.local
+
+# 내부 작업 문서 (에이전트 플랜 스캐폴딩) - 추적 제외
+docs/superpowers/
