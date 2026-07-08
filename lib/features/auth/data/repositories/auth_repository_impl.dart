@@ -156,40 +156,30 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<void> signOut() async {
+    // 1. 백엔드 로그아웃 (실패 무시 — 로컬 정리 우선)
     try {
-      // 1. 백엔드 로그아웃 (refreshToken 전달)
       final refreshToken = await _tokenStorage.getRefreshToken();
       if (refreshToken != null) {
-        try {
-          await _authRemoteDataSource.logout(
-            LogoutRequestModel(refreshToken: refreshToken),
-          );
-          if (kDebugMode) {
-            debugPrint('✅ 백엔드 로그아웃 성공');
-          }
-        } catch (e) {
-          // 백엔드 로그아웃 실패해도 로컬 정리는 계속 진행
-          debugPrint('⚠️ 백엔드 로그아웃 실패 (무시하고 계속 진행): $e');
-        }
-      }
-
-      // 2. Firebase 로그아웃 (Google/Apple 세션 정리)
-      await _firebaseAuthDataSource.signOut();
-
-      // 3. 로컬 토큰 삭제
-      await _tokenStorage.clearTokens();
-
-      if (kDebugMode) {
-        debugPrint('✅ 전체 로그아웃 완료 (백엔드 + Firebase + 토큰 삭제)');
+        await _authRemoteDataSource.logout(
+          LogoutRequestModel(refreshToken: refreshToken),
+        );
       }
     } catch (e) {
-      if (e is AppException) rethrow;
+      debugPrint('⚠️ 백엔드 로그아웃 실패 (무시하고 진행): $e');
+    }
 
-      throw AuthException(
-        message: '로그아웃 중 오류가 발생했습니다.',
-        messageKey: 'errorLogoutGeneric',
-        originalException: e,
-      );
+    // 2. Firebase 로그아웃 (실패 무시 — 로컬 정리 우선)
+    try {
+      await _firebaseAuthDataSource.signOut();
+    } catch (e) {
+      debugPrint('⚠️ Firebase 로그아웃 실패 (무시하고 진행): $e');
+    }
+
+    // 3. 로컬 토큰 삭제 (반드시 실행)
+    await _tokenStorage.clearTokens();
+
+    if (kDebugMode) {
+      debugPrint('✅ 로그아웃 로컬 정리 완료 (토큰 삭제)');
     }
   }
 
