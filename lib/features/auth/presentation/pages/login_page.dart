@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/network/dio_client.dart';
+import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_snackbar.dart';
 import '../providers/auth_provider.dart';
 
@@ -77,17 +78,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 children: [
                   Text('어대GO', style: AppTextStyles.display34),
                   const SizedBox(height: 32),
-                  // TODO: AppButton 소셜 프리셋으로 교체
-                  ElevatedButton(
+                  AppButton.google(
                     onPressed: () => notifier.signInWithGoogle(),
-                    child: Text('Google로 시작하기',
-                        style: AppTextStyles.label16Semibold),
                   ),
                   const SizedBox(height: 12),
-                  ElevatedButton(
+                  AppButton.apple(
                     onPressed: () => notifier.signInWithApple(),
-                    child: Text('Apple로 시작하기',
-                        style: AppTextStyles.label16Semibold),
                   ),
                 ],
               ),
