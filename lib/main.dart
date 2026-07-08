@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'core/config/env_config.dart';
 import 'core/constants/app_colors.dart';
+import 'firebase_options.dart';
 import 'core/services/fcm/firebase_messaging_service.dart';
 import 'core/services/fcm/local_notifications_service.dart';
 import 'core/storage/secure_token_storage.dart';
@@ -33,7 +34,9 @@ void main() async {
   // Firebase 초기화 (실패해도 앱 실행 계속)
   bool isFirebaseInitialized = false;
   try {
-    await Firebase.initializeApp().timeout(const Duration(seconds: 10));
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    ).timeout(const Duration(seconds: 10));
     isFirebaseInitialized = true;
     debugPrint('✅ Firebase initialized');
   } catch (e, s) {
@@ -44,8 +47,9 @@ void main() async {
   if (isFirebaseInitialized) {
     try {
       if (kDebugMode) {
-        await FirebaseCrashlytics.instance
-            .setCrashlyticsCollectionEnabled(false);
+        await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(
+          false,
+        );
       }
       FlutterError.onError = (details) {
         if (kDebugMode) {
