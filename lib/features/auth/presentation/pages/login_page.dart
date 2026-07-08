@@ -4,36 +4,55 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/network/dio_client.dart';
+import '../../../../core/widgets/app_snackbar.dart';
 import '../providers/auth_provider.dart';
 
-/// 강제 로그아웃 사유 키 → 한국어 (i18n 미포팅 대체).
-String _forceLogoutMessage(String key) {
+/// 로그인 화면 안내 키 → (문구, 색). 순수 함수 — 위젯 없이 단위 테스트 가능.
+({String message, Color color}) loginNoticeFor(String key) {
   switch (key) {
+    case 'logoutSuccess':
+      return (message: '로그아웃되었습니다', color: AppColors.ink);
+    case 'logoutUnexpected':
+      return (message: '로그아웃 중 문제가 있었어요', color: AppColors.danger);
     case 'errorAuthExpired':
-      return '세션이 만료되었어요. 다시 로그인해 주세요.';
+      return (message: '세션이 만료되었어요. 다시 로그인해 주세요.', color: AppColors.danger);
     case 'errorTemporaryRetry':
-      return '일시적인 오류가 발생했어요. 다시 시도해 주세요.';
+      return (message: '일시적인 오류가 발생했어요. 다시 시도해 주세요.', color: AppColors.danger);
     default:
-      return '다시 로그인해 주세요.';
+      return (message: '다시 로그인해 주세요.', color: AppColors.ink);
   }
 }
 
 /// TODO: 어대GO 로그인 디자인 (Google/Apple 소셜 버튼 프리셋).
-class LoginPage extends ConsumerWidget {
+class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // 강제 로그아웃 사유 1회 소비 → 스낵바
-    ref.listen(loginNoticeKeyProvider, (prev, next) {
-      if (next != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(_forceLogoutMessage(next))),
-        );
-        ref.read(loginNoticeKeyProvider.notifier).state = null;
-      }
-    });
+  ConsumerState<LoginPage> createState() => _LoginPageState();
+}
 
+class _LoginPageState extends ConsumerState<LoginPage> {
+  @override
+  void initState() {
+    super.initState();
+    // 로그인 화면 진입 시 대기 중인 안내 키를 1회 소비 → AppSnackbar 표시.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final key = ref.read(loginNoticeKeyProvider);
+      if (key == null) return;
+      final notice = loginNoticeFor(key);
+      AppSnackbar.show(
+        context,
+        message: notice.message,
+        backgroundColor: notice.color,
+        bottomOffset: 40,
+      );
+      ref.read(loginNoticeKeyProvider.notifier).state = null;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final isLoading = ref.watch(authNotifierProvider).isLoading;
     final notifier = ref.read(authNotifierProvider.notifier);
 
