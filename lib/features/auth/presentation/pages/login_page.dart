@@ -18,6 +18,8 @@ import '../providers/auth_provider.dart';
       return (message: '세션이 만료되었어요. 다시 로그인해 주세요.', color: AppColors.danger);
     case 'errorTemporaryRetry':
       return (message: '일시적인 오류가 발생했어요. 다시 시도해 주세요.', color: AppColors.danger);
+    case 'loginFailed':
+      return (message: '로그인에 실패했어요. 잠시 후 다시 시도해 주세요.', color: AppColors.danger);
     default:
       return (message: '다시 로그인해 주세요.', color: AppColors.ink);
   }
@@ -35,24 +37,33 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   @override
   void initState() {
     super.initState();
-    // 로그인 화면 진입 시 대기 중인 안내 키를 1회 소비 → AppSnackbar 표시.
+    // 로그아웃 리다이렉트 등, 화면 진입 시점에 이미 대기 중인 안내 키를 1회 소비.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       final key = ref.read(loginNoticeKeyProvider);
-      if (key == null) return;
-      final notice = loginNoticeFor(key);
-      AppSnackbar.show(
-        context,
-        message: notice.message,
-        backgroundColor: notice.color,
-        bottomOffset: 40,
-      );
-      ref.read(loginNoticeKeyProvider.notifier).state = null;
+      if (key != null) _showNotice(key);
     });
+  }
+
+  /// 안내 키 → AppSnackbar 표시 후 키 소비(null).
+  void _showNotice(String key) {
+    final notice = loginNoticeFor(key);
+    AppSnackbar.show(
+      context,
+      message: notice.message,
+      backgroundColor: notice.color,
+      bottomOffset: 40,
+    );
+    ref.read(loginNoticeKeyProvider.notifier).state = null;
   }
 
   @override
   Widget build(BuildContext context) {
+    // 로그인 화면에 머무는 중 발생한 안내(예: 로그인 실패)를 즉시 소비.
+    ref.listen(loginNoticeKeyProvider, (prev, next) {
+      if (next != null) _showNotice(next);
+    });
+
     final isLoading = ref.watch(authNotifierProvider).isLoading;
     final notifier = ref.read(authNotifierProvider.notifier);
 

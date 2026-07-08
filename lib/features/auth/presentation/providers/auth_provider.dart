@@ -16,7 +16,6 @@ import '../../domain/repositories/auth_repository.dart';
 import '../../domain/usecases/sign_in_with_apple_usecase.dart';
 import '../../domain/usecases/sign_in_with_google_usecase.dart';
 import '../../domain/usecases/sign_out_usecase.dart';
-import '../../domain/utils/firebase_auth_error_handler.dart';
 import '../../../user/presentation/providers/user_provider.dart';
 
 part 'auth_provider.g.dart';
@@ -148,24 +147,12 @@ class AuthNotifier extends _$AuthNotifier {
     } on AuthCancelledException {
       // 사용자가 로그인 취소 — 에러 아님. 조용히 미로그인 상태로 복귀.
       state = const AsyncValue.data(null);
-    } on FirebaseAuthException catch (e) {
-      state = AsyncValue.error(
-        FirebaseAuthErrorHandler.createAuthException(e, provider: provider),
-        StackTrace.current,
-      );
-      rethrow;
-    } catch (e, stack) {
-      state = AsyncValue.error(
-        e is AppException
-            ? e
-            : AuthException(
-                message: 'unknown auth error',
-                messageKey: 'errorUnknown',
-                originalException: e,
-              ),
-        stack,
-      );
-      rethrow;
+    } catch (e) {
+      // 실제 로그인 실패(네트워크/서버/Firebase 등). 앱은 멈추지 않고,
+      // 로그인 화면에 안내(AppSnackbar)만 띄운다.
+      debugPrint('⚠️ [$provider] 로그인 실패: $e');
+      ref.read(loginNoticeKeyProvider.notifier).state = 'loginFailed';
+      state = const AsyncValue.data(null);
     }
   }
 

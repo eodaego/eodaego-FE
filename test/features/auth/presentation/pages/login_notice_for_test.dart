@@ -21,6 +21,12 @@ void main() {
       expect(n.color, AppColors.danger);
     });
 
+    test('loginFailed → 로그인 실패 문구 + danger', () {
+      final n = loginNoticeFor('loginFailed');
+      expect(n.message, '로그인에 실패했어요. 잠시 후 다시 시도해 주세요.');
+      expect(n.color, AppColors.danger);
+    });
+
     test('알 수 없는 키 → 기본 문구 + ink', () {
       final n = loginNoticeFor('unknown-key');
       expect(n.message, '다시 로그인해 주세요.');
