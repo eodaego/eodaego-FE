@@ -145,6 +145,9 @@ class AuthNotifier extends _$AuthNotifier {
     state = const AsyncValue.loading();
     try {
       state = AsyncValue.data(await run());
+    } on AuthCancelledException {
+      // 사용자가 로그인 취소 — 에러 아님. 조용히 미로그인 상태로 복귀.
+      state = const AsyncValue.data(null);
     } on FirebaseAuthException catch (e) {
       state = AsyncValue.error(
         FirebaseAuthErrorHandler.createAuthException(e, provider: provider),
