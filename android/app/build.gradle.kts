@@ -33,7 +33,8 @@ android {
 
     namespace = "com.elipair.eodaego"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    // ubuntu-latest 러너 사전설치 NDK로 고정 (flutter.ndkVersion=27.0.12077973은 러너에 없어 자동 다운로드 실패)
+    ndkVersion = "27.3.13750724"
 
     compileOptions {
         // flutter_local_notifications 요구: core library desugaring 활성화
