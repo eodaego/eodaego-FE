@@ -1,14 +1,47 @@
 {
   "metadata": {
-    "lastUpdated": "2026-07-09T11:42:15Z",
-    "currentVersion": "1.0.14",
+    "lastUpdated": "2026-07-09T12:58:46Z",
+    "currentVersion": "1.0.15",
     "projectType": "flutter",
     "projectTypes": [
       "flutter"
     ],
-    "totalReleases": 3
+    "totalReleases": 4
   },
   "releases": [
+    {
+      "version": "1.0.15",
+      "project_type": "flutter",
+      "project_types": [
+        "flutter"
+      ],
+      "date": "2026-07-09",
+      "pr_number": 7,
+      "raw_summary": "## Summary by CodeRabbit\n\n* **New Features**\n  * 릴리즈 노트 파일을 길이 제한에 맞춰 자동으로 잘라내는 도구가 추가되었습니다.\n  * 앱 버전이 `1.0.15`로 업데이트되었습니다.\n\n* **Chores**\n  * 최신 버전 표기와 버전 코드가 함께 갱신되었습니다.\n  * Android 빌드 설정이 안정적인 NDK 버전을 사용하도록 조정되었습니다.\n\n* **Style**\n  * 여러 화면과 테스트 코드의 표시 형식이 정리되어 가독성이 개선되었습니다.",
+      "parsed_changes": {
+        "new_features": {
+          "title": "New Features",
+          "items": [
+            "릴리즈 노트 파일을 길이 제한에 맞춰 자동으로 잘라내는 도구가 추가되었습니다.",
+            "앱 버전이 `1.0.15`로 업데이트되었습니다."
+          ]
+        },
+        "chores": {
+          "title": "Chores",
+          "items": [
+            "최신 버전 표기와 버전 코드가 함께 갱신되었습니다.",
+            "Android 빌드 설정이 안정적인 NDK 버전을 사용하도록 조정되었습니다."
+          ]
+        },
+        "style": {
+          "title": "Style",
+          "items": [
+            "여러 화면과 테스트 코드의 표시 형식이 정리되어 가독성이 개선되었습니다."
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "1.0.14",
       "project_type": "flutter",
