@@ -54,15 +54,20 @@ void main() {
       expect(container.read(loginNoticeKeyProvider), 'logoutSuccess');
     });
 
-    test('예상 밖 오류: state=data(null), loginNoticeKey=logoutUnexpected', () async {
-      final container = _containerWith(_FakeAuthRepository()..throwOnSignOut = true);
-      addTearDown(container.dispose);
-      await container.read(authNotifierProvider.future);
+    test(
+      '예상 밖 오류: state=data(null), loginNoticeKey=logoutUnexpected',
+      () async {
+        final container = _containerWith(
+          _FakeAuthRepository()..throwOnSignOut = true,
+        );
+        addTearDown(container.dispose);
+        await container.read(authNotifierProvider.future);
 
-      await container.read(authNotifierProvider.notifier).signOut();
+        await container.read(authNotifierProvider.notifier).signOut();
 
-      expect(container.read(authNotifierProvider).value, isNull);
-      expect(container.read(loginNoticeKeyProvider), 'logoutUnexpected');
-    });
+        expect(container.read(authNotifierProvider).value, isNull);
+        expect(container.read(loginNoticeKeyProvider), 'logoutUnexpected');
+      },
+    );
   });
 }

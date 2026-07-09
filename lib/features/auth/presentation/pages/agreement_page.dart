@@ -15,7 +15,8 @@ class AgreementPage extends ConsumerWidget {
     final state = ref.watch(agreementNotifierProvider);
     final notifier = ref.read(agreementNotifierProvider.notifier);
 
-    Widget row(String label, bool value, VoidCallback onTap) => CheckboxListTile(
+    Widget row(String label, bool value, VoidCallback onTap) =>
+        CheckboxListTile(
           value: value,
           onChanged: (_) => onTap(),
           title: Text(label, style: AppTextStyles.body15),
@@ -30,7 +31,11 @@ class AgreementPage extends ConsumerWidget {
             Text('약관에 동의해 주세요', style: AppTextStyles.display24),
             row('[필수] 서비스 이용약관', state.termsOfService, notifier.toggleTerms),
             row('[필수] 개인정보 처리방침', state.privacyPolicy, notifier.togglePrivacy),
-            row('[필수] 위치기반 서비스 약관', state.locationTerms, notifier.toggleLocation),
+            row(
+              '[필수] 위치기반 서비스 약관',
+              state.locationTerms,
+              notifier.toggleLocation,
+            ),
             row('[선택] 마케팅 수신 동의', state.marketing, notifier.toggleMarketing),
             const Spacer(),
             Padding(
@@ -50,8 +55,7 @@ class AgreementPage extends ConsumerWidget {
                         }
                       }
                     : null,
-                child: Text('동의하고 시작하기',
-                    style: AppTextStyles.label16Semibold),
+                child: Text('동의하고 시작하기', style: AppTextStyles.label16Semibold),
               ),
             ),
           ],

@@ -18,8 +18,9 @@ import 'route_paths.dart';
 
 part 'app_router.g.dart';
 
-final GlobalKey<NavigatorState> rootNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'root');
+final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>(
+  debugLabel: 'root',
+);
 
 /// 스플래시 화면 최소 노출 시간 (앱 시작 시 1회)
 const Duration _minSplashDuration = Duration(milliseconds: 1800);
@@ -115,10 +116,8 @@ GoRouter router(Ref ref) {
       GoRoute(
         path: RoutePaths.onboarding,
         name: RoutePaths.onboardingName,
-        pageBuilder: (context, state) => NoTransitionPage(
-          key: state.pageKey,
-          child: const OnboardingPage(),
-        ),
+        pageBuilder: (context, state) =>
+            NoTransitionPage(key: state.pageKey, child: const OnboardingPage()),
       ),
       GoRoute(
         path: RoutePaths.nicknameSetup,

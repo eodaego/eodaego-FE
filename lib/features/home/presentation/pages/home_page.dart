@@ -20,15 +20,20 @@ class HomePage extends ConsumerWidget {
           children: [
             Text('어대GO', style: AppTextStyles.display26),
             const SizedBox(height: 12),
-            Text('환영합니다 ${user?.nickname ?? ''}',
-                style: AppTextStyles.body15.copyWith(color: AppColors.muted)),
+            Text(
+              '환영합니다 ${user?.nickname ?? ''}',
+              style: AppTextStyles.body15.copyWith(color: AppColors.muted),
+            ),
             const SizedBox(height: 24),
             TextButton(
               onPressed: () =>
                   ref.read(authNotifierProvider.notifier).signOut(),
-              child: Text('로그아웃',
-                  style: AppTextStyles.label16Semibold
-                      .copyWith(color: AppColors.primary)),
+              child: Text(
+                '로그아웃',
+                style: AppTextStyles.label16Semibold.copyWith(
+                  color: AppColors.primary,
+                ),
+              ),
             ),
           ],
         ),

@@ -30,8 +30,7 @@ class ForceUpdatePage extends StatelessWidget {
                 const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: () => launchExternalUrl(AppUrls.storeUrl),
-                  child: Text('지금 업데이트',
-                      style: AppTextStyles.label16Semibold),
+                  child: Text('지금 업데이트', style: AppTextStyles.label16Semibold),
                 ),
               ],
             ),

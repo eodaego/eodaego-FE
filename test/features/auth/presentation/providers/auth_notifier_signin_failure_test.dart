@@ -9,16 +9,18 @@ import 'package:flutter_test/flutter_test.dart';
 /// 백엔드/네트워크 실패를 재현하는 Fake (백엔드 미실행 시나리오).
 class _FakeAuthRepository implements AuthRepository {
   @override
-  Future<AuthResultEntity> signInWithGoogle() async => throw const NetworkException(
-    message: 'connection error',
-    code: 'connection-error',
-  );
+  Future<AuthResultEntity> signInWithGoogle() async =>
+      throw const NetworkException(
+        message: 'connection error',
+        code: 'connection-error',
+      );
 
   @override
-  Future<AuthResultEntity> signInWithApple() async => throw const NetworkException(
-    message: 'connection error',
-    code: 'connection-error',
-  );
+  Future<AuthResultEntity> signInWithApple() async =>
+      throw const NetworkException(
+        message: 'connection error',
+        code: 'connection-error',
+      );
 
   @override
   Future<void> signOut() => throw UnimplementedError();

@@ -128,14 +128,14 @@ class AuthNotifier extends _$AuthNotifier {
   }
 
   Future<void> signInWithGoogle() => _signIn(
-        () => ref.read(signInWithGoogleUseCaseProvider).execute(),
-        provider: 'Google',
-      );
+    () => ref.read(signInWithGoogleUseCaseProvider).execute(),
+    provider: 'Google',
+  );
 
   Future<void> signInWithApple() => _signIn(
-        () => ref.read(signInWithAppleUseCaseProvider).execute(),
-        provider: 'Apple',
-      );
+    () => ref.read(signInWithAppleUseCaseProvider).execute(),
+    provider: 'Apple',
+  );
 
   Future<void> _signIn(
     Future<AuthResultEntity> Function() run, {

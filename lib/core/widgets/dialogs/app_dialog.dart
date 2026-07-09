@@ -419,7 +419,8 @@ class _AppDialogState extends State<AppDialog>
                     if (widget.showAvatar) ...[
                       _buildAvatarSection(),
                       SizedBox(
-                        height: widget.spacing?.avatarToTitle ?? AppSpacing.base.h,
+                        height:
+                            widget.spacing?.avatarToTitle ?? AppSpacing.base.h,
                       ),
                     ],
 
@@ -604,9 +605,7 @@ class _DialogActionButton extends StatelessWidget {
         ),
         child: Text(
           text,
-          style: AppTextStyles.label16Semibold.copyWith(
-            color: foregroundColor,
-          ),
+          style: AppTextStyles.label16Semibold.copyWith(color: foregroundColor),
         ),
       ),
     );

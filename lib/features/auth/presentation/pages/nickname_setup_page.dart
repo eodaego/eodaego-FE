@@ -15,8 +15,9 @@ class NicknameSetupPage extends ConsumerStatefulWidget {
 }
 
 class _NicknameSetupPageState extends ConsumerState<NicknameSetupPage> {
-  late final TextEditingController _controller =
-      TextEditingController(text: widget.initialNickname ?? '');
+  late final TextEditingController _controller = TextEditingController(
+    text: widget.initialNickname ?? '',
+  );
 
   @override
   void dispose() {

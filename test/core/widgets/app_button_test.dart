@@ -5,8 +5,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 Widget _wrap(Widget child) => ScreenUtilInit(
   designSize: const Size(393, 852),
-  builder: (context, _) =>
-      MaterialApp(home: Scaffold(body: Center(child: child))),
+  builder: (context, _) => MaterialApp(
+    home: Scaffold(body: Center(child: child)),
+  ),
 );
 
 void main() {
@@ -29,9 +30,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final button = tester.widget<ElevatedButton>(
-        find.byType(ElevatedButton),
-      );
+      final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
       expect(button.onPressed, isNull);
     });
 
@@ -43,9 +42,7 @@ void main() {
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
       expect(find.text('로딩'), findsNothing);
-      final button = tester.widget<ElevatedButton>(
-        find.byType(ElevatedButton),
-      );
+      final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
       expect(button.onPressed, isNull);
     });
   });
