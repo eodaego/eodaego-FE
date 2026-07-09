@@ -1,0 +1,76 @@
+# Changelog
+
+**현재 버전:** 1.0.9  
+**마지막 업데이트:** 2026-07-08T14:19:39Z  
+
+---
+
+## [1.0.9] - 2026-07-08
+
+**PR:** #3  
+
+**새 기능**
+- 로그인 화면 하단 정렬 + 약관 동의/열람(LegalDocumentPage, 임시 JSON)
+- 공용 AppButton 위젯 + Google/Apple 프리셋, 로그인 화면 적용
+- 로그인 실패 시 AppSnackbar 피드백 (백엔드 미응답 등, 앱 멈춤 방지)
+- 로그인 화면 안내를 AppSnackbar로 통일 (loginNoticeFor + mount 소비)
+- 스플래시 최소 노출 시간(1.8s) 보장 #2
+- 화면 전환 애니메이션 제거 (NoTransitionPage) #2
+- 위치·권한 서비스 #2
+- Remote Config (버전 체크·강제 업데이트·점검) #2
+- FCM·디바이스 서비스 + 부트스트랩 연결 #2
+- main.dart 부트스트랩 (앱 부팅 → 로그인) #2
+- 라우터 + 인증 페이지 뼈대 + 홈 플레이스홀더 #2
+- 인증 provider (약관·auth notifier) #2
+- 유저 데이터·도메인 계층 (닉네임·약관·탈퇴) #2
+- 인증 데이터·도메인 계층 (Firebase·Retrofit 로그인) #2
+- 공용 다이얼로그 + 점검·강제 업데이트 페이지 #2
+- 네트워크·스토리지 계층 (Dio·AuthInterceptor·SecureTokenStorage) #2
+- 코어 상수·config·errors·utils (디자인 토큰·EnvConfig·AppException·URL) #2
+
+**버그 수정**
+- 로그인 취소(AuthCancelledException)를 에러가 아닌 미로그인 복귀로 처리
+- 로그아웃 실패해도 앱 멈추지 않도록 signOut을 항상 data(null)로 종료
+- 로그아웃 시 원격 실패와 무관하게 로컬 토큰 삭제 보장
+- FCM 정리 + Firebase 설정 gitignore + Colors.transparent 상수화 #2
+- .env를 Flutter 에셋으로 등록 (dotenv 로드 크래시 방지) #2
+- 스플래시 리다이렉트 데드엔드 해소 + 린트 정리 #2
+- 다이얼로그 스크림 AppColors.scrim 상수화 #2
+
+**개선**
+- forceLogoutMessageKeyProvider를 loginNoticeKeyProvider로 리네임
+
+**문서**
+- 로그아웃 견고화 및 로그인 안내 AppSnackbar 통일 설계 스펙
+- cops → 어대GO 포팅 구현 계획 추가 (12 태스크)
+- cops_and_robbers → 어대GO 선별 포팅 설계 문서 추가
+
+**기타**
+- docs : Firebase 초기 설정 보고서 갱신 (Remote Config 배선·상수화 반영) #2
+- chore : Remote Config 초기화 배선 + ads 제거·상수화 #2
+- chore : superpowers 에이전트 플랜 문서 git 추적 제외
+- docs : Firebase 연동·iOS 푸시/소셜 로그인 설정 구현 보고서 추가
+- chore : Firebase/FlutterFire 연동 및 iOS 푸시·소셜 로그인 네이티브 설정
+- assets/icons SVG 에셋을 pubspec에 등록
+- Merge branch 'main' of https://github.com/eodaego/eodaego-FE
+- Firebase 설정 파일 추가 (google-services.json / GoogleService-Info.plist) #2
+- Merge branch 'main' of https://github.com/eodaego/eodaego-FE
+- docs : 이슈 작성문서
+- 앱 아이콘·디자인 시스템 파일 추가 #2
+- 기본 카운터 테스트 제거 + app_router.g.dart 동기화 #2
+- chore : iOS/Android 빌드 및 Fastlane 배포 설정 추가
+- feat : 커스텀 폰트(Pretendard, Cafe24Ssurround) 등록
+- Add keystore files to .gitignore
+- Merge branch 'main' of https://github.com/eodaego/eodaego-FE
+- fix : Android core library desugaring 활성화
+- chore : google_mobile_ads 의존성 임시 제외
+- chore : iOS CocoaPods 설치 및 연동
+- chore : Firebase 버전 하향 및 Google Maps 의존성 제거
+- chore : 디버깅 파일
+- chore : 개발 규칙·커맨드 문서 및 에이전트 설정 추가
+- chore : 앱 패키지 식별자 및 표시 이름 변경
+- chore : 프로젝트 의존성 추가 및 플러그인 등록
+- chore : TEMPLATE 세팅
+
+---
+
