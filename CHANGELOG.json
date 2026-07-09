@@ -1,14 +1,40 @@
 {
   "metadata": {
-    "lastUpdated": "2026-07-09T12:58:46Z",
-    "currentVersion": "1.0.15",
+    "lastUpdated": "2026-07-09T17:24:59Z",
+    "currentVersion": "1.0.17",
     "projectType": "flutter",
     "projectTypes": [
       "flutter"
     ],
-    "totalReleases": 4
+    "totalReleases": 5
   },
   "releases": [
+    {
+      "version": "1.0.17",
+      "project_type": "flutter",
+      "project_types": [
+        "flutter"
+      ],
+      "date": "2026-07-09",
+      "pr_number": 8,
+      "raw_summary": "## Summary by CodeRabbit\n\n* **Chores**\n  * 앱 및 프로젝트 버전이 `1.0.17`으로 업데이트되었습니다.\n  * 최신 버전 정보가 `v1.0.15`에서 `v1.0.15`/`v1.0.17` 기준으로 갱신되었습니다.\n* **Bug Fixes**\n  * 빌드 처리 대기 동작에 시간 제한이 추가되어, 배포 과정이 더 안정적으로 진행되도록 개선되었습니다.",
+      "parsed_changes": {
+        "chores": {
+          "title": "Chores",
+          "items": [
+            "앱 및 프로젝트 버전이 `1.0.17`으로 업데이트되었습니다.",
+            "최신 버전 정보가 `v1.0.15`에서 `v1.0.15`/`v1.0.17` 기준으로 갱신되었습니다."
+          ]
+        },
+        "bug_fixes": {
+          "title": "Bug Fixes",
+          "items": [
+            "빌드 처리 대기 동작에 시간 제한이 추가되어, 배포 과정이 더 안정적으로 진행되도록 개선되었습니다."
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "1.0.15",
       "project_type": "flutter",
