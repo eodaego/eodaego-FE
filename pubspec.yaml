@@ -1,7 +1,7 @@
 name: eodaego
 description: "A new Flutter project."
 publish_to: "none"
-version: 1.0.10+10
+version: 1.0.13+12
 environment:
   sdk: ^3.9.2
 dependencies:
@@ -78,14 +78,12 @@ dev_dependencies:
   # 앱 설정 도구
   flutter_launcher_icons: ^0.14.4 # 앱 런처 아이콘 생성
   change_app_package_name: ^1.5.0 # 앱 패키지명 변경
-
 # 앱 런처 아이콘 생성: dart run flutter_launcher_icons
 flutter_launcher_icons:
   image_path: "assets/app_logo_1024.png"
   android: true
   ios: true
   remove_alpha_ios: true
-
 flutter:
   uses-material-design: true
   assets:
