@@ -18,6 +18,6 @@ samples, guidance on mobile development, and a full API reference.
 ---
 
 <!-- AUTO-VERSION-SECTION: DO NOT EDIT MANUALLY -->
-## 최신 버전 : v1.0.15 (2026-07-09)
+## 최신 버전 : v1.0.17 (2026-07-09)
 
 [전체 버전 기록 보기](CHANGELOG.md)
