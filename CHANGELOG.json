@@ -1,14 +1,40 @@
 {
   "metadata": {
-    "lastUpdated": "2026-07-09T10:05:35Z",
-    "currentVersion": "1.0.13",
+    "lastUpdated": "2026-07-09T11:42:15Z",
+    "currentVersion": "1.0.14",
     "projectType": "flutter",
     "projectTypes": [
       "flutter"
     ],
-    "totalReleases": 2
+    "totalReleases": 3
   },
   "releases": [
+    {
+      "version": "1.0.14",
+      "project_type": "flutter",
+      "project_types": [
+        "flutter"
+      ],
+      "date": "2026-07-09",
+      "pr_number": 5,
+      "raw_summary": "## Summary by CodeRabbit\n\n* **새 기능**\n  * 앱 버전이 `1.0.14`로 업데이트되었습니다.\n  * iOS/Android 배포 파이프라인이 프로젝트 경로 변경에 더 유연하게 동작하도록 개선되었습니다.\n\n* **문서**\n  * README의 최신 버전 정보가 업데이트되었습니다.",
+      "parsed_changes": {
+        "새_기능": {
+          "title": "새 기능",
+          "items": [
+            "앱 버전이 `1.0.14`로 업데이트되었습니다.",
+            "iOS/Android 배포 파이프라인이 프로젝트 경로 변경에 더 유연하게 동작하도록 개선되었습니다."
+          ]
+        },
+        "문서": {
+          "title": "문서",
+          "items": [
+            "README의 최신 버전 정보가 업데이트되었습니다."
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "1.0.13",
       "project_type": "flutter",
