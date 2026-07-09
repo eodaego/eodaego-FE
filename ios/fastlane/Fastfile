@@ -41,6 +41,9 @@ platform :ios do
       ipa: ENV["IPA_PATH"],
       changelog: ENV["RELEASE_NOTES"],
       skip_waiting_for_build_processing: !prepare_appstore,
+      # 기본값은 무한 대기 — Apple이 처리 중 빌드를 걷어내면 목록에 영영 안 나타나고
+      # 잡이 GitHub Actions 6시간 한도까지 러너를 태운다. 1시간이면 실패 처리.
+      wait_processing_timeout_duration: 3600,
       distribute_external: false,
       notify_external_testers: false,
       uses_non_exempt_encryption: false
