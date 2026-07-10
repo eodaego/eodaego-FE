@@ -1,14 +1,41 @@
 {
   "metadata": {
-    "lastUpdated": "2026-07-09T17:24:59Z",
-    "currentVersion": "1.0.17",
+    "lastUpdated": "2026-07-10T11:30:26Z",
+    "currentVersion": "1.0.18",
     "projectType": "flutter",
     "projectTypes": [
       "flutter"
     ],
-    "totalReleases": 5
+    "totalReleases": 6
   },
   "releases": [
+    {
+      "version": "1.0.18",
+      "project_type": "flutter",
+      "project_types": [
+        "flutter"
+      ],
+      "date": "2026-07-10",
+      "pr_number": 9,
+      "raw_summary": "## Summary by CodeRabbit\n\n* **새로운 기능**\n  * QR 코드 스캔을 위한 카메라 권한과 지도·주변 장소 안내를 위한 위치 권한이 추가되었습니다.\n  * Android와 iOS에서 필요한 권한 안내가 제공됩니다.\n\n* **개선 사항**\n  * 앱 버전이 1.0.18로 업데이트되었습니다.\n  * 최신 버전 정보와 버전 코드가 갱신되었습니다.",
+      "parsed_changes": {
+        "새로운_기능": {
+          "title": "새로운 기능",
+          "items": [
+            "QR 코드 스캔을 위한 카메라 권한과 지도·주변 장소 안내를 위한 위치 권한이 추가되었습니다.",
+            "Android와 iOS에서 필요한 권한 안내가 제공됩니다."
+          ]
+        },
+        "개선_사항": {
+          "title": "개선 사항",
+          "items": [
+            "앱 버전이 1.0.18로 업데이트되었습니다.",
+            "최신 버전 정보와 버전 코드가 갱신되었습니다."
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "1.0.17",
       "project_type": "flutter",
