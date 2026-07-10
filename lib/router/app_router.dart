@@ -11,6 +11,7 @@ import '../features/auth/presentation/pages/nickname_setup_page.dart';
 import '../features/auth/presentation/pages/onboarding_page.dart';
 import '../features/auth/presentation/pages/splash_page.dart';
 import '../features/auth/presentation/providers/auth_provider.dart';
+import '../features/collection/presentation/pages/collection_page.dart';
 import '../features/home/presentation/pages/home_page.dart';
 import '../core/widgets/main_tab_shell.dart';
 import '../core/widgets/pages/force_update_page.dart';
@@ -174,7 +175,7 @@ GoRouter router(Ref ref) {
                 name: RoutePaths.collectionName,
                 pageBuilder: (context, state) => NoTransitionPage(
                   key: state.pageKey,
-                  child: const _StubPage(title: '도감'),
+                  child: const CollectionPage(),
                 ),
                 routes: [
                   GoRoute(
