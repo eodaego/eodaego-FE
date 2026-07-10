@@ -13,6 +13,7 @@ import '../features/auth/presentation/pages/splash_page.dart';
 import '../features/auth/presentation/providers/auth_provider.dart';
 import '../features/collection/presentation/pages/collection_detail_page.dart';
 import '../features/collection/presentation/pages/collection_page.dart';
+import '../features/course/presentation/pages/course_wizard_page.dart';
 import '../features/home/presentation/pages/home_page.dart';
 import '../features/quiz/presentation/pages/quiz_page.dart';
 import '../features/quiz/presentation/pages/quiz_reward_page.dart';
@@ -236,7 +237,7 @@ GoRouter router(Ref ref) {
         path: RoutePaths.courseWizard,
         name: RoutePaths.courseWizardName,
         pageBuilder: (context, state) => NoTransitionPage(
-            key: state.pageKey, child: const _StubPage(title: '코스 추천')),
+            key: state.pageKey, child: const CourseWizardPage()),
       ),
       GoRoute(
         path: RoutePaths.courseResult,
