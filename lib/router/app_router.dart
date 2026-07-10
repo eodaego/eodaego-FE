@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -12,6 +12,7 @@ import '../features/auth/presentation/pages/onboarding_page.dart';
 import '../features/auth/presentation/pages/splash_page.dart';
 import '../features/auth/presentation/providers/auth_provider.dart';
 import '../features/home/presentation/pages/home_page.dart';
+import '../core/widgets/main_tab_shell.dart';
 import '../core/widgets/pages/force_update_page.dart';
 import '../core/widgets/pages/maintenance_page.dart';
 import 'route_paths.dart';
@@ -135,11 +136,110 @@ GoRouter router(Ref ref) {
         pageBuilder: (context, state) =>
             NoTransitionPage(key: state.pageKey, child: const AgreementPage()),
       ),
+      // ── 4탭 셸 ──
+      StatefulShellRoute.indexedStack(
+        pageBuilder: (context, state, navigationShell) => NoTransitionPage(
+          key: state.pageKey,
+          child: MainTabShell(navigationShell: navigationShell),
+        ),
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RoutePaths.home,
+                name: RoutePaths.homeName,
+                pageBuilder: (context, state) => NoTransitionPage(
+                  key: state.pageKey,
+                  child: const HomePage(),
+                ),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RoutePaths.map,
+                name: RoutePaths.mapName,
+                pageBuilder: (context, state) => NoTransitionPage(
+                  key: state.pageKey,
+                  child: const _StubPage(title: '지도'),
+                ),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RoutePaths.collection,
+                name: RoutePaths.collectionName,
+                pageBuilder: (context, state) => NoTransitionPage(
+                  key: state.pageKey,
+                  child: const _StubPage(title: '도감'),
+                ),
+                routes: [
+                  GoRoute(
+                    path: ':id',
+                    name: RoutePaths.collectionDetailName,
+                    parentNavigatorKey: rootNavigatorKey,
+                    pageBuilder: (context, state) => NoTransitionPage(
+                      key: state.pageKey,
+                      child: const _StubPage(title: '도감 상세'),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RoutePaths.favorite,
+                name: RoutePaths.favoriteName,
+                pageBuilder: (context, state) => NoTransitionPage(
+                  key: state.pageKey,
+                  child: const _StubPage(title: '즐겨찾기'),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+      // ── 루트 push 화면 (탭바 없음) ──
       GoRoute(
-        path: RoutePaths.home,
-        name: RoutePaths.homeName,
-        pageBuilder: (context, state) =>
-            NoTransitionPage(key: state.pageKey, child: const HomePage()),
+        path: RoutePaths.scan,
+        name: RoutePaths.scanName,
+        pageBuilder: (context, state) => NoTransitionPage(
+            key: state.pageKey, child: const _StubPage(title: '촬영')),
+      ),
+      GoRoute(
+        path: RoutePaths.quiz,
+        name: RoutePaths.quizName,
+        pageBuilder: (context, state) => NoTransitionPage(
+            key: state.pageKey, child: const _StubPage(title: '퀴즈')),
+      ),
+      GoRoute(
+        path: RoutePaths.quizReward,
+        name: RoutePaths.quizRewardName,
+        pageBuilder: (context, state) => NoTransitionPage(
+            key: state.pageKey, child: const _StubPage(title: '정답 축하')),
+      ),
+      GoRoute(
+        path: RoutePaths.courseWizard,
+        name: RoutePaths.courseWizardName,
+        pageBuilder: (context, state) => NoTransitionPage(
+            key: state.pageKey, child: const _StubPage(title: '코스 추천')),
+      ),
+      GoRoute(
+        path: RoutePaths.courseResult,
+        name: RoutePaths.courseResultName,
+        pageBuilder: (context, state) => NoTransitionPage(
+            key: state.pageKey, child: const _StubPage(title: '추천 코스')),
+      ),
+      GoRoute(
+        path: RoutePaths.mypage,
+        name: RoutePaths.mypageName,
+        pageBuilder: (context, state) => NoTransitionPage(
+            key: state.pageKey, child: const _StubPage(title: '내 정보')),
       ),
       GoRoute(
         path: RoutePaths.maintenance,
@@ -159,4 +259,16 @@ GoRouter router(Ref ref) {
       ),
     ],
   );
+}
+
+/// 목 UI 구축 중 임시 화면. 모든 화면 구현 완료 시(Task 13) 삭제.
+class _StubPage extends StatelessWidget {
+  const _StubPage({required this.title});
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(body: Center(child: Text(title)));
+  }
 }
