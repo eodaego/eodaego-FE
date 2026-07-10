@@ -14,6 +14,7 @@ import '../features/auth/presentation/providers/auth_provider.dart';
 import '../features/collection/presentation/pages/collection_detail_page.dart';
 import '../features/collection/presentation/pages/collection_page.dart';
 import '../features/home/presentation/pages/home_page.dart';
+import '../features/scan/presentation/pages/scan_page.dart';
 import '../core/widgets/main_tab_shell.dart';
 import '../core/widgets/pages/force_update_page.dart';
 import '../core/widgets/pages/maintenance_page.dart';
@@ -213,7 +214,9 @@ GoRouter router(Ref ref) {
         path: RoutePaths.scan,
         name: RoutePaths.scanName,
         pageBuilder: (context, state) => NoTransitionPage(
-            key: state.pageKey, child: const _StubPage(title: '촬영')),
+          key: state.pageKey,
+          child: const ScanPage(),
+        ),
       ),
       GoRoute(
         path: RoutePaths.quiz,
