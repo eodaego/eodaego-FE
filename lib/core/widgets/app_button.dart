@@ -96,6 +96,29 @@ class AppButton extends StatelessWidget {
     );
   }
 
+  /// 보상 노랑 CTA 프리셋 — 홈 '코스 추천 받기'·축하 화면 전용.
+  /// (노랑 사용 허용 위치는 이 두 곳뿐 — UI_Design_System.md)
+  factory AppButton.reward({
+    Key? key,
+    required String text,
+    required VoidCallback? onPressed,
+    double? width,
+    double? height,
+    BorderRadius? borderRadius,
+  }) {
+    return AppButton(
+      key: key,
+      text: text,
+      onPressed: onPressed,
+      backgroundColor: AppColors.reward,
+      foregroundColor: AppColors.rewardDark,
+      textStyle: AppTextStyles.display17,
+      width: width,
+      height: height,
+      borderRadius: borderRadius,
+    );
+  }
+
   /// 버튼 텍스트 (필수).
   final String text;
 
