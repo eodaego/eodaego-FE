@@ -14,6 +14,7 @@ import '../features/auth/presentation/providers/auth_provider.dart';
 import '../features/collection/presentation/pages/collection_detail_page.dart';
 import '../features/collection/presentation/pages/collection_page.dart';
 import '../features/home/presentation/pages/home_page.dart';
+import '../features/quiz/presentation/pages/quiz_page.dart';
 import '../features/scan/presentation/pages/scan_page.dart';
 import '../core/widgets/main_tab_shell.dart';
 import '../core/widgets/pages/force_update_page.dart';
@@ -222,7 +223,7 @@ GoRouter router(Ref ref) {
         path: RoutePaths.quiz,
         name: RoutePaths.quizName,
         pageBuilder: (context, state) => NoTransitionPage(
-            key: state.pageKey, child: const _StubPage(title: '퀴즈')),
+            key: state.pageKey, child: const QuizPage()),
       ),
       GoRoute(
         path: RoutePaths.quizReward,
