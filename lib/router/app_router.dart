@@ -11,6 +11,7 @@ import '../features/auth/presentation/pages/nickname_setup_page.dart';
 import '../features/auth/presentation/pages/onboarding_page.dart';
 import '../features/auth/presentation/pages/splash_page.dart';
 import '../features/auth/presentation/providers/auth_provider.dart';
+import '../features/collection/presentation/pages/collection_detail_page.dart';
 import '../features/collection/presentation/pages/collection_page.dart';
 import '../features/home/presentation/pages/home_page.dart';
 import '../core/widgets/main_tab_shell.dart';
@@ -184,7 +185,9 @@ GoRouter router(Ref ref) {
                     parentNavigatorKey: rootNavigatorKey,
                     pageBuilder: (context, state) => NoTransitionPage(
                       key: state.pageKey,
-                      child: const _StubPage(title: '도감 상세'),
+                      child: CollectionDetailPage(
+                        itemId: state.pathParameters['id']!,
+                      ),
                     ),
                   ),
                 ],
