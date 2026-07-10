@@ -83,8 +83,11 @@ class _CourseWizardPageState extends State<CourseWizardPage> {
   void _selectSingle(int optionIndex) {
     if (_singleSelections[_step] != null) return; // 진행 중 중복 탭 방지
     setState(() => _singleSelections[_step] = optionIndex);
+    final scheduledStep = _step;
     Future.delayed(const Duration(milliseconds: 350), () {
-      if (!mounted) return;
+      // back 등으로 스텝이 바뀌었거나 선택이 초기화됐으면 stale 타이머는 무시
+      if (!mounted || _step != scheduledStep) return;
+      if (_singleSelections[scheduledStep] == null) return;
       setState(() => _step += 1);
     });
   }
@@ -95,6 +98,8 @@ class _CourseWizardPageState extends State<CourseWizardPage> {
       return;
     }
     setState(() {
+      // 떠나는 스텝의 선택 초기화 (pending 타이머 무효화 + 팬텀 선택 방지)
+      if (_step < _singleSelections.length) _singleSelections[_step] = null;
       _step -= 1;
       // 돌아간 스텝의 선택을 초기화해 자동 진행이 다시 동작하게 한다
       if (_step < _singleSelections.length) _singleSelections[_step] = null;
