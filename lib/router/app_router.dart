@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -11,7 +11,18 @@ import '../features/auth/presentation/pages/nickname_setup_page.dart';
 import '../features/auth/presentation/pages/onboarding_page.dart';
 import '../features/auth/presentation/pages/splash_page.dart';
 import '../features/auth/presentation/providers/auth_provider.dart';
+import '../features/collection/presentation/pages/collection_detail_page.dart';
+import '../features/collection/presentation/pages/collection_page.dart';
+import '../features/course/presentation/pages/course_recommend_page.dart';
+import '../features/favorite/presentation/pages/favorite_page.dart';
 import '../features/home/presentation/pages/home_page.dart';
+import '../features/map/presentation/pages/map_page.dart';
+import '../features/quiz/presentation/pages/quiz_page.dart';
+import '../features/quiz/presentation/pages/quiz_reward_page.dart';
+import '../features/scan/presentation/pages/scan_page.dart';
+import '../features/user/presentation/pages/my_page.dart';
+import '../core/providers/guest_mode_provider.dart';
+import '../core/widgets/main_tab_shell.dart';
 import '../core/widgets/pages/force_update_page.dart';
 import '../core/widgets/pages/maintenance_page.dart';
 import 'route_paths.dart';
@@ -77,6 +88,8 @@ GoRouter router(Ref ref) {
         ];
 
         if (!isAuthenticated) {
+          // 게스트 둘러보기: 전 화면 통과 (로그인 화면 접근도 허용 — 로그인하러 가기 동선)
+          if (ref.read(guestModeProvider)) return null;
           return publicPaths.contains(path) ? null : RoutePaths.login;
         }
 
@@ -135,11 +148,110 @@ GoRouter router(Ref ref) {
         pageBuilder: (context, state) =>
             NoTransitionPage(key: state.pageKey, child: const AgreementPage()),
       ),
+      // ── 4탭 셸 ──
+      StatefulShellRoute.indexedStack(
+        pageBuilder: (context, state, navigationShell) => NoTransitionPage(
+          key: state.pageKey,
+          child: MainTabShell(navigationShell: navigationShell),
+        ),
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RoutePaths.home,
+                name: RoutePaths.homeName,
+                pageBuilder: (context, state) => NoTransitionPage(
+                  key: state.pageKey,
+                  child: const HomePage(),
+                ),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RoutePaths.map,
+                name: RoutePaths.mapName,
+                pageBuilder: (context, state) => NoTransitionPage(
+                  key: state.pageKey,
+                  child: const MapPage(),
+                ),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RoutePaths.collection,
+                name: RoutePaths.collectionName,
+                pageBuilder: (context, state) => NoTransitionPage(
+                  key: state.pageKey,
+                  child: const CollectionPage(),
+                ),
+                routes: [
+                  GoRoute(
+                    path: ':id',
+                    name: RoutePaths.collectionDetailName,
+                    parentNavigatorKey: rootNavigatorKey,
+                    pageBuilder: (context, state) => NoTransitionPage(
+                      key: state.pageKey,
+                      child: CollectionDetailPage(
+                        itemId: state.pathParameters['id']!,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RoutePaths.favorite,
+                name: RoutePaths.favoriteName,
+                pageBuilder: (context, state) => NoTransitionPage(
+                  key: state.pageKey,
+                  child: const FavoritePage(),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+      // ── 루트 push 화면 (탭바 없음) ──
       GoRoute(
-        path: RoutePaths.home,
-        name: RoutePaths.homeName,
-        pageBuilder: (context, state) =>
-            NoTransitionPage(key: state.pageKey, child: const HomePage()),
+        path: RoutePaths.scan,
+        name: RoutePaths.scanName,
+        pageBuilder: (context, state) => NoTransitionPage(
+          key: state.pageKey,
+          child: const ScanPage(),
+        ),
+      ),
+      GoRoute(
+        path: RoutePaths.quiz,
+        name: RoutePaths.quizName,
+        pageBuilder: (context, state) => NoTransitionPage(
+            key: state.pageKey, child: const QuizPage()),
+      ),
+      GoRoute(
+        path: RoutePaths.quizReward,
+        name: RoutePaths.quizRewardName,
+        pageBuilder: (context, state) => NoTransitionPage(
+            key: state.pageKey, child: const QuizRewardPage()),
+      ),
+      GoRoute(
+        path: RoutePaths.mypage,
+        name: RoutePaths.mypageName,
+        pageBuilder: (context, state) => NoTransitionPage(
+            key: state.pageKey, child: const MyPage()),
+      ),
+      GoRoute(
+        path: RoutePaths.courseRecommend,
+        name: RoutePaths.courseRecommendName,
+        pageBuilder: (context, state) => NoTransitionPage(
+          key: state.pageKey,
+          child: const CourseRecommendPage(),
+        ),
       ),
       GoRoute(
         path: RoutePaths.maintenance,

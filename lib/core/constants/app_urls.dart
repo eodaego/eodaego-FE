@@ -24,4 +24,8 @@ class AppUrls {
   // TODO(eodaego): 마케팅 수신 동의 페이지 URL 확정 시 교체
   static const String marketingConsent =
       'https://example.com/eodaego/marketing';
+
+  /// 서울어린이대공원 공식 사이트
+  static const String parkOfficialSite =
+      'https://www.sisul.or.kr/open_content/childrenpark/';
 }

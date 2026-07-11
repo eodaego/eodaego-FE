@@ -15,4 +15,10 @@ class EnvConfig {
   static String get apiBaseUrl {
     return dotenv.env['API_BASE_URL'] ?? 'http://localhost:8080';
   }
+
+  /// 목 데이터 사용 여부. 미설정 시 false(실 데이터) — CI/프로덕션 안전 기본값.
+  /// API 연동 시 Repository provider에서 목/실 구현체 분기에 사용한다.
+  static bool get useMockData {
+    return dotenv.env['USE_MOCK_DATA']?.toLowerCase() == 'true';
+  }
 }

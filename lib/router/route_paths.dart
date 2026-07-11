@@ -22,4 +22,29 @@ class RoutePaths {
 
   static String nicknameSetupWithNickname(String nickname) =>
       '$nicknameSetup?nickname=${Uri.encodeComponent(nickname)}';
+
+  // ── 목 UI 화면 (탭 셸 브랜치) ──
+  static const String map = '/map';
+  static const String collection = '/collection';
+  static const String favorite = '/favorite';
+
+  // ── 목 UI 화면 (루트 push) ──
+  static const String scan = '/scan';
+  static const String quiz = '/quiz';
+  static const String quizReward = '/quiz/reward';
+  static const String mypage = '/mypage';
+  static const String courseRecommend = '/course/recommend';
+
+  static const String mapName = 'map';
+  static const String collectionName = 'collection';
+  static const String collectionDetailName = 'collectionDetail';
+  static const String favoriteName = 'favorite';
+  static const String scanName = 'scan';
+  static const String quizName = 'quiz';
+  static const String quizRewardName = 'quizReward';
+  static const String mypageName = 'mypage';
+  static const String courseRecommendName = 'courseRecommend';
+
+  /// 도감 상세 경로 생성 (예: /collection/a1)
+  static String collectionDetail(String id) => '$collection/$id';
 }

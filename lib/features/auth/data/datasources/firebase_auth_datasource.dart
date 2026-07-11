@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:flutter/foundation.dart';
+import 'dart:developer' as developer;
 
 /// Firebase Authentication DataSource
 ///
@@ -107,7 +108,8 @@ class FirebaseAuthDataSource {
         );
       }
       if (kDebugMode) {
-        debugPrint('🔥 Firebase ID Token length: ${idToken.length}');
+        developer.log('🔥 Firebase ID Token length: ${idToken.length}');
+        developer.log('🔥 Firebase ID Token: $idToken');
       }
 
       return idToken;

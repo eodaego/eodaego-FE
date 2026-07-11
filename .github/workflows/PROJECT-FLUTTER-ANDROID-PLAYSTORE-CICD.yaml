@@ -22,10 +22,6 @@ name: PROJECT-FLUTTER-ANDROID-PLAYSTORE-INTERNAL-CICD
 on:
   push:
     branches: ["deploy"]
-  workflow_run:
-    workflows: ["CHANGELOG 자동 업데이트"]
-    types: [completed]
-    branches: [main]
   workflow_dispatch:
     inputs:
       deploy_mode:
@@ -61,9 +57,6 @@ jobs:
     defaults:
       run:
         working-directory: ${{ env.FLUTTER_APP_DIR }}
-    # CHANGELOG 워크플로우가 성공한 경우에만 실행
-    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name != 'workflow_run' }}
-
     outputs:
       version: ${{ steps.current_version.outputs.version }}
       version_code: ${{ steps.current_version.outputs.version_code }}
