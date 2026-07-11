@@ -32,7 +32,7 @@ class _FavoritePageState extends ConsumerState<FavoritePage> {
   void initState() {
     super.initState();
     // 게스트는 저장한 코스가 없음 — empty state로 시작 (게스트 스펙 §7.2)
-    _saved = ref.read(guestModeProvider) ? [] : mockCourses.take(3).toList(); // 저장 데모용 부분 시드 (전체 시드는 저장 기능 체감 저하)
+    _saved = ref.read(guestRestrictedProvider) ? [] : mockCourses.take(3).toList(); // 저장 데모용 부분 시드 (전체 시드는 저장 기능 체감 저하)
   }
 
   @override

@@ -82,7 +82,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
                 _Shutter(
                   color: _mode.color,
                   onTap: () {
-                    if (ref.read(guestModeProvider)) {
+                    if (ref.read(guestRestrictedProvider)) {
                       showLoginGateDialog(
                         context,
                         ref,

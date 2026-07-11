@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -179,8 +180,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 ),
               ],
 
-              SizedBox(height: AppSpacing.md.h),
-              _buildGuestButton(busy),
+              // 게스트 둘러보기는 UI 개발용 — 디버그 빌드에서만 노출 (릴리즈는 로그인 필수)
+              if (kDebugMode) ...[
+                SizedBox(height: AppSpacing.md.h),
+                _buildGuestButton(busy),
+              ],
               SizedBox(height: AppSpacing.md.h),
               _buildAgreement(),
               SizedBox(height: AppSpacing.md.h),
@@ -191,7 +195,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     );
   }
 
-  /// 게스트 둘러보기 진입 — 로그인 없이 목 UI 열람 (핵심 액션은 게이트).
+  /// 게스트 둘러보기 진입 (디버그 전용) — 목 모드에선 전 기능, 실 데이터에선 열람만.
   Widget _buildGuestButton(bool busy) {
     return InkWell(
       onTap: busy

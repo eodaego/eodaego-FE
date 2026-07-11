@@ -87,7 +87,7 @@ class _CourseSheetState extends ConsumerState<CourseSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final isGuest = ref.watch(guestModeProvider);
+    final isGuest = ref.watch(guestRestrictedProvider);
     return DraggableScrollableSheet(
       controller: _controller,
       initialChildSize: 0.22,
