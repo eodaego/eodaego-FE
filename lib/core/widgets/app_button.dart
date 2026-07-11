@@ -96,7 +96,7 @@ class AppButton extends StatelessWidget {
     );
   }
 
-  /// 보상 노랑 CTA 프리셋 — 홈 '코스 추천 받기'·축하 화면 전용.
+  /// 보상 노랑 CTA 프리셋 — 홈 '코스 보러 가기'·축하 화면 전용.
   /// (노랑 사용 허용 위치는 이 두 곳뿐 — UI_Design_System.md)
   factory AppButton.reward({
     Key? key,

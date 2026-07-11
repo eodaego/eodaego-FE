@@ -32,7 +32,7 @@ class _FavoritePageState extends ConsumerState<FavoritePage> {
   void initState() {
     super.initState();
     // 게스트는 저장한 코스가 없음 — empty state로 시작 (게스트 스펙 §7.2)
-    _saved = ref.read(guestModeProvider) ? [] : List.of(mockCourses);
+    _saved = ref.read(guestModeProvider) ? [] : mockCourses.take(3).toList(); // 저장 데모용 부분 시드 (전체 시드는 저장 기능 체감 저하)
   }
 
   @override
@@ -103,7 +103,7 @@ class _FavoritePageState extends ConsumerState<FavoritePage> {
   }
 }
 
-/// 빈 상태 — 점선 원 하트 + 안내 + 위저드 이동 버튼.
+/// 빈 상태 — 점선 원 하트 + 안내 + 지도 이동 버튼.
 class _EmptyState extends StatelessWidget {
   const _EmptyState();
 

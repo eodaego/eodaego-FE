@@ -31,7 +31,7 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
-    // 지도 영역은 시트 접힘 높이(22%)만큼 하단을 비워 마커·라벨이 가려지지 않게 한다
+    // 시트 접힘 높이(body 기준 22%)에 대응해 풀스크린 기준 20%를 비워 마커·라벨 가림을 방지
     final sheetInset = MediaQuery.sizeOf(context).height * 0.20;
     return Scaffold(
       backgroundColor: AppColors.canvas,
