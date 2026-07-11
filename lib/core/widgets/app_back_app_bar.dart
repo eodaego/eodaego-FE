@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../constants/app_colors.dart';
 import '../constants/text_styles.dart';
+import 'previous_button.dart';
 
 /// canvas 배경 + back 버튼 공용 앱바 (루트 push 화면용).
 class AppBackAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -24,10 +25,9 @@ class AppBackAppBar extends StatelessWidget implements PreferredSizeWidget {
       scrolledUnderElevation: 0,
       titleSpacing: 0,
       centerTitle: false,
-      leading: IconButton(
+      leading: PreviousButton(
         onPressed: onBack ?? () => context.pop(),
-        tooltip: '뒤로',
-        icon: const Icon(Icons.arrow_back, color: AppColors.ink),
+        color: AppColors.ink,
       ),
       title: Text(
         title,
