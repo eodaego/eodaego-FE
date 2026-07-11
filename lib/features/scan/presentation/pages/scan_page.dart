@@ -55,35 +55,39 @@ class ScanPage extends ConsumerWidget {
               style: AppTextStyles.body15.copyWith(color: AppColors.onPrimary),
             ),
             SizedBox(height: 28.h),
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                _Shutter(
-                  onTap: () {
-                    if (ref.read(guestRestrictedProvider)) {
-                      showLoginGateDialog(
-                        context,
-                        ref,
-                        message: '로그인하면 사진을 찍고 도감을 모을 수 있어요',
-                      );
-                      return;
-                    }
-                    context.push(RoutePaths.quiz);
-                  },
-                ),
-                Positioned(
-                  left: 28.w,
-                  child: IconButton(
-                    onPressed: () => context.pop(),
-                    tooltip: '닫기',
-                    icon: Icon(
-                      Icons.close,
-                      size: 28.w,
-                      color: AppColors.onPrimary,
+            // 전체 폭 Stack — 셔터는 중앙, 닫기는 왼쪽 끝 (셔터 크기로 잡히면 겹침)
+            SizedBox(
+              width: double.infinity,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  _Shutter(
+                    onTap: () {
+                      if (ref.read(guestRestrictedProvider)) {
+                        showLoginGateDialog(
+                          context,
+                          ref,
+                          message: '로그인하면 사진을 찍고 도감을 모을 수 있어요',
+                        );
+                        return;
+                      }
+                      context.push(RoutePaths.quiz);
+                    },
+                  ),
+                  Positioned(
+                    left: 28.w,
+                    child: IconButton(
+                      onPressed: () => context.pop(),
+                      tooltip: '닫기',
+                      icon: Icon(
+                        Icons.close,
+                        size: 28.w,
+                        color: AppColors.onPrimary,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             SizedBox(height: 24.h),
           ],
