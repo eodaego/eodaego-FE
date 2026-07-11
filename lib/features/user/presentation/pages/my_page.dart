@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/mock/mock_dogam.dart';
+import '../../../../core/providers/guest_mode_provider.dart';
 import '../../../../core/widgets/app_back_app_bar.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_snackbar.dart';
 import '../../../../core/widgets/dialogs/app_dialog.dart';
+import '../../../../router/route_paths.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 
 /// 내 정보 (MY-01/02) — 프로필·수집 통계·로그아웃(실동작)·탈퇴(준비 중).
@@ -32,8 +35,10 @@ class MyPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final nickname =
-        ref.watch(authNotifierProvider).valueOrNull?.nickname ?? '탐험가';
+    final isGuest = ref.watch(guestModeProvider);
+    final nickname = isGuest
+        ? '게스트'
+        : ref.watch(authNotifierProvider).valueOrNull?.nickname ?? '탐험가';
     final percent = (mockDogamCollected / mockDogamTotal * 100).round();
     return Scaffold(
       backgroundColor: AppColors.canvas,
@@ -103,26 +108,41 @@ class MyPage extends ConsumerWidget {
               ],
             ),
             SizedBox(height: 24.h),
-            AppButton(
-              text: '로그아웃',
-              backgroundColor: AppColors.surface,
-              foregroundColor: AppColors.ink,
-              showBorder: true,
-              width: double.infinity,
-              onPressed: () => _confirmSignOut(context, ref),
-            ),
-            SizedBox(height: 12.h),
-            AppButton(
-              text: '탈퇴하기',
-              backgroundColor: AppColors.surface,
-              foregroundColor: AppColors.danger,
-              showBorder: true,
-              subtitle: '모든 기록이 완전히 삭제돼요',
-              subtitleColor: AppColors.muted,
-              width: double.infinity,
-              height: 72.h,
-              onPressed: () => AppSnackbar.show(context, message: '준비 중이에요'),
-            ),
+            if (isGuest)
+              AppButton(
+                text: '로그인하러 가기',
+                backgroundColor: AppColors.surface,
+                foregroundColor: AppColors.ink,
+                showBorder: true,
+                width: double.infinity,
+                onPressed: () {
+                  ref.read(guestModeProvider.notifier).state = false;
+                  context.go(RoutePaths.login);
+                },
+              )
+            else ...[
+              AppButton(
+                text: '로그아웃',
+                backgroundColor: AppColors.surface,
+                foregroundColor: AppColors.ink,
+                showBorder: true,
+                width: double.infinity,
+                onPressed: () => _confirmSignOut(context, ref),
+              ),
+              SizedBox(height: 12.h),
+              AppButton(
+                text: '탈퇴하기',
+                backgroundColor: AppColors.surface,
+                foregroundColor: AppColors.danger,
+                showBorder: true,
+                subtitle: '모든 기록이 완전히 삭제돼요',
+                subtitleColor: AppColors.muted,
+                width: double.infinity,
+                height: 72.h,
+                onPressed: () =>
+                    AppSnackbar.show(context, message: '준비 중이에요'),
+              ),
+            ],
             SizedBox(height: 32.h),
           ],
         ),

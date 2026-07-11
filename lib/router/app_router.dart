@@ -22,6 +22,7 @@ import '../features/quiz/presentation/pages/quiz_page.dart';
 import '../features/quiz/presentation/pages/quiz_reward_page.dart';
 import '../features/scan/presentation/pages/scan_page.dart';
 import '../features/user/presentation/pages/my_page.dart';
+import '../core/providers/guest_mode_provider.dart';
 import '../core/widgets/main_tab_shell.dart';
 import '../core/widgets/pages/force_update_page.dart';
 import '../core/widgets/pages/maintenance_page.dart';
@@ -88,6 +89,8 @@ GoRouter router(Ref ref) {
         ];
 
         if (!isAuthenticated) {
+          // 게스트 둘러보기: 전 화면 통과 (로그인 화면 접근도 허용 — 로그인하러 가기 동선)
+          if (ref.read(guestModeProvider)) return null;
           return publicPaths.contains(path) ? null : RoutePaths.login;
         }
 

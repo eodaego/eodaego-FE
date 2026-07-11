@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
@@ -6,19 +7,21 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/mock/mock_dogam.dart';
+import '../../../../core/providers/guest_mode_provider.dart';
 import '../../../../core/widgets/dashed_rrect_painter.dart';
+import '../../../../core/widgets/dialogs/login_gate_dialog.dart';
 import '../../../../router/route_paths.dart';
 
 /// 촬영 (SCAN-01) — 목 배경. 카메라 프리뷰 없이 UI만 (스펙 §2).
 /// 앱에서 유일한 다크 화면(cameraBg).
-class ScanPage extends StatefulWidget {
+class ScanPage extends ConsumerStatefulWidget {
   const ScanPage({super.key});
 
   @override
-  State<ScanPage> createState() => _ScanPageState();
+  ConsumerState<ScanPage> createState() => _ScanPageState();
 }
 
-class _ScanPageState extends State<ScanPage> {
+class _ScanPageState extends ConsumerState<ScanPage> {
   DogamCategory _mode = DogamCategory.animal;
 
   @override
@@ -78,7 +81,17 @@ class _ScanPageState extends State<ScanPage> {
               children: [
                 _Shutter(
                   color: _mode.color,
-                  onTap: () => context.push(RoutePaths.quiz),
+                  onTap: () {
+                    if (ref.read(guestModeProvider)) {
+                      showLoginGateDialog(
+                        context,
+                        ref,
+                        message: '로그인하면 사진을 찍고 도감을 모을 수 있어요',
+                      );
+                      return;
+                    }
+                    context.push(RoutePaths.quiz);
+                  },
                 ),
                 Positioned(
                   left: 28.w,

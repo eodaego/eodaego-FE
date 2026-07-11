@@ -4,15 +4,18 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_urls.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/network/dio_client.dart';
+import '../../../../core/providers/guest_mode_provider.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_snackbar.dart';
 import '../../../../core/widgets/pages/legal_document_page.dart';
+import '../../../../router/route_paths.dart';
 import '../providers/auth_provider.dart';
 
 /// 로그인 화면 안내 키 → (문구, 색). 순수 함수 — 위젯 없이 단위 테스트 가능.
@@ -112,6 +115,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   }
 
   Future<void> _handleGoogleSignIn() async {
+    // 게스트 상태에서 실로그인 시 플래그 잔존 방지 (스펙 §3)
+    ref.read(guestModeProvider.notifier).state = false;
     setState(() => _isGoogleLoading = true);
     try {
       await ref.read(authNotifierProvider.notifier).signInWithGoogle();
@@ -123,6 +128,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   }
 
   Future<void> _handleAppleSignIn() async {
+    // 게스트 상태에서 실로그인 시 플래그 잔존 방지 (스펙 §3)
+    ref.read(guestModeProvider.notifier).state = false;
     setState(() => _isAppleLoading = true);
     try {
       await ref.read(authNotifierProvider.notifier).signInWithApple();
@@ -172,10 +179,36 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 ),
               ],
 
-              SizedBox(height: AppSpacing.xl.h),
+              SizedBox(height: AppSpacing.md.h),
+              _buildGuestButton(busy),
+              SizedBox(height: AppSpacing.md.h),
               _buildAgreement(),
               SizedBox(height: AppSpacing.md.h),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 게스트 둘러보기 진입 — 로그인 없이 목 UI 열람 (핵심 액션은 게이트).
+  Widget _buildGuestButton(bool busy) {
+    return InkWell(
+      onTap: busy
+          ? null
+          : () {
+              ref.read(guestModeProvider.notifier).state = true;
+              context.go(RoutePaths.home);
+            },
+      child: ConstrainedBox(
+        constraints: BoxConstraints(minHeight: 48.h),
+        child: Center(
+          child: Text(
+            '게스트로 둘러보기',
+            style: AppTextStyles.caption14.copyWith(
+              color: AppColors.muted,
+              decoration: TextDecoration.underline,
+            ),
           ),
         ),
       ),

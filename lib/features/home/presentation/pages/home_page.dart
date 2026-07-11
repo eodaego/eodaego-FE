@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
@@ -7,9 +8,11 @@ import '../../../../core/constants/app_urls.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/mock/mock_dogam.dart';
+import '../../../../core/providers/guest_mode_provider.dart';
 import '../../../../core/utils/url_launcher_util.dart';
 import '../../../../core/widgets/app_badge.dart';
 import '../../../../core/widgets/app_button.dart';
+import '../../../../core/widgets/dialogs/login_gate_dialog.dart';
 import '../../../../router/route_paths.dart';
 
 /// 홈 (HOME-01) — 코스 추천 CTA + 도감 진행률 + 바로가기.
@@ -72,11 +75,11 @@ class HomePage extends StatelessWidget {
 }
 
 /// 코스 추천 히어로 카드 — 앱에서 노랑 CTA가 허용된 두 곳 중 하나.
-class _HeroCard extends StatelessWidget {
+class _HeroCard extends ConsumerWidget {
   const _HeroCard();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
@@ -103,7 +106,17 @@ class _HeroCard extends StatelessWidget {
             height: 52.h,
             // 카드(radius 24) 내부 버튼은 radius 12 (동심원 규칙)
             borderRadius: BorderRadius.circular(AppRadius.sm.r),
-            onPressed: () => context.push(RoutePaths.courseWizard),
+            onPressed: () {
+              if (ref.read(guestModeProvider)) {
+                showLoginGateDialog(
+                  context,
+                  ref,
+                  message: '로그인하면 코스 추천을 받을 수 있어요',
+                );
+                return;
+              }
+              context.push(RoutePaths.courseWizard);
+            },
           ),
         ],
       ),
