@@ -13,7 +13,6 @@ import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/category_chip.dart';
 import '../../../../core/widgets/course_card.dart';
 import '../../../../core/widgets/dashed_rrect_painter.dart';
-import '../../../../core/widgets/dialogs/login_gate_dialog.dart';
 import '../../../../router/route_paths.dart';
 
 /// 즐겨찾기 (탭) — 저장 코스 리스트 + 빈 상태.
@@ -105,11 +104,11 @@ class _FavoritePageState extends ConsumerState<FavoritePage> {
 }
 
 /// 빈 상태 — 점선 원 하트 + 안내 + 위저드 이동 버튼.
-class _EmptyState extends ConsumerWidget {
+class _EmptyState extends StatelessWidget {
   const _EmptyState();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -131,29 +130,19 @@ class _EmptyState extends ConsumerWidget {
           ),
           SizedBox(height: 16.h),
           Text(
-            '아직 저장한 코스가 없어요\n추천 코스에서 하트를 눌러 저장해요',
+            '아직 저장한 코스가 없어요\n지도에서 마음에 드는 코스에 하트를 눌러요',
             textAlign: TextAlign.center,
             style: AppTextStyles.body15.copyWith(color: AppColors.muted),
           ),
           SizedBox(height: 20.h),
           AppButton(
-            text: '코스 추천 받으러 가기',
+            text: '지도에서 코스 보러 가기',
             backgroundColor: AppColors.surface,
             foregroundColor: AppColors.ink,
             showBorder: true,
             width: 260.w,
             height: 52.h,
-            onPressed: () {
-              if (ref.read(guestModeProvider)) {
-                showLoginGateDialog(
-                  context,
-                  ref,
-                  message: '로그인하면 코스 추천을 받을 수 있어요',
-                );
-                return;
-              }
-              context.push(RoutePaths.courseWizard);
-            },
+            onPressed: () => context.go(RoutePaths.map),
           ),
         ],
       ),

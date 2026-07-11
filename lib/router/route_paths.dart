@@ -32,8 +32,6 @@ class RoutePaths {
   static const String scan = '/scan';
   static const String quiz = '/quiz';
   static const String quizReward = '/quiz/reward';
-  static const String courseWizard = '/course/wizard';
-  static const String courseResult = '/course/result';
   static const String mypage = '/mypage';
 
   static const String mapName = 'map';
@@ -43,8 +41,6 @@ class RoutePaths {
   static const String scanName = 'scan';
   static const String quizName = 'quiz';
   static const String quizRewardName = 'quizReward';
-  static const String courseWizardName = 'courseWizard';
-  static const String courseResultName = 'courseResult';
   static const String mypageName = 'mypage';
 
   /// 도감 상세 경로 생성 (예: /collection/a1)
