@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
@@ -7,15 +6,15 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_urls.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../core/mock/mock_course.dart';
 import '../../../../core/mock/mock_dogam.dart';
-import '../../../../core/providers/guest_mode_provider.dart';
+import '../../../../core/mock/mock_park_status.dart';
 import '../../../../core/utils/url_launcher_util.dart';
 import '../../../../core/widgets/app_badge.dart';
 import '../../../../core/widgets/app_button.dart';
-import '../../../../core/widgets/dialogs/login_gate_dialog.dart';
 import '../../../../router/route_paths.dart';
 
-/// 홈 (HOME-01) — 코스 추천 CTA + 도감 진행률 + 바로가기.
+/// 홈 (A안) — 날씨·혼잡도 바 + 오늘의 추천 코스 프리뷰 + 도감 요약 + 공식 사이트.
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
@@ -50,16 +49,12 @@ class HomePage extends StatelessWidget {
                 ],
               ),
               SizedBox(height: 14.h),
-              const _HeroCard(),
+              const _ParkStatusBar(),
+              SizedBox(height: 14.h),
+              const _CoursePreviewCard(),
               SizedBox(height: 14.h),
               const _DogamProgressCard(),
               SizedBox(height: 14.h),
-              _LinkRow(
-                label: '공원 지도 보기',
-                icon: Icons.map_outlined,
-                onTap: () => context.go(RoutePaths.map),
-              ),
-              SizedBox(height: 10.h),
               _LinkRow(
                 label: '공식 사이트',
                 icon: Icons.open_in_new,
@@ -74,49 +69,38 @@ class HomePage extends StatelessWidget {
   }
 }
 
-/// 코스 추천 히어로 카드 — 앱에서 노랑 CTA가 허용된 두 곳 중 하나.
-class _HeroCard extends ConsumerWidget {
-  const _HeroCard();
+/// 오늘 공원 상태 — 날씨 + 혼잡도 한 줄 바.
+class _ParkStatusBar extends StatelessWidget {
+  const _ParkStatusBar();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppRadius.lg.r),
+        borderRadius: BorderRadius.circular(AppRadius.md.r),
         border: Border.all(color: AppColors.line),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
+          Icon(mockParkStatus.weatherIcon, size: 22.w, color: AppColors.muted),
+          SizedBox(width: 8.w),
           Text(
-            '오늘은 어디로 가볼까?',
-            style: AppTextStyles.display19.copyWith(color: AppColors.ink),
+            '${mockParkStatus.weatherLabel} ${mockParkStatus.temperatureC}°',
+            style:
+                AppTextStyles.label16Semibold.copyWith(color: AppColors.ink),
           ),
-          SizedBox(height: 6.h),
+          const Spacer(),
           Text(
-            '시간·관심사에 맞춰 코스 3개를 추천해요',
+            '지금 공원',
             style: AppTextStyles.caption14.copyWith(color: AppColors.muted),
           ),
-          SizedBox(height: 16.h),
-          AppButton.reward(
-            text: '코스 추천 받기',
-            width: double.infinity,
-            height: 52.h,
-            // 카드(radius 24) 내부 버튼은 radius 12 (동심원 규칙)
-            borderRadius: BorderRadius.circular(AppRadius.sm.r),
-            onPressed: () {
-              if (ref.read(guestModeProvider)) {
-                showLoginGateDialog(
-                  context,
-                  ref,
-                  message: '로그인하면 코스 추천을 받을 수 있어요',
-                );
-                return;
-              }
-              context.push(RoutePaths.courseWizard);
-            },
+          SizedBox(width: 8.w),
+          AppBadge(
+            label: mockParkStatus.congestion.label,
+            background: mockParkStatus.congestion.badgeBackground,
+            foreground: mockParkStatus.congestion.badgeForeground,
           ),
         ],
       ),
@@ -124,7 +108,75 @@ class _HeroCard extends ConsumerWidget {
   }
 }
 
-/// 도감 진행률 카드 — 탭 시 도감 탭으로 전환.
+/// 오늘의 추천 코스 프리뷰 — 탭/CTA 모두 지도 탭 이동 (게이트 없음, 스펙 §4.2).
+class _CoursePreviewCard extends StatelessWidget {
+  const _CoursePreviewCard();
+
+  @override
+  Widget build(BuildContext context) {
+    // 지도 초기 선택 코스와 동일 (진입 일관성)
+    final course = mockCourses.first;
+    return Material(
+      color: AppColors.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppRadius.lg.r),
+        side: const BorderSide(color: AppColors.line),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(AppRadius.lg.r),
+        onTap: () => context.go(RoutePaths.map),
+        child: Padding(
+          padding: EdgeInsets.all(16.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '오늘의 추천 코스',
+                style: AppTextStyles.display16
+                    .copyWith(color: AppColors.primaryDark),
+              ),
+              SizedBox(height: 8.h),
+              Text(
+                course.title,
+                style:
+                    AppTextStyles.display19.copyWith(color: AppColors.ink),
+              ),
+              SizedBox(height: 10.h),
+              Row(
+                children: [
+                  AppBadge.category(course.category, label: course.tagLabel),
+                  SizedBox(width: 6.w),
+                  AppBadge(
+                    label: course.durationLabel,
+                    background: AppColors.surfaceDim,
+                    foreground: AppColors.muted,
+                  ),
+                  SizedBox(width: 6.w),
+                  AppBadge(
+                    label: '${course.places.length}곳',
+                    background: AppColors.surfaceDim,
+                    foreground: AppColors.muted,
+                  ),
+                ],
+              ),
+              SizedBox(height: 16.h),
+              AppButton.reward(
+                text: '코스 보러 가기',
+                width: double.infinity,
+                height: 52.h,
+                // 카드(radius 24) 내부 버튼은 radius 12 (동심원 규칙)
+                borderRadius: BorderRadius.circular(AppRadius.sm.r),
+                onPressed: () => context.go(RoutePaths.map),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 도감 진행률 카드 — 탭 시 도감 탭으로 전환. (기존 유지)
 class _DogamProgressCard extends StatelessWidget {
   const _DogamProgressCard();
 
@@ -192,7 +244,7 @@ class _DogamProgressCard extends StatelessWidget {
   }
 }
 
-/// 바로가기 row — 지도/공식 사이트.
+/// 바로가기 row — 공식 사이트. (기존 유지)
 class _LinkRow extends StatelessWidget {
   const _LinkRow({
     required this.label,
