@@ -33,12 +33,18 @@ class CategoryChip extends StatelessWidget {
       child: InkWell(
         customBorder: const StadiumBorder(),
         onTap: onTap,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
-          child: Text(
-            label,
-            style: AppTextStyles.tag13Bold.copyWith(
-              color: selected ? AppColors.onPrimary : AppColors.muted,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: 48.h),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
+            child: Center(
+              widthFactor: 1,
+              child: Text(
+                label,
+                style: AppTextStyles.tag13Bold.copyWith(
+                  color: selected ? AppColors.onPrimary : AppColors.muted,
+                ),
+              ),
             ),
           ),
         ),

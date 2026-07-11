@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
 
 /// 도감 카테고리 — 카테고리 컬러 페어링 규칙(UI_Design_System.md)의 단일 소스.
+/// 주의: 공용 위젯(AppBadge/DogamCard/CourseCard)이 사용 — API 연동 시 이 폴더를
+/// 삭제할 때 이 enum은 삭제하지 말고 core/constants/로 이동할 것.
 enum DogamCategory {
   animal('동물', AppColors.animal, AppColors.animalTint, AppColors.animalDark,
       Icons.pets),

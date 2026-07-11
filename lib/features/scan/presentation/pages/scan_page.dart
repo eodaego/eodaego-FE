@@ -128,14 +128,20 @@ class _ScanModeChip extends StatelessWidget {
       child: InkWell(
         customBorder: const StadiumBorder(),
         onTap: onTap,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
-          child: Text(
-            category.label,
-            style: AppTextStyles.label16Semibold.copyWith(
-              color: selected
-                  ? AppColors.onPrimary
-                  : AppColors.onPrimary.withValues(alpha: 0.8),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: 48.h),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+            child: Center(
+              widthFactor: 1,
+              child: Text(
+                category.label,
+                style: AppTextStyles.label16Semibold.copyWith(
+                  color: selected
+                      ? AppColors.onPrimary
+                      : AppColors.onPrimary.withValues(alpha: 0.8),
+                ),
+              ),
             ),
           ),
         ),

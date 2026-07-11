@@ -73,13 +73,19 @@ class MyPage extends ConsumerWidget {
                   customBorder: const StadiumBorder(),
                   onTap: () =>
                       AppSnackbar.show(context, message: '준비 중이에요'),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: 14.w, vertical: 8.h),
-                    child: Text(
-                      '닉네임 바꾸기',
-                      style: AppTextStyles.caption14
-                          .copyWith(color: AppColors.muted),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: 48.h),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 14.w, vertical: 8.h),
+                      child: Center(
+                        widthFactor: 1,
+                        child: Text(
+                          '닉네임 바꾸기',
+                          style: AppTextStyles.caption14
+                              .copyWith(color: AppColors.muted),
+                        ),
+                      ),
                     ),
                   ),
                 ),

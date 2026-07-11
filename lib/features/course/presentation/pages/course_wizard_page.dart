@@ -155,6 +155,7 @@ class _CourseWizardPageState extends State<CourseWizardPage> {
                     selected: _singleSelections[_step] == i,
                     selectedColor: AppColors.primary,
                     selectedTint: AppColors.primaryTint,
+                    selectedForeground: AppColors.primaryDark,
                     onTap: () => _selectSingle(i),
                   ),
                   SizedBox(height: 12.h),
@@ -166,6 +167,7 @@ class _CourseWizardPageState extends State<CourseWizardPage> {
                     selected: _interests.contains(entry.key),
                     selectedColor: entry.key.color,
                     selectedTint: entry.key.tint,
+                    selectedForeground: entry.key.dark,
                     onTap: () => setState(() {
                       _interests.contains(entry.key)
                           ? _interests.remove(entry.key)
@@ -199,6 +201,7 @@ class _OptionCard extends StatelessWidget {
     required this.selected,
     required this.selectedColor,
     required this.selectedTint,
+    required this.selectedForeground,
     required this.onTap,
   });
 
@@ -206,6 +209,7 @@ class _OptionCard extends StatelessWidget {
   final bool selected;
   final Color selectedColor;
   final Color selectedTint;
+  final Color selectedForeground;
   final VoidCallback onTap;
 
   @override
@@ -233,14 +237,16 @@ class _OptionCard extends StatelessWidget {
                 children: [
                   Text(
                     option.title,
-                    style: AppTextStyles.label16Semibold
-                        .copyWith(color: AppColors.ink),
+                    style: AppTextStyles.label16Semibold.copyWith(
+                      color: selected ? selectedForeground : AppColors.ink,
+                    ),
                   ),
                   SizedBox(height: 4.h),
                   Text(
                     option.subtitle,
-                    style: AppTextStyles.caption14
-                        .copyWith(color: AppColors.muted),
+                    style: AppTextStyles.caption14.copyWith(
+                      color: selected ? selectedForeground : AppColors.muted,
+                    ),
                   ),
                 ],
               ),
