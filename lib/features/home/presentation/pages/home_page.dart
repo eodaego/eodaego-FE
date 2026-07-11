@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
@@ -6,9 +7,9 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_urls.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
-import '../../../../core/mock/mock_course.dart';
 import '../../../../core/mock/mock_dogam.dart';
 import '../../../../core/mock/mock_park_status.dart';
+import '../../../../core/providers/selected_course_provider.dart';
 import '../../../../core/utils/url_launcher_util.dart';
 import '../../../../core/widgets/app_badge.dart';
 import '../../../../core/widgets/app_button.dart';
@@ -109,13 +110,13 @@ class _ParkStatusBar extends StatelessWidget {
 }
 
 /// 오늘의 추천 코스 프리뷰 — 탭/CTA 모두 지도 탭 이동 (게이트 없음, 스펙 §4.2).
-class _CoursePreviewCard extends StatelessWidget {
+class _CoursePreviewCard extends ConsumerWidget {
   const _CoursePreviewCard();
 
   @override
-  Widget build(BuildContext context) {
-    // 지도 초기 선택 코스와 동일 (진입 일관성)
-    final course = mockCourses.first;
+  Widget build(BuildContext context, WidgetRef ref) {
+    // 지도·추천과 공유하는 선택 코스 (진입 일관성 — 스펙 §6)
+    final course = ref.watch(selectedCourseProvider);
     return Material(
       color: AppColors.surface,
       shape: RoundedRectangleBorder(

@@ -1,25 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
-import '../../../../core/mock/mock_course.dart';
+import '../../../../core/providers/selected_course_provider.dart';
 import '../../../../core/widgets/dashed_rrect_painter.dart';
 import '../widgets/course_sheet.dart';
 import '../widgets/map_marker.dart';
 
 /// 지도 (탭) — 약도 placeholder + 선택 코스 마커 + 드래그 코스 시트.
-class MapPage extends StatefulWidget {
+class MapPage extends ConsumerWidget {
   const MapPage({super.key});
-
-  @override
-  State<MapPage> createState() => _MapPageState();
-}
-
-class _MapPageState extends State<MapPage> {
-  /// 초기 선택 = 오늘의 추천 코스 (홈 프리뷰와 동일 — 스펙 §3.2)
-  MockCourse _selected = mockCourses.first;
 
   /// 마커 배치 위치 (약도 이미지 수급 전 임의 좌표)
   static const List<Alignment> _markerAlignments = [
@@ -30,7 +23,8 @@ class _MapPageState extends State<MapPage> {
   ];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selected = ref.watch(selectedCourseProvider);
     // 시트 접힘 높이(body 기준 22%)에 대응해 풀스크린 기준 20%를 비워 마커·라벨 가림을 방지
     final sheetInset = MediaQuery.sizeOf(context).height * 0.20;
     return Scaffold(
@@ -78,13 +72,13 @@ class _MapPageState extends State<MapPage> {
                                   .copyWith(color: AppColors.muted),
                             ),
                           ),
-                          for (var i = 0; i < _selected.places.length; i++)
+                          for (var i = 0; i < selected.places.length; i++)
                             Align(
                               alignment: _markerAlignments[
                                   i % _markerAlignments.length],
                               child: MapMarker(
                                 number: i + 1,
-                                color: _selected.places[i].category.color,
+                                color: selected.places[i].category.color,
                               ),
                             ),
                           Positioned(
@@ -99,7 +93,7 @@ class _MapPageState extends State<MapPage> {
                                     BorderRadius.circular(AppRadius.xs.r),
                               ),
                               child: Text(
-                                _selected.entranceLabel,
+                                selected.entranceLabel,
                                 style: AppTextStyles.tag13Bold
                                     .copyWith(color: AppColors.ink),
                               ),
@@ -113,10 +107,7 @@ class _MapPageState extends State<MapPage> {
                 ),
               ),
             ),
-            CourseSheet(
-              selected: _selected,
-              onSelect: (course) => setState(() => _selected = course),
-            ),
+            const CourseSheet(),
           ],
         ),
       ),
