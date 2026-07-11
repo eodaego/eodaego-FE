@@ -16,6 +16,7 @@ import '../features/collection/presentation/pages/collection_page.dart';
 import '../features/course/presentation/pages/course_result_page.dart';
 import '../features/course/presentation/pages/course_wizard_page.dart';
 import '../features/home/presentation/pages/home_page.dart';
+import '../features/map/presentation/pages/map_page.dart';
 import '../features/quiz/presentation/pages/quiz_page.dart';
 import '../features/quiz/presentation/pages/quiz_reward_page.dart';
 import '../features/scan/presentation/pages/scan_page.dart';
@@ -169,7 +170,7 @@ GoRouter router(Ref ref) {
                 name: RoutePaths.mapName,
                 pageBuilder: (context, state) => NoTransitionPage(
                   key: state.pageKey,
-                  child: const _StubPage(title: '지도'),
+                  child: const MapPage(),
                 ),
               ),
             ],
