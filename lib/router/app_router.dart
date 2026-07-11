@@ -21,6 +21,7 @@ import '../features/map/presentation/pages/map_page.dart';
 import '../features/quiz/presentation/pages/quiz_page.dart';
 import '../features/quiz/presentation/pages/quiz_reward_page.dart';
 import '../features/scan/presentation/pages/scan_page.dart';
+import '../features/user/presentation/pages/my_page.dart';
 import '../core/widgets/main_tab_shell.dart';
 import '../core/widgets/pages/force_update_page.dart';
 import '../core/widgets/pages/maintenance_page.dart';
@@ -252,7 +253,7 @@ GoRouter router(Ref ref) {
         path: RoutePaths.mypage,
         name: RoutePaths.mypageName,
         pageBuilder: (context, state) => NoTransitionPage(
-            key: state.pageKey, child: const _StubPage(title: '내 정보')),
+            key: state.pageKey, child: const MyPage()),
       ),
       GoRoute(
         path: RoutePaths.maintenance,
@@ -272,16 +273,4 @@ GoRouter router(Ref ref) {
       ),
     ],
   );
-}
-
-/// 목 UI 구축 중 임시 화면. 모든 화면 구현 완료 시(Task 13) 삭제.
-class _StubPage extends StatelessWidget {
-  const _StubPage({required this.title});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(body: Center(child: Text(title)));
-  }
 }
