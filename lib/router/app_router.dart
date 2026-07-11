@@ -15,6 +15,7 @@ import '../features/collection/presentation/pages/collection_detail_page.dart';
 import '../features/collection/presentation/pages/collection_page.dart';
 import '../features/course/presentation/pages/course_result_page.dart';
 import '../features/course/presentation/pages/course_wizard_page.dart';
+import '../features/favorite/presentation/pages/favorite_page.dart';
 import '../features/home/presentation/pages/home_page.dart';
 import '../features/map/presentation/pages/map_page.dart';
 import '../features/quiz/presentation/pages/quiz_page.dart';
@@ -207,7 +208,7 @@ GoRouter router(Ref ref) {
                 name: RoutePaths.favoriteName,
                 pageBuilder: (context, state) => NoTransitionPage(
                   key: state.pageKey,
-                  child: const _StubPage(title: '즐겨찾기'),
+                  child: const FavoritePage(),
                 ),
               ),
             ],
