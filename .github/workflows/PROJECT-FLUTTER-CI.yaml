@@ -76,8 +76,14 @@ env:
   ANALYZE_ONLY: "false"     # true: analyze만 실행 (빌드 스킵), false: analyze + 빌드
 
   # 🎯 빌드 대상 플랫폼 설정 (ANALYZE_ONLY=false일 때만 적용)
-  ENABLE_ANDROID: "true"    # Android 빌드 활성화 (true/false)
-  ENABLE_IOS: "true"        # iOS 빌드 활성화 (true/false)
+  # 아래 두 빌드는 러너 환경 문제로 항상 실패해 비활성화한다.
+  #   - Android: android/gradlew가 android/.gitignore에 막혀 저장소에 없다.
+  #              CI가 체크아웃 후 gradlew를 찾지 못해 chmod 단계에서 중단된다.
+  #   - iOS: 러너에 XCODE_VERSION(26.0)에 맞는 iOS 플랫폼이 설치돼 있지 않다.
+  #          "iOS 26.0 is not installed"로 destination을 찾지 못한다.
+  # 코드 분석(analyze)과 테스트는 계속 돌아간다.
+  ENABLE_ANDROID: "false"   # Android 빌드 활성화 (true/false)
+  ENABLE_IOS: "false"       # iOS 빌드 활성화 (true/false)
 
   # 🔧 프로젝트별 설정
   FLUTTER_VERSION: "3.35.5"
