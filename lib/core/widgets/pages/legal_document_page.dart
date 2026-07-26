@@ -103,7 +103,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage> {
             : _document == null
             ? Center(
                 child: Text(
-                  '문서를 불러오지 못했어요.',
+                  '문서를 불러오지 못했어요',
                   style: AppTextStyles.body15.copyWith(color: AppColors.muted),
                 ),
               )

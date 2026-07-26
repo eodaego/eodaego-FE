@@ -106,7 +106,9 @@ class DioClient {
       // 2. 로깅 인터셉터 (디버그 모드에서만)
       if (kDebugMode)
         LogInterceptor(
-          requestHeader: true,
+          // Authorization 헤더에 Bearer 토큰이 실려 모든 요청에 노출되므로 끈다.
+          // requestBody/responseBody는 스키마 디버깅에 필요해 유지한다.
+          requestHeader: false,
           requestBody: true,
           responseHeader: false,
           responseBody: true,

@@ -9,8 +9,8 @@ part 'auth_result_entity.freezed.dart';
 @freezed
 class AuthResultEntity with _$AuthResultEntity {
   const factory AuthResultEntity({
-    /// 사용자 ID
-    required int userId,
+    /// 사용자 ID (UUID)
+    required String userId,
 
     /// 닉네임 (서버에서 자동 생성)
     required String nickname,

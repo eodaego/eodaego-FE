@@ -84,16 +84,23 @@ class AuthNotifier extends _$AuthNotifier {
       ref.read(forceLogoutCallbackNotifierProvider.notifier).unregister();
     });
 
-    // 초기 상태: Firebase + JWT 토큰 모두 있어야 인증
+    // 초기 상태: Firebase + JWT 토큰 + 온보딩 상태가 모두 있어야 인증으로 본다.
+    // 로그인 시 저장은 여러 개의 독립적인 비동기 쓰기라, 중간에 앱이 종료되면
+    // 불완전한 스냅샷이 남을 수 있다. 필수 값이 하나라도 없으면 세션을 정리한다
+    // (누락된 requiresAgreement를 false로 취급하면 약관 게이트를 우회하게 된다).
     final dataSource = ref.watch(firebaseAuthDataSourceProvider);
     final tokenStorage = ref.watch(secureTokenStorageProvider);
+
     final currentUser = dataSource.currentUser;
     if (currentUser == null) return null;
 
     if (!await tokenStorage.hasTokens()) return null;
 
     final userId = await tokenStorage.getUserId();
-    if (userId == null) {
+    final requiresAgreement = await tokenStorage.getRequiresAgreement();
+
+    if (userId == null || requiresAgreement == null) {
+      debugPrint('⚠️ [AuthNotifier] 불완전한 세션 스냅샷 — 재로그인 유도');
       try {
         await dataSource.signOut();
       } catch (_) {}
@@ -101,24 +108,10 @@ class AuthNotifier extends _$AuthNotifier {
       return null;
     }
 
-    // cold start: 약관/프로필을 백엔드에서 조회 (각 실패 독립 허용)
-    final userRepo = ref.read(userRepositoryProvider);
-    bool requiresAgreement = false;
-    String nickname = currentUser.displayName ?? '';
-    try {
-      final status = await userRepo.getAgreements();
-      requiresAgreement = !status.hasAllRequired;
-    } catch (e) {
-      debugPrint('⚠️ [AuthNotifier] 약관 상태 조회 실패: $e');
-    }
-    try {
-      final profile = await userRepo.getMyProfile();
-      nickname = profile.nickname;
-    } catch (e) {
-      debugPrint('⚠️ [AuthNotifier] 프로필 조회 실패: $e');
-    }
-
+    // 닉네임은 표시용이라 누락 시 빈 문자열로 폴백한다.
+    final nickname = await tokenStorage.getNickname() ?? '';
     final isNewUser = await tokenStorage.getIsNewUser();
+
     return AuthResultEntity(
       userId: userId,
       nickname: nickname,
@@ -171,37 +164,55 @@ class AuthNotifier extends _$AuthNotifier {
     }
   }
 
-  /// 닉네임 설정 완료 → isNewUser=false 로 갱신 (영속 포함)
-  Future<void> updateNicknameCompleted(String nickname) async {
-    final current = state.value;
+  /// 닉네임 설정 — 서버에 저장하고 성공한 경우에만 상태를 갱신한다.
+  ///
+  /// 서버가 닉네임을 정규화할 수 있으므로 입력값이 아니라 **응답값**을 반영한다.
+  /// 실패 시 상태를 바꾸지 않고 예외를 다시 던져, 화면이 안내 후 재시도할 수 있게 한다.
+  ///
+  /// Throws: 409 중복 시 `code == 'NICKNAME_ALREADY_EXISTS'`인 [AppException]
+  Future<void> updateNickname(String nickname) async {
+    final current = state.valueOrNull;
     if (current == null) return;
+
+    final confirmed = await ref
+        .read(userRepositoryProvider)
+        .updateNickname(nickname);
+
     state = AsyncValue.data(
-      AuthResultEntity(
-        userId: current.userId,
-        nickname: nickname,
-        isNewUser: false,
-        requiresAgreement: current.requiresAgreement,
-      ),
+      current.copyWith(nickname: confirmed, isNewUser: false),
     );
+
     try {
-      await ref.read(secureTokenStorageProvider).saveIsNewUser(false);
+      final storage = ref.read(secureTokenStorageProvider);
+      await storage.saveNickname(confirmed);
+      await storage.saveIsNewUser(false);
     } catch (e) {
-      debugPrint('⚠️ [AuthNotifier] saveIsNewUser(false) 실패: $e');
+      debugPrint('⚠️ [AuthNotifier] 닉네임 로컬 저장 실패: $e');
     }
   }
 
-  /// 약관 동의 완료 → requiresAgreement=false
-  void markAgreementCompleted() {
+  /// 약관 동의 완료 → requiresAgreement=false (로컬 영속 포함)
+  Future<void> markAgreementCompleted() async {
     final current = state.valueOrNull;
     if (current == null || !current.requiresAgreement) return;
     state = AsyncValue.data(current.copyWith(requiresAgreement: false));
+    try {
+      await ref.read(secureTokenStorageProvider).saveRequiresAgreement(false);
+    } catch (e) {
+      debugPrint('⚠️ [AuthNotifier] saveRequiresAgreement(false) 실패: $e');
+    }
   }
 
-  /// 백엔드 "필수 약관 미동의" 차단 → requiresAgreement=true
-  void markNeedsAgreement() {
+  /// 백엔드 "필수 약관 미동의" 차단 → requiresAgreement=true (로컬 영속 포함)
+  Future<void> markNeedsAgreement() async {
     final current = state.valueOrNull;
     if (current == null || current.requiresAgreement) return;
     state = AsyncValue.data(current.copyWith(requiresAgreement: true));
+    try {
+      await ref.read(secureTokenStorageProvider).saveRequiresAgreement(true);
+    } catch (e) {
+      debugPrint('⚠️ [AuthNotifier] saveRequiresAgreement(true) 실패: $e');
+    }
   }
 
   /// 회원 탈퇴 후 로컬 정리 (state는 호출부에서 forceLogout로 초기화)

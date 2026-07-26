@@ -5,14 +5,14 @@ part 'agreement_response_model.g.dart';
 
 /// 약관 동의 상태 조회 응답 DTO
 ///
-/// `GET /api/user/agreements` 응답
+/// `GET /api/1/members/me/agreements` 응답
 ///
 /// **응답 예시**:
 /// ```json
 /// {
 ///   "termsOfServiceAgreed": true,
 ///   "privacyPolicyAgreed": true,
-///   "locationTermsAgreed": true,
+///   "locationInfoAgreed": true,
 ///   "termsAgreedAt": "2026-04-15T10:00:00+09:00",
 ///   "marketingAgreed": false,
 ///   "marketingAgreedAt": null
@@ -22,16 +22,16 @@ part 'agreement_response_model.g.dart';
 class AgreementResponseModel with _$AgreementResponseModel {
   const factory AgreementResponseModel({
     /// 이용약관 동의 여부
-    required bool termsOfServiceAgreed,
+    @Default(false) bool termsOfServiceAgreed,
 
     /// 개인정보처리방침 동의 여부
-    required bool privacyPolicyAgreed,
+    @Default(false) bool privacyPolicyAgreed,
 
-    /// 위치정보 이용약관 동의 여부
-    required bool locationTermsAgreed,
+    /// 위치정보 수집 동의 여부
+    @Default(false) bool locationInfoAgreed,
 
-    /// 마케팅 수신 동의 여부
-    required bool marketingAgreed,
+    /// 마케팅 정보 수신 동의 여부
+    @Default(false) bool marketingAgreed,
 
     /// 필수 약관 최초 동의 시각 (미동의 시 null)
     String? termsAgreedAt,

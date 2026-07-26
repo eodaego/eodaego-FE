@@ -13,7 +13,7 @@ import '../constants/text_styles.dart';
 ///
 /// 사용 예시:
 /// ```dart
-/// AppSnackbar.show(context, message: '저장되었어요.');
+/// AppSnackbar.show(context, message: '저장했어요');
 /// AppSnackbar.show(context, message: '오류가 발생했어요', backgroundColor: AppColors.danger);
 /// AppSnackbar.show(context, message: '복사됐어요', iconPath: 'assets/icons/icon_copy.svg');
 /// ```

@@ -105,6 +105,7 @@ GoRouter router(Ref ref) {
 
         if (path == RoutePaths.login) return RoutePaths.home;
         if (path == RoutePaths.agreement) return RoutePaths.home;
+        if (path == RoutePaths.nicknameSetup) return RoutePaths.home;
         if (path == RoutePaths.splash) return RoutePaths.home;
         return null;
       } catch (e, stack) {
@@ -222,28 +223,26 @@ GoRouter router(Ref ref) {
       GoRoute(
         path: RoutePaths.scan,
         name: RoutePaths.scanName,
-        pageBuilder: (context, state) => NoTransitionPage(
-          key: state.pageKey,
-          child: const ScanPage(),
-        ),
+        pageBuilder: (context, state) =>
+            NoTransitionPage(key: state.pageKey, child: const ScanPage()),
       ),
       GoRoute(
         path: RoutePaths.quiz,
         name: RoutePaths.quizName,
-        pageBuilder: (context, state) => NoTransitionPage(
-            key: state.pageKey, child: const QuizPage()),
+        pageBuilder: (context, state) =>
+            NoTransitionPage(key: state.pageKey, child: const QuizPage()),
       ),
       GoRoute(
         path: RoutePaths.quizReward,
         name: RoutePaths.quizRewardName,
-        pageBuilder: (context, state) => NoTransitionPage(
-            key: state.pageKey, child: const QuizRewardPage()),
+        pageBuilder: (context, state) =>
+            NoTransitionPage(key: state.pageKey, child: const QuizRewardPage()),
       ),
       GoRoute(
         path: RoutePaths.mypage,
         name: RoutePaths.mypageName,
-        pageBuilder: (context, state) => NoTransitionPage(
-            key: state.pageKey, child: const MyPage()),
+        pageBuilder: (context, state) =>
+            NoTransitionPage(key: state.pageKey, child: const MyPage()),
       ),
       GoRoute(
         path: RoutePaths.courseRecommend,

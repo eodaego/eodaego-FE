@@ -6,12 +6,27 @@ import '../constants/app_colors.dart';
 /// 주의: 공용 위젯(AppBadge/DogamCard/CourseCard)이 사용 — API 연동 시 이 폴더를
 /// 삭제할 때 이 enum은 삭제하지 말고 core/constants/로 이동할 것.
 enum DogamCategory {
-  animal('동물', AppColors.animal, AppColors.animalTint, AppColors.animalDark,
-      Icons.pets),
-  plant('식물', AppColors.plant, AppColors.plantTint, AppColors.plantDark,
-      Icons.local_florist),
-  place('장소', AppColors.place, AppColors.placeTint, AppColors.placeDark,
-      Icons.place);
+  animal(
+    '동물',
+    AppColors.animal,
+    AppColors.animalTint,
+    AppColors.animalDark,
+    Icons.pets,
+  ),
+  plant(
+    '식물',
+    AppColors.plant,
+    AppColors.plantTint,
+    AppColors.plantDark,
+    Icons.local_florist,
+  ),
+  place(
+    '장소',
+    AppColors.place,
+    AppColors.placeTint,
+    AppColors.placeDark,
+    Icons.place,
+  );
 
   const DogamCategory(this.label, this.color, this.tint, this.dark, this.icon);
 
@@ -52,7 +67,8 @@ const List<MockDogamItem> _curated = [
     collected: true,
     collectedAt: '2026.07.05',
     oneLiner: '물가에서 헤엄치는 재주꾼',
-    kidsDescription: '수달은 물속에서 눈을 뜨고 헤엄칠 수 있어요. '
+    kidsDescription:
+        '수달은 물속에서 눈을 뜨고 헤엄칠 수 있어요. '
         '미끄러운 물고기도 앞발로 꽉 잡아서 냠냠 먹는답니다.',
   ),
   MockDogamItem(
@@ -163,7 +179,8 @@ final List<MockDogamItem> mockDogamItems = List.unmodifiable([
       collected: collected,
       collectedAt: collected ? '2026.07.0${(i % 9) + 1}' : null,
       oneLiner: '공원 어딘가에서 만날 수 있어요',
-      kidsDescription: '공원을 탐험하다 보면 만날 수 있는 친구예요. '
+      kidsDescription:
+          '공원을 탐험하다 보면 만날 수 있는 친구예요. '
           '카메라로 찍으면 도감에 등록된답니다.',
     );
   }),

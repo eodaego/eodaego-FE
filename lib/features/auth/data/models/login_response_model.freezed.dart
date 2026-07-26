@@ -21,24 +21,28 @@ LoginResponseModel _$LoginResponseModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$LoginResponseModel {
-  /// 사용자 ID
-  int get userId => throw _privateConstructorUsedError;
+  /// JWT Access Token — 없으면 세션이 성립하지 않으므로 파싱 실패가 맞다
+  String get accessToken => throw _privateConstructorUsedError;
 
-  /// 닉네임 (서버에서 자동 생성)
-  String get nickname => throw _privateConstructorUsedError;
+  /// JWT Refresh Token
+  String get refreshToken => throw _privateConstructorUsedError;
 
-  /// JWT 토큰 (Access + Refresh)
-  TokensModel get tokens => throw _privateConstructorUsedError;
-
-  /// 신규 회원 여부
-  bool get isNewUser => throw _privateConstructorUsedError;
+  /// 회원 고유 ID (UUID)
+  String get userId => throw _privateConstructorUsedError;
 
   /// 필수 약관 미동의 여부
   ///
-  /// true이면 약관 동의 화면으로 라우팅해야 합니다.
-  /// 신규 회원(isNewUser=true)은 항상 true.
-  /// 기존 회원 중 필수 약관 중 하나라도 미동의면 true.
+  /// 신규 회원은 항상 true. 기존 회원도 필수 약관 미동의면 매 로그인마다 true.
+  /// **누락 시 true(fail-closed)** — 약관 게이트를 열지 않는다.
   bool get requiresAgreement => throw _privateConstructorUsedError;
+
+  /// 이번 요청에서 신규 가입이 함께 처리되었는지 여부
+  ///
+  /// 누락 시 false — 기존 회원으로 취급해 추가 온보딩을 띄우지 않는다.
+  bool get firstLogin => throw _privateConstructorUsedError;
+
+  /// 회원 닉네임 (서버 자동 발급)
+  String get nickname => throw _privateConstructorUsedError;
 
   /// Serializes this LoginResponseModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -58,14 +62,13 @@ abstract class $LoginResponseModelCopyWith<$Res> {
   ) = _$LoginResponseModelCopyWithImpl<$Res, LoginResponseModel>;
   @useResult
   $Res call({
-    int userId,
-    String nickname,
-    TokensModel tokens,
-    bool isNewUser,
+    String accessToken,
+    String refreshToken,
+    String userId,
     bool requiresAgreement,
+    bool firstLogin,
+    String nickname,
   });
-
-  $TokensModelCopyWith<$Res> get tokens;
 }
 
 /// @nodoc
@@ -83,47 +86,42 @@ class _$LoginResponseModelCopyWithImpl<$Res, $Val extends LoginResponseModel>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? accessToken = null,
+    Object? refreshToken = null,
     Object? userId = null,
-    Object? nickname = null,
-    Object? tokens = null,
-    Object? isNewUser = null,
     Object? requiresAgreement = null,
+    Object? firstLogin = null,
+    Object? nickname = null,
   }) {
     return _then(
       _value.copyWith(
+            accessToken: null == accessToken
+                ? _value.accessToken
+                : accessToken // ignore: cast_nullable_to_non_nullable
+                      as String,
+            refreshToken: null == refreshToken
+                ? _value.refreshToken
+                : refreshToken // ignore: cast_nullable_to_non_nullable
+                      as String,
             userId: null == userId
                 ? _value.userId
                 : userId // ignore: cast_nullable_to_non_nullable
-                      as int,
-            nickname: null == nickname
-                ? _value.nickname
-                : nickname // ignore: cast_nullable_to_non_nullable
                       as String,
-            tokens: null == tokens
-                ? _value.tokens
-                : tokens // ignore: cast_nullable_to_non_nullable
-                      as TokensModel,
-            isNewUser: null == isNewUser
-                ? _value.isNewUser
-                : isNewUser // ignore: cast_nullable_to_non_nullable
-                      as bool,
             requiresAgreement: null == requiresAgreement
                 ? _value.requiresAgreement
                 : requiresAgreement // ignore: cast_nullable_to_non_nullable
                       as bool,
+            firstLogin: null == firstLogin
+                ? _value.firstLogin
+                : firstLogin // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            nickname: null == nickname
+                ? _value.nickname
+                : nickname // ignore: cast_nullable_to_non_nullable
+                      as String,
           )
           as $Val,
     );
-  }
-
-  /// Create a copy of LoginResponseModel
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $TokensModelCopyWith<$Res> get tokens {
-    return $TokensModelCopyWith<$Res>(_value.tokens, (value) {
-      return _then(_value.copyWith(tokens: value) as $Val);
-    });
   }
 }
 
@@ -137,15 +135,13 @@ abstract class _$$LoginResponseModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    int userId,
-    String nickname,
-    TokensModel tokens,
-    bool isNewUser,
+    String accessToken,
+    String refreshToken,
+    String userId,
     bool requiresAgreement,
+    bool firstLogin,
+    String nickname,
   });
-
-  @override
-  $TokensModelCopyWith<$Res> get tokens;
 }
 
 /// @nodoc
@@ -162,34 +158,39 @@ class __$$LoginResponseModelImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? accessToken = null,
+    Object? refreshToken = null,
     Object? userId = null,
-    Object? nickname = null,
-    Object? tokens = null,
-    Object? isNewUser = null,
     Object? requiresAgreement = null,
+    Object? firstLogin = null,
+    Object? nickname = null,
   }) {
     return _then(
       _$LoginResponseModelImpl(
+        accessToken: null == accessToken
+            ? _value.accessToken
+            : accessToken // ignore: cast_nullable_to_non_nullable
+                  as String,
+        refreshToken: null == refreshToken
+            ? _value.refreshToken
+            : refreshToken // ignore: cast_nullable_to_non_nullable
+                  as String,
         userId: null == userId
             ? _value.userId
             : userId // ignore: cast_nullable_to_non_nullable
-                  as int,
-        nickname: null == nickname
-            ? _value.nickname
-            : nickname // ignore: cast_nullable_to_non_nullable
                   as String,
-        tokens: null == tokens
-            ? _value.tokens
-            : tokens // ignore: cast_nullable_to_non_nullable
-                  as TokensModel,
-        isNewUser: null == isNewUser
-            ? _value.isNewUser
-            : isNewUser // ignore: cast_nullable_to_non_nullable
-                  as bool,
         requiresAgreement: null == requiresAgreement
             ? _value.requiresAgreement
             : requiresAgreement // ignore: cast_nullable_to_non_nullable
                   as bool,
+        firstLogin: null == firstLogin
+            ? _value.firstLogin
+            : firstLogin // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        nickname: null == nickname
+            ? _value.nickname
+            : nickname // ignore: cast_nullable_to_non_nullable
+                  as String,
       ),
     );
   }
@@ -199,43 +200,52 @@ class __$$LoginResponseModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$LoginResponseModelImpl implements _LoginResponseModel {
   const _$LoginResponseModelImpl({
+    required this.accessToken,
+    required this.refreshToken,
     required this.userId,
-    required this.nickname,
-    required this.tokens,
-    required this.isNewUser,
-    required this.requiresAgreement,
+    this.requiresAgreement = true,
+    this.firstLogin = false,
+    this.nickname = '',
   });
 
   factory _$LoginResponseModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$LoginResponseModelImplFromJson(json);
 
-  /// 사용자 ID
+  /// JWT Access Token — 없으면 세션이 성립하지 않으므로 파싱 실패가 맞다
   @override
-  final int userId;
+  final String accessToken;
 
-  /// 닉네임 (서버에서 자동 생성)
+  /// JWT Refresh Token
   @override
-  final String nickname;
+  final String refreshToken;
 
-  /// JWT 토큰 (Access + Refresh)
+  /// 회원 고유 ID (UUID)
   @override
-  final TokensModel tokens;
-
-  /// 신규 회원 여부
-  @override
-  final bool isNewUser;
+  final String userId;
 
   /// 필수 약관 미동의 여부
   ///
-  /// true이면 약관 동의 화면으로 라우팅해야 합니다.
-  /// 신규 회원(isNewUser=true)은 항상 true.
-  /// 기존 회원 중 필수 약관 중 하나라도 미동의면 true.
+  /// 신규 회원은 항상 true. 기존 회원도 필수 약관 미동의면 매 로그인마다 true.
+  /// **누락 시 true(fail-closed)** — 약관 게이트를 열지 않는다.
   @override
+  @JsonKey()
   final bool requiresAgreement;
+
+  /// 이번 요청에서 신규 가입이 함께 처리되었는지 여부
+  ///
+  /// 누락 시 false — 기존 회원으로 취급해 추가 온보딩을 띄우지 않는다.
+  @override
+  @JsonKey()
+  final bool firstLogin;
+
+  /// 회원 닉네임 (서버 자동 발급)
+  @override
+  @JsonKey()
+  final String nickname;
 
   @override
   String toString() {
-    return 'LoginResponseModel(userId: $userId, nickname: $nickname, tokens: $tokens, isNewUser: $isNewUser, requiresAgreement: $requiresAgreement)';
+    return 'LoginResponseModel(accessToken: $accessToken, refreshToken: $refreshToken, userId: $userId, requiresAgreement: $requiresAgreement, firstLogin: $firstLogin, nickname: $nickname)';
   }
 
   @override
@@ -243,25 +253,29 @@ class _$LoginResponseModelImpl implements _LoginResponseModel {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$LoginResponseModelImpl &&
+            (identical(other.accessToken, accessToken) ||
+                other.accessToken == accessToken) &&
+            (identical(other.refreshToken, refreshToken) ||
+                other.refreshToken == refreshToken) &&
             (identical(other.userId, userId) || other.userId == userId) &&
-            (identical(other.nickname, nickname) ||
-                other.nickname == nickname) &&
-            (identical(other.tokens, tokens) || other.tokens == tokens) &&
-            (identical(other.isNewUser, isNewUser) ||
-                other.isNewUser == isNewUser) &&
             (identical(other.requiresAgreement, requiresAgreement) ||
-                other.requiresAgreement == requiresAgreement));
+                other.requiresAgreement == requiresAgreement) &&
+            (identical(other.firstLogin, firstLogin) ||
+                other.firstLogin == firstLogin) &&
+            (identical(other.nickname, nickname) ||
+                other.nickname == nickname));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
     runtimeType,
+    accessToken,
+    refreshToken,
     userId,
-    nickname,
-    tokens,
-    isNewUser,
     requiresAgreement,
+    firstLogin,
+    nickname,
   );
 
   /// Create a copy of LoginResponseModel
@@ -283,215 +297,18 @@ class _$LoginResponseModelImpl implements _LoginResponseModel {
 
 abstract class _LoginResponseModel implements LoginResponseModel {
   const factory _LoginResponseModel({
-    required final int userId,
-    required final String nickname,
-    required final TokensModel tokens,
-    required final bool isNewUser,
-    required final bool requiresAgreement,
+    required final String accessToken,
+    required final String refreshToken,
+    required final String userId,
+    final bool requiresAgreement,
+    final bool firstLogin,
+    final String nickname,
   }) = _$LoginResponseModelImpl;
 
   factory _LoginResponseModel.fromJson(Map<String, dynamic> json) =
       _$LoginResponseModelImpl.fromJson;
 
-  /// 사용자 ID
-  @override
-  int get userId;
-
-  /// 닉네임 (서버에서 자동 생성)
-  @override
-  String get nickname;
-
-  /// JWT 토큰 (Access + Refresh)
-  @override
-  TokensModel get tokens;
-
-  /// 신규 회원 여부
-  @override
-  bool get isNewUser;
-
-  /// 필수 약관 미동의 여부
-  ///
-  /// true이면 약관 동의 화면으로 라우팅해야 합니다.
-  /// 신규 회원(isNewUser=true)은 항상 true.
-  /// 기존 회원 중 필수 약관 중 하나라도 미동의면 true.
-  @override
-  bool get requiresAgreement;
-
-  /// Create a copy of LoginResponseModel
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$LoginResponseModelImplCopyWith<_$LoginResponseModelImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-TokensModel _$TokensModelFromJson(Map<String, dynamic> json) {
-  return _TokensModel.fromJson(json);
-}
-
-/// @nodoc
-mixin _$TokensModel {
-  /// JWT Access Token
-  String get accessToken => throw _privateConstructorUsedError;
-
-  /// JWT Refresh Token
-  String get refreshToken => throw _privateConstructorUsedError;
-
-  /// Serializes this TokensModel to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of TokensModel
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $TokensModelCopyWith<TokensModel> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $TokensModelCopyWith<$Res> {
-  factory $TokensModelCopyWith(
-    TokensModel value,
-    $Res Function(TokensModel) then,
-  ) = _$TokensModelCopyWithImpl<$Res, TokensModel>;
-  @useResult
-  $Res call({String accessToken, String refreshToken});
-}
-
-/// @nodoc
-class _$TokensModelCopyWithImpl<$Res, $Val extends TokensModel>
-    implements $TokensModelCopyWith<$Res> {
-  _$TokensModelCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of TokensModel
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({Object? accessToken = null, Object? refreshToken = null}) {
-    return _then(
-      _value.copyWith(
-            accessToken: null == accessToken
-                ? _value.accessToken
-                : accessToken // ignore: cast_nullable_to_non_nullable
-                      as String,
-            refreshToken: null == refreshToken
-                ? _value.refreshToken
-                : refreshToken // ignore: cast_nullable_to_non_nullable
-                      as String,
-          )
-          as $Val,
-    );
-  }
-}
-
-/// @nodoc
-abstract class _$$TokensModelImplCopyWith<$Res>
-    implements $TokensModelCopyWith<$Res> {
-  factory _$$TokensModelImplCopyWith(
-    _$TokensModelImpl value,
-    $Res Function(_$TokensModelImpl) then,
-  ) = __$$TokensModelImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call({String accessToken, String refreshToken});
-}
-
-/// @nodoc
-class __$$TokensModelImplCopyWithImpl<$Res>
-    extends _$TokensModelCopyWithImpl<$Res, _$TokensModelImpl>
-    implements _$$TokensModelImplCopyWith<$Res> {
-  __$$TokensModelImplCopyWithImpl(
-    _$TokensModelImpl _value,
-    $Res Function(_$TokensModelImpl) _then,
-  ) : super(_value, _then);
-
-  /// Create a copy of TokensModel
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({Object? accessToken = null, Object? refreshToken = null}) {
-    return _then(
-      _$TokensModelImpl(
-        accessToken: null == accessToken
-            ? _value.accessToken
-            : accessToken // ignore: cast_nullable_to_non_nullable
-                  as String,
-        refreshToken: null == refreshToken
-            ? _value.refreshToken
-            : refreshToken // ignore: cast_nullable_to_non_nullable
-                  as String,
-      ),
-    );
-  }
-}
-
-/// @nodoc
-@JsonSerializable()
-class _$TokensModelImpl implements _TokensModel {
-  const _$TokensModelImpl({
-    required this.accessToken,
-    required this.refreshToken,
-  });
-
-  factory _$TokensModelImpl.fromJson(Map<String, dynamic> json) =>
-      _$$TokensModelImplFromJson(json);
-
-  /// JWT Access Token
-  @override
-  final String accessToken;
-
-  /// JWT Refresh Token
-  @override
-  final String refreshToken;
-
-  @override
-  String toString() {
-    return 'TokensModel(accessToken: $accessToken, refreshToken: $refreshToken)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$TokensModelImpl &&
-            (identical(other.accessToken, accessToken) ||
-                other.accessToken == accessToken) &&
-            (identical(other.refreshToken, refreshToken) ||
-                other.refreshToken == refreshToken));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(runtimeType, accessToken, refreshToken);
-
-  /// Create a copy of TokensModel
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$TokensModelImplCopyWith<_$TokensModelImpl> get copyWith =>
-      __$$TokensModelImplCopyWithImpl<_$TokensModelImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$TokensModelImplToJson(this);
-  }
-}
-
-abstract class _TokensModel implements TokensModel {
-  const factory _TokensModel({
-    required final String accessToken,
-    required final String refreshToken,
-  }) = _$TokensModelImpl;
-
-  factory _TokensModel.fromJson(Map<String, dynamic> json) =
-      _$TokensModelImpl.fromJson;
-
-  /// JWT Access Token
+  /// JWT Access Token — 없으면 세션이 성립하지 않으므로 파싱 실패가 맞다
   @override
   String get accessToken;
 
@@ -499,10 +316,31 @@ abstract class _TokensModel implements TokensModel {
   @override
   String get refreshToken;
 
-  /// Create a copy of TokensModel
+  /// 회원 고유 ID (UUID)
+  @override
+  String get userId;
+
+  /// 필수 약관 미동의 여부
+  ///
+  /// 신규 회원은 항상 true. 기존 회원도 필수 약관 미동의면 매 로그인마다 true.
+  /// **누락 시 true(fail-closed)** — 약관 게이트를 열지 않는다.
+  @override
+  bool get requiresAgreement;
+
+  /// 이번 요청에서 신규 가입이 함께 처리되었는지 여부
+  ///
+  /// 누락 시 false — 기존 회원으로 취급해 추가 온보딩을 띄우지 않는다.
+  @override
+  bool get firstLogin;
+
+  /// 회원 닉네임 (서버 자동 발급)
+  @override
+  String get nickname;
+
+  /// Create a copy of LoginResponseModel
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$TokensModelImplCopyWith<_$TokensModelImpl> get copyWith =>
+  _$$LoginResponseModelImplCopyWith<_$LoginResponseModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

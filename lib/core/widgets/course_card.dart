@@ -75,12 +75,14 @@ class CourseCard extends StatelessWidget {
               padding: EdgeInsets.only(bottom: 8.h),
               child: Row(
                 children: [
-                  _NumberDot(number: i + 1, color: course.places[i].category.color),
+                  _NumberDot(
+                    number: i + 1,
+                    color: course.places[i].category.color,
+                  ),
                   SizedBox(width: 10.w),
                   Text(
                     course.places[i].name,
-                    style:
-                        AppTextStyles.body15.copyWith(color: AppColors.ink),
+                    style: AppTextStyles.body15.copyWith(color: AppColors.ink),
                   ),
                 ],
               ),
@@ -118,8 +120,7 @@ class _NumberDot extends StatelessWidget {
         child: Text(
           '$number',
           // 코스 스텝 번호 숫자는 Ssurround (디자인 시스템)
-          style:
-              AppTextStyles.display16.copyWith(color: AppColors.onPrimary),
+          style: AppTextStyles.display16.copyWith(color: AppColors.onPrimary),
         ),
       ),
     );

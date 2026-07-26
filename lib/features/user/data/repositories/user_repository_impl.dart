@@ -19,39 +19,21 @@ class UserRepositoryImpl implements UserRepository {
   UserRepositoryImpl(this._dataSource);
 
   @override
-  Future<bool> checkNickname(String nickname) async {
+  Future<String> updateNickname(String nickname) async {
     try {
-      final response = await _dataSource.checkNickname(nickname);
-
-      if (kDebugMode) {
-        debugPrint('✅ 닉네임 중복 확인: $nickname → ${response.isAvailable}');
-      }
-
-      return response.isAvailable;
-    } on DioException catch (e) {
-      throw DioExceptionHandler.handle(e);
-    } catch (e) {
-      throw ServerException(
-        message: '닉네임 확인 중 예기치 않은 오류가 발생했습니다.',
-        messageKey: 'errorNicknameCheckUnexpected',
-        originalException: e,
-      );
-    }
-  }
-
-  @override
-  Future<void> updateNickname(String nickname) async {
-    try {
-      await _dataSource.updateNickname(
+      final response = await _dataSource.updateNickname(
         NicknameUpdateRequestModel(nickname: nickname),
       );
 
       if (kDebugMode) {
-        debugPrint('✅ 닉네임 변경 성공: $nickname');
+        debugPrint('✅ 닉네임 변경 성공: ${response.nickname}');
       }
+
+      return response.nickname;
     } on DioException catch (e) {
       throw DioExceptionHandler.handle(e);
     } catch (e) {
+      if (e is AppException) rethrow;
       throw ServerException(
         message: '닉네임 변경 중 예기치 않은 오류가 발생했습니다.',
         messageKey: 'errorNicknameUpdateUnexpected',
@@ -116,7 +98,7 @@ class UserRepositoryImpl implements UserRepository {
           '✅ 약관 동의 상태 조회: '
           'terms=${response.termsOfServiceAgreed}, '
           'privacy=${response.privacyPolicyAgreed}, '
-          'location=${response.locationTermsAgreed}, '
+          'location=${response.locationInfoAgreed}, '
           'marketing=${response.marketingAgreed}',
         );
       }
@@ -124,7 +106,7 @@ class UserRepositoryImpl implements UserRepository {
       return AgreementStatusEntity(
         termsOfService: response.termsOfServiceAgreed,
         privacyPolicy: response.privacyPolicyAgreed,
-        locationTerms: response.locationTermsAgreed,
+        locationTerms: response.locationInfoAgreed,
         marketing: response.marketingAgreed,
       );
     } on DioException catch (e) {
@@ -144,10 +126,10 @@ class UserRepositoryImpl implements UserRepository {
     try {
       await _dataSource.updateAgreements(
         AgreementRequestModel(
-          termsOfService: true,
-          privacyPolicy: true,
-          locationTerms: true,
-          marketing: marketing,
+          termsOfServiceAgreed: true,
+          privacyPolicyAgreed: true,
+          locationInfoAgreed: true,
+          marketingAgreed: marketing,
         ),
       );
 

@@ -42,8 +42,9 @@ class DogamCard extends StatelessWidget {
                         )
                       : Text(
                           '?',
-                          style: AppTextStyles.display34
-                              .copyWith(color: AppColors.uncollected),
+                          style: AppTextStyles.display34.copyWith(
+                            color: AppColors.uncollected,
+                          ),
                         ),
                 ),
               ),

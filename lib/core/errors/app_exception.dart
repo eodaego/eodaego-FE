@@ -68,9 +68,12 @@ class AuthException extends AppException {
 
 /// 사용자가 로그인을 취소한 경우
 /// User cancelled the login process
+///
+/// 취소는 에러가 아니라 정상 흐름이라 사용자에게 아무것도 표시하지 않는다.
+/// 호출부(`AuthNotifier._signIn`)가 이 **타입**을 잡아 조용히 복귀하므로
+/// messageKey를 두지 않는다. message는 로그 전용.
 class AuthCancelledException extends AuthException {
-  const AuthCancelledException()
-    : super(message: '로그인이 취소되었습니다', messageKey: 'errorAuthLoginCancelled');
+  const AuthCancelledException() : super(message: '로그인이 취소되었습니다');
 }
 
 /// 검증 관련 예외

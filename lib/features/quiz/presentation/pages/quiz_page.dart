@@ -20,7 +20,7 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
-  static const String _question = '이 친구의 이름은 무엇일까요?';
+  static const String _question = '이 친구 이름이 뭘까요?';
   static const List<String> _choices = ['너구리', '수달', '비버'];
   static const int _correctIndex = 1;
 
@@ -87,8 +87,9 @@ class _QuizPageState extends State<QuizPage> {
               Center(
                 child: Text(
                   '앗, 다시 골라 볼까요?',
-                  style: AppTextStyles.caption14
-                      .copyWith(color: AppColors.muted),
+                  style: AppTextStyles.caption14.copyWith(
+                    color: AppColors.muted,
+                  ),
                 ),
               ),
             SizedBox(height: 24.h),

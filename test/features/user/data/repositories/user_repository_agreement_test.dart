@@ -4,7 +4,7 @@ import 'package:eodaego/features/user/data/models/agreement_request_model.dart';
 import 'package:eodaego/features/user/data/models/agreement_response_model.dart';
 import 'package:eodaego/features/user/data/models/delete_account_response_model.dart';
 import 'package:eodaego/features/user/data/models/my_page_response_model.dart';
-import 'package:eodaego/features/user/data/models/nickname_check_response_model.dart';
+import 'package:eodaego/features/user/data/models/nickname_response_model.dart';
 import 'package:eodaego/features/user/data/models/nickname_update_request_model.dart';
 import 'package:eodaego/features/user/data/repositories/user_repository_impl.dart';
 import 'package:dio/dio.dart';
@@ -28,12 +28,9 @@ class _FakeUserRemoteDataSource implements UserRemoteDataSource {
   }
 
   @override
-  Future<NicknameCheckResponseModel> checkNickname(String nickname) =>
-      throw UnimplementedError();
-
-  @override
-  Future<void> updateNickname(NicknameUpdateRequestModel request) =>
-      throw UnimplementedError();
+  Future<NicknameResponseModel> updateNickname(
+    NicknameUpdateRequestModel request,
+  ) => throw UnimplementedError();
 
   @override
   Future<MyPageResponseModel> getMyPage() => throw UnimplementedError();
@@ -44,16 +41,11 @@ class _FakeUserRemoteDataSource implements UserRemoteDataSource {
 }
 
 DioException _dioError(int statusCode) => DioException(
-  requestOptions: RequestOptions(path: '/api/user/agreements'),
+  requestOptions: RequestOptions(path: '/api/1/members/me/agreements'),
   response: Response(
-    requestOptions: RequestOptions(path: '/api/user/agreements'),
+    requestOptions: RequestOptions(path: '/api/1/members/me/agreements'),
     statusCode: statusCode,
-    data: {
-      'title': 'error',
-      'status': statusCode,
-      'detail': 'msg',
-      'instance': '/api/user/agreements',
-    },
+    data: {'errorCode': 'INVALID_REQUEST', 'errorMessage': '잘못된 요청입니다.'},
   ),
   type: DioExceptionType.badResponse,
 );
@@ -65,7 +57,7 @@ void main() {
         ..responseToReturn = const AgreementResponseModel(
           termsOfServiceAgreed: true,
           privacyPolicyAgreed: true,
-          locationTermsAgreed: true,
+          locationInfoAgreed: true,
           marketingAgreed: false,
         );
       final repo = UserRepositoryImpl(fake);
@@ -95,10 +87,10 @@ void main() {
       await repo.updateAgreements(marketing: true);
 
       expect(fake.lastUpdateRequest, isNotNull);
-      expect(fake.lastUpdateRequest!.termsOfService, true);
-      expect(fake.lastUpdateRequest!.privacyPolicy, true);
-      expect(fake.lastUpdateRequest!.locationTerms, true);
-      expect(fake.lastUpdateRequest!.marketing, true);
+      expect(fake.lastUpdateRequest!.termsOfServiceAgreed, true);
+      expect(fake.lastUpdateRequest!.privacyPolicyAgreed, true);
+      expect(fake.lastUpdateRequest!.locationInfoAgreed, true);
+      expect(fake.lastUpdateRequest!.marketingAgreed, true);
     });
 
     test('marketing=false도 정상 전달된다', () async {
@@ -107,7 +99,7 @@ void main() {
 
       await repo.updateAgreements(marketing: false);
 
-      expect(fake.lastUpdateRequest!.marketing, false);
+      expect(fake.lastUpdateRequest!.marketingAgreed, false);
     });
 
     test('DioException은 AppException으로 변환된다', () async {

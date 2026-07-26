@@ -16,9 +16,9 @@ class AppBadge extends StatelessWidget {
 
   /// 카테고리 뱃지 프리셋 — tint 배경 + 같은 계열 dark 텍스트 (페어링 규칙).
   AppBadge.category(DogamCategory category, {super.key, String? label})
-      : label = label ?? category.label,
-        background = category.tint,
-        foreground = category.dark;
+    : label = label ?? category.label,
+      background = category.tint,
+      foreground = category.dark;
 
   final String label;
   final Color background;

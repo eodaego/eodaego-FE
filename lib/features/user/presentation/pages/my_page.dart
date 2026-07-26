@@ -76,19 +76,21 @@ class MyPage extends ConsumerWidget {
                 ),
                 child: InkWell(
                   customBorder: const StadiumBorder(),
-                  onTap: () =>
-                      AppSnackbar.show(context, message: '준비 중이에요'),
+                  onTap: () => AppSnackbar.show(context, message: '준비 중이에요'),
                   child: ConstrainedBox(
                     constraints: BoxConstraints(minHeight: 48.h),
                     child: Padding(
                       padding: EdgeInsets.symmetric(
-                          horizontal: 14.w, vertical: 8.h),
+                        horizontal: 14.w,
+                        vertical: 8.h,
+                      ),
                       child: Center(
                         widthFactor: 1,
                         child: Text(
                           '닉네임 바꾸기',
-                          style: AppTextStyles.caption14
-                              .copyWith(color: AppColors.muted),
+                          style: AppTextStyles.caption14.copyWith(
+                            color: AppColors.muted,
+                          ),
                         ),
                       ),
                     ),
@@ -99,11 +101,15 @@ class MyPage extends ConsumerWidget {
             SizedBox(height: 24.h),
             Row(
               children: [
-                Expanded(child: _StatCard(value: '$percent%', label: '수집률')),
+                Expanded(
+                  child: _StatCard(value: '$percent%', label: '수집률'),
+                ),
                 SizedBox(width: 12.w),
                 Expanded(
                   child: _StatCard(
-                      value: '$mockDogamCollected', label: '모은 도감'),
+                    value: '$mockDogamCollected',
+                    label: '모은 도감',
+                  ),
                 ),
               ],
             ),
@@ -135,12 +141,11 @@ class MyPage extends ConsumerWidget {
                 backgroundColor: AppColors.surface,
                 foregroundColor: AppColors.danger,
                 showBorder: true,
-                subtitle: '모든 기록이 완전히 삭제돼요',
+                subtitle: '모든 기록을 완전히 지워요',
                 subtitleColor: AppColors.muted,
                 width: double.infinity,
                 height: 72.h,
-                onPressed: () =>
-                    AppSnackbar.show(context, message: '준비 중이에요'),
+                onPressed: () => AppSnackbar.show(context, message: '준비 중이에요'),
               ),
             ],
             SizedBox(height: 32.h),

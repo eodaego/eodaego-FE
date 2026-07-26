@@ -6,13 +6,13 @@ void main() {
   group('loginNoticeFor', () {
     test('logoutSuccess → 성공 문구 + ink', () {
       final n = loginNoticeFor('logoutSuccess');
-      expect(n.message, '로그아웃되었습니다');
+      expect(n.message, '로그아웃했어요');
       expect(n.color, AppColors.ink);
     });
 
     test('logoutUnexpected → 오류 문구 + danger', () {
       final n = loginNoticeFor('logoutUnexpected');
-      expect(n.message, '로그아웃 중 문제가 있었어요');
+      expect(n.message, '로그아웃하는 중에 문제가 생겼어요');
       expect(n.color, AppColors.danger);
     });
 
@@ -23,7 +23,7 @@ void main() {
 
     test('loginFailed → 로그인 실패 문구 + danger', () {
       final n = loginNoticeFor('loginFailed');
-      expect(n.message, '로그인에 실패했어요. 잠시 후 다시 시도해 주세요.');
+      expect(n.message, '로그인하지 못했어요. 잠시 후 다시 시도해 주세요.');
       expect(n.color, AppColors.danger);
     });
 

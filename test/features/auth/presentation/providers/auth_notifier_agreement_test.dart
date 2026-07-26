@@ -11,7 +11,7 @@ void main() {
           authNotifierProvider.overrideWith(
             () => _TestAuthNotifier(
               const AuthResultEntity(
-                userId: 1,
+                userId: 'test-user-uuid',
                 nickname: '테스트',
                 isNewUser: false,
                 requiresAgreement: false,
@@ -29,7 +29,7 @@ void main() {
         isFalse,
       );
 
-      container.read(authNotifierProvider.notifier).markNeedsAgreement();
+      await container.read(authNotifierProvider.notifier).markNeedsAgreement();
 
       expect(
         container.read(authNotifierProvider).value?.requiresAgreement,
@@ -39,7 +39,7 @@ void main() {
 
     test('이미 requiresAgreement: true이면 state 값이 그대로 유지된다', () async {
       const initial = AuthResultEntity(
-        userId: 2,
+        userId: 'another-user-uuid',
         nickname: '이미미동의',
         isNewUser: false,
         requiresAgreement: true,
@@ -54,7 +54,7 @@ void main() {
       await container.read(authNotifierProvider.future);
       final before = container.read(authNotifierProvider).value;
 
-      container.read(authNotifierProvider.notifier).markNeedsAgreement();
+      await container.read(authNotifierProvider.notifier).markNeedsAgreement();
 
       final after = container.read(authNotifierProvider).value;
       expect(after, same(before));
@@ -72,7 +72,7 @@ void main() {
       expect(container.read(authNotifierProvider).value, isNull);
 
       // 예외 없이 호출 가능해야 함
-      container.read(authNotifierProvider.notifier).markNeedsAgreement();
+      await container.read(authNotifierProvider.notifier).markNeedsAgreement();
 
       expect(container.read(authNotifierProvider).value, isNull);
     });

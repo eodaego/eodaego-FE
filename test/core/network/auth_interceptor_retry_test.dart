@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:eodaego/core/constants/api_endpoints.dart';
 import 'package:eodaego/core/network/auth_interceptor.dart';
 import 'package:eodaego/core/storage/secure_token_storage.dart';
 
@@ -205,9 +206,9 @@ void main() {
       final reissueDio = Dio(BaseOptions(baseUrl: 'https://test.api'));
 
       reissueDio.httpClientAdapter = _StubHttpClientAdapter((options) async {
-        if (options.path == '/api/auth/reissue') {
+        if (options.path == ApiEndpoints.reissue) {
           return _jsonResponse(
-            '{"tokens":{"accessToken":"new-access-token","refreshToken":"new-refresh-token"}}',
+            '{"accessToken":"new-access-token","refreshToken":"new-refresh-token"}',
             200,
           );
         }
@@ -275,7 +276,7 @@ void main() {
       final reissueDio = Dio(BaseOptions(baseUrl: 'https://test.api'));
 
       reissueDio.httpClientAdapter = _StubHttpClientAdapter((options) async {
-        return _jsonResponse('{"detail":"temporary server error"}', 500);
+        return _jsonResponse('{"errorMessage":"temporary server error"}', 500);
       });
 
       final dio = _protectedDio(
@@ -310,7 +311,7 @@ void main() {
 
         reissueDio.httpClientAdapter = _StubHttpClientAdapter((options) async {
           return _jsonResponse(
-            '{"detail":"refresh token rejected"}',
+            '{"errorCode":"REFRESH_TOKEN_MISMATCH","errorMessage":"refresh token rejected"}',
             statusCode,
           );
         });
@@ -340,10 +341,7 @@ void main() {
       final reissueDio = Dio(BaseOptions(baseUrl: 'https://test.api'));
 
       reissueDio.httpClientAdapter = _StubHttpClientAdapter((options) async {
-        return _jsonResponse(
-          '{"tokens":{"accessToken":"new-access-token"}}',
-          200,
-        );
+        return _jsonResponse('{"accessToken":"new-access-token"}', 200);
       });
 
       final dio = _protectedDio(
@@ -370,9 +368,9 @@ void main() {
       final reissueDio = Dio(BaseOptions(baseUrl: 'https://test.api'));
 
       reissueDio.httpClientAdapter = _StubHttpClientAdapter((options) async {
-        if (options.path == '/api/auth/reissue') {
+        if (options.path == ApiEndpoints.reissue) {
           return _jsonResponse(
-            '{"tokens":{"accessToken":"new-access-token","refreshToken":"new-refresh-token"}}',
+            '{"accessToken":"new-access-token","refreshToken":"new-refresh-token"}',
             200,
           );
         }
@@ -410,9 +408,9 @@ void main() {
       final reissueDio = Dio(BaseOptions(baseUrl: 'https://test.api'));
 
       reissueDio.httpClientAdapter = _StubHttpClientAdapter((options) async {
-        if (options.path == '/api/auth/reissue') {
+        if (options.path == ApiEndpoints.reissue) {
           return _jsonResponse(
-            '{"tokens":{"accessToken":"new-access-token","refreshToken":"new-refresh-token"}}',
+            '{"accessToken":"new-access-token","refreshToken":"new-refresh-token"}',
             200,
           );
         }
@@ -450,9 +448,9 @@ void main() {
       final reissueDio = Dio(BaseOptions(baseUrl: 'https://test.api'));
 
       reissueDio.httpClientAdapter = _StubHttpClientAdapter((options) async {
-        if (options.path == '/api/auth/reissue') {
+        if (options.path == ApiEndpoints.reissue) {
           return _jsonResponse(
-            '{"tokens":{"accessToken":"new-access-token","refreshToken":"new-refresh-token"}}',
+            '{"accessToken":"new-access-token","refreshToken":"new-refresh-token"}',
             200,
           );
         }
@@ -493,7 +491,7 @@ void main() {
       reissueDio.httpClientAdapter = _StubHttpClientAdapter((options) async {
         reissueCalled = true;
         return _jsonResponse(
-          '{"tokens":{"accessToken":"new-access-token","refreshToken":"new-refresh-token"}}',
+          '{"accessToken":"new-access-token","refreshToken":"new-refresh-token"}',
           200,
         );
       });

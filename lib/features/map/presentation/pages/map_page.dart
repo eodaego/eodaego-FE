@@ -42,8 +42,9 @@ class MapPage extends ConsumerWidget {
                     SizedBox(height: 8.h),
                     Text(
                       '공원 지도',
-                      style: AppTextStyles.display19
-                          .copyWith(color: AppColors.ink),
+                      style: AppTextStyles.display19.copyWith(
+                        color: AppColors.ink,
+                      ),
                     ),
                     SizedBox(height: 12.h),
                     Expanded(
@@ -53,8 +54,9 @@ class MapPage extends ConsumerWidget {
                           Container(
                             decoration: BoxDecoration(
                               color: AppColors.surfaceDim,
-                              borderRadius:
-                                  BorderRadius.circular(AppRadius.lg.r),
+                              borderRadius: BorderRadius.circular(
+                                AppRadius.lg.r,
+                              ),
                             ),
                           ),
                           CustomPaint(
@@ -68,14 +70,16 @@ class MapPage extends ConsumerWidget {
                             left: 12.w,
                             child: Text(
                               '공식 약도 이미지',
-                              style: AppTextStyles.caption14
-                                  .copyWith(color: AppColors.muted),
+                              style: AppTextStyles.caption14.copyWith(
+                                color: AppColors.muted,
+                              ),
                             ),
                           ),
                           for (var i = 0; i < selected.places.length; i++)
                             Align(
-                              alignment: _markerAlignments[
-                                  i % _markerAlignments.length],
+                              alignment:
+                                  _markerAlignments[i %
+                                      _markerAlignments.length],
                               child: MapMarker(
                                 number: i + 1,
                                 color: selected.places[i].category.color,
@@ -86,16 +90,20 @@ class MapPage extends ConsumerWidget {
                             bottom: 16.h,
                             child: Container(
                               padding: EdgeInsets.symmetric(
-                                  horizontal: 10.w, vertical: 6.h),
+                                horizontal: 10.w,
+                                vertical: 6.h,
+                              ),
                               decoration: BoxDecoration(
                                 color: AppColors.surface,
-                                borderRadius:
-                                    BorderRadius.circular(AppRadius.xs.r),
+                                borderRadius: BorderRadius.circular(
+                                  AppRadius.xs.r,
+                                ),
                               ),
                               child: Text(
                                 selected.entranceLabel,
-                                style: AppTextStyles.tag13Bold
-                                    .copyWith(color: AppColors.ink),
+                                style: AppTextStyles.tag13Bold.copyWith(
+                                  color: AppColors.ink,
+                                ),
                               ),
                             ),
                           ),

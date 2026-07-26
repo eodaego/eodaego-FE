@@ -25,10 +25,7 @@ class DashedRRectPainter extends CustomPainter {
       ..strokeWidth = strokeWidth;
     final path = Path()
       ..addRRect(
-        RRect.fromRectAndRadius(
-          Offset.zero & size,
-          Radius.circular(radius),
-        ),
+        RRect.fromRectAndRadius(Offset.zero & size, Radius.circular(radius)),
       );
     for (final metric in path.computeMetrics()) {
       var distance = 0.0;

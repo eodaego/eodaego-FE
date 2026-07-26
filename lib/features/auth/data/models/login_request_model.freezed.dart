@@ -21,20 +21,20 @@ LoginRequestModel _$LoginRequestModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$LoginRequestModel {
-  /// 소셜 플랫폼 (`GOOGLE`, `APPLE`)
-  String get socialPlatform => throw _privateConstructorUsedError;
-
   /// Firebase ID Token
   String get idToken => throw _privateConstructorUsedError;
 
-  /// FCM 디바이스 토큰
-  String get fcmToken => throw _privateConstructorUsedError;
+  /// 소셜 로그인 제공자 (`GOOGLE`, `APPLE`)
+  String get socialType => throw _privateConstructorUsedError;
 
   /// 디바이스 타입 (`IOS`, `ANDROID`)
   String get deviceType => throw _privateConstructorUsedError;
 
   /// 고유 디바이스 ID
   String get deviceId => throw _privateConstructorUsedError;
+
+  /// FCM 디바이스 토큰 (선택 — null이면 전송하지 않음)
+  String? get fcmToken => throw _privateConstructorUsedError;
 
   /// Serializes this LoginRequestModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -54,11 +54,11 @@ abstract class $LoginRequestModelCopyWith<$Res> {
   ) = _$LoginRequestModelCopyWithImpl<$Res, LoginRequestModel>;
   @useResult
   $Res call({
-    String socialPlatform,
     String idToken,
-    String fcmToken,
+    String socialType,
     String deviceType,
     String deviceId,
+    String? fcmToken,
   });
 }
 
@@ -77,25 +77,21 @@ class _$LoginRequestModelCopyWithImpl<$Res, $Val extends LoginRequestModel>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? socialPlatform = null,
     Object? idToken = null,
-    Object? fcmToken = null,
+    Object? socialType = null,
     Object? deviceType = null,
     Object? deviceId = null,
+    Object? fcmToken = freezed,
   }) {
     return _then(
       _value.copyWith(
-            socialPlatform: null == socialPlatform
-                ? _value.socialPlatform
-                : socialPlatform // ignore: cast_nullable_to_non_nullable
-                      as String,
             idToken: null == idToken
                 ? _value.idToken
                 : idToken // ignore: cast_nullable_to_non_nullable
                       as String,
-            fcmToken: null == fcmToken
-                ? _value.fcmToken
-                : fcmToken // ignore: cast_nullable_to_non_nullable
+            socialType: null == socialType
+                ? _value.socialType
+                : socialType // ignore: cast_nullable_to_non_nullable
                       as String,
             deviceType: null == deviceType
                 ? _value.deviceType
@@ -105,6 +101,10 @@ class _$LoginRequestModelCopyWithImpl<$Res, $Val extends LoginRequestModel>
                 ? _value.deviceId
                 : deviceId // ignore: cast_nullable_to_non_nullable
                       as String,
+            fcmToken: freezed == fcmToken
+                ? _value.fcmToken
+                : fcmToken // ignore: cast_nullable_to_non_nullable
+                      as String?,
           )
           as $Val,
     );
@@ -121,11 +121,11 @@ abstract class _$$LoginRequestModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    String socialPlatform,
     String idToken,
-    String fcmToken,
+    String socialType,
     String deviceType,
     String deviceId,
+    String? fcmToken,
   });
 }
 
@@ -143,25 +143,21 @@ class __$$LoginRequestModelImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? socialPlatform = null,
     Object? idToken = null,
-    Object? fcmToken = null,
+    Object? socialType = null,
     Object? deviceType = null,
     Object? deviceId = null,
+    Object? fcmToken = freezed,
   }) {
     return _then(
       _$LoginRequestModelImpl(
-        socialPlatform: null == socialPlatform
-            ? _value.socialPlatform
-            : socialPlatform // ignore: cast_nullable_to_non_nullable
-                  as String,
         idToken: null == idToken
             ? _value.idToken
             : idToken // ignore: cast_nullable_to_non_nullable
                   as String,
-        fcmToken: null == fcmToken
-            ? _value.fcmToken
-            : fcmToken // ignore: cast_nullable_to_non_nullable
+        socialType: null == socialType
+            ? _value.socialType
+            : socialType // ignore: cast_nullable_to_non_nullable
                   as String,
         deviceType: null == deviceType
             ? _value.deviceType
@@ -171,36 +167,37 @@ class __$$LoginRequestModelImplCopyWithImpl<$Res>
             ? _value.deviceId
             : deviceId // ignore: cast_nullable_to_non_nullable
                   as String,
+        fcmToken: freezed == fcmToken
+            ? _value.fcmToken
+            : fcmToken // ignore: cast_nullable_to_non_nullable
+                  as String?,
       ),
     );
   }
 }
 
 /// @nodoc
-@JsonSerializable()
+
+@JsonSerializable(includeIfNull: false)
 class _$LoginRequestModelImpl implements _LoginRequestModel {
   const _$LoginRequestModelImpl({
-    required this.socialPlatform,
     required this.idToken,
-    required this.fcmToken,
+    required this.socialType,
     required this.deviceType,
     required this.deviceId,
+    this.fcmToken,
   });
 
   factory _$LoginRequestModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$LoginRequestModelImplFromJson(json);
 
-  /// 소셜 플랫폼 (`GOOGLE`, `APPLE`)
-  @override
-  final String socialPlatform;
-
   /// Firebase ID Token
   @override
   final String idToken;
 
-  /// FCM 디바이스 토큰
+  /// 소셜 로그인 제공자 (`GOOGLE`, `APPLE`)
   @override
-  final String fcmToken;
+  final String socialType;
 
   /// 디바이스 타입 (`IOS`, `ANDROID`)
   @override
@@ -210,9 +207,13 @@ class _$LoginRequestModelImpl implements _LoginRequestModel {
   @override
   final String deviceId;
 
+  /// FCM 디바이스 토큰 (선택 — null이면 전송하지 않음)
+  @override
+  final String? fcmToken;
+
   @override
   String toString() {
-    return 'LoginRequestModel(socialPlatform: $socialPlatform, idToken: $idToken, fcmToken: $fcmToken, deviceType: $deviceType, deviceId: $deviceId)';
+    return 'LoginRequestModel(idToken: $idToken, socialType: $socialType, deviceType: $deviceType, deviceId: $deviceId, fcmToken: $fcmToken)';
   }
 
   @override
@@ -220,26 +221,26 @@ class _$LoginRequestModelImpl implements _LoginRequestModel {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$LoginRequestModelImpl &&
-            (identical(other.socialPlatform, socialPlatform) ||
-                other.socialPlatform == socialPlatform) &&
             (identical(other.idToken, idToken) || other.idToken == idToken) &&
-            (identical(other.fcmToken, fcmToken) ||
-                other.fcmToken == fcmToken) &&
+            (identical(other.socialType, socialType) ||
+                other.socialType == socialType) &&
             (identical(other.deviceType, deviceType) ||
                 other.deviceType == deviceType) &&
             (identical(other.deviceId, deviceId) ||
-                other.deviceId == deviceId));
+                other.deviceId == deviceId) &&
+            (identical(other.fcmToken, fcmToken) ||
+                other.fcmToken == fcmToken));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
     runtimeType,
-    socialPlatform,
     idToken,
-    fcmToken,
+    socialType,
     deviceType,
     deviceId,
+    fcmToken,
   );
 
   /// Create a copy of LoginRequestModel
@@ -261,27 +262,23 @@ class _$LoginRequestModelImpl implements _LoginRequestModel {
 
 abstract class _LoginRequestModel implements LoginRequestModel {
   const factory _LoginRequestModel({
-    required final String socialPlatform,
     required final String idToken,
-    required final String fcmToken,
+    required final String socialType,
     required final String deviceType,
     required final String deviceId,
+    final String? fcmToken,
   }) = _$LoginRequestModelImpl;
 
   factory _LoginRequestModel.fromJson(Map<String, dynamic> json) =
       _$LoginRequestModelImpl.fromJson;
 
-  /// 소셜 플랫폼 (`GOOGLE`, `APPLE`)
-  @override
-  String get socialPlatform;
-
   /// Firebase ID Token
   @override
   String get idToken;
 
-  /// FCM 디바이스 토큰
+  /// 소셜 로그인 제공자 (`GOOGLE`, `APPLE`)
   @override
-  String get fcmToken;
+  String get socialType;
 
   /// 디바이스 타입 (`IOS`, `ANDROID`)
   @override
@@ -290,6 +287,10 @@ abstract class _LoginRequestModel implements LoginRequestModel {
   /// 고유 디바이스 ID
   @override
   String get deviceId;
+
+  /// FCM 디바이스 토큰 (선택 — null이면 전송하지 않음)
+  @override
+  String? get fcmToken;
 
   /// Create a copy of LoginRequestModel
   /// with the given fields replaced by the non-null parameter values.

@@ -47,7 +47,9 @@ class _FavoritePageState extends ConsumerState<FavoritePage> {
   void initState() {
     super.initState();
     // 게스트는 저장한 코스가 없음 — empty state로 시작 (게스트 스펙 §7.2)
-    _saved = ref.read(guestRestrictedProvider) ? [] : mockCourses.take(3).toList(); // 저장 데모용 부분 시드 (전체 시드는 저장 기능 체감 저하)
+    _saved = ref.read(guestRestrictedProvider)
+        ? []
+        : mockCourses.take(3).toList(); // 저장 데모용 부분 시드 (전체 시드는 저장 기능 체감 저하)
   }
 
   /// 정렬 적용된 표시 리스트 — _saved(리스트 순서 = 저장 순서로 간주)는 불변 유지.
@@ -60,9 +62,11 @@ class _FavoritePageState extends ConsumerState<FavoritePage> {
         return _desc ? _saved.reversed.toList() : _saved;
       case _FavoriteSort.duration:
         final list = List.of(_saved)
-          ..sort((a, b) => _desc
-              ? b.durationMinutes.compareTo(a.durationMinutes)
-              : a.durationMinutes.compareTo(b.durationMinutes));
+          ..sort(
+            (a, b) => _desc
+                ? b.durationMinutes.compareTo(a.durationMinutes)
+                : a.durationMinutes.compareTo(b.durationMinutes),
+          );
         return list;
     }
   }
@@ -100,8 +104,9 @@ class _FavoritePageState extends ConsumerState<FavoritePage> {
                 children: [
                   Text(
                     '저장한 코스',
-                    style: AppTextStyles.display19
-                        .copyWith(color: AppColors.ink),
+                    style: AppTextStyles.display19.copyWith(
+                      color: AppColors.ink,
+                    ),
                   ),
                   SizedBox(width: 8.w),
                   AppBadge(

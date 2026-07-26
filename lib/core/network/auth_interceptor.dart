@@ -54,7 +54,6 @@ class AuthInterceptor extends QueuedInterceptor {
   static const List<String> _publicPaths = [
     ApiEndpoints.login,
     ApiEndpoints.reissue,
-    ApiEndpoints.checkNickname, // 닉네임 중복 확인 (인증 불필요)
   ];
 
   /// 해당 경로가 인증 불필요한 공개 API인지 확인
@@ -92,14 +91,6 @@ class AuthInterceptor extends QueuedInterceptor {
       return handler.next(err);
     }
 
-    // reissue API 자체가 401이면 강제 로그아웃
-    if (err.requestOptions.path.contains(ApiEndpoints.reissue)) {
-      final apiError = ApiErrorResponse.tryParse(err.response?.data);
-      // errorCode로 정확한 원인을 파악해 messageKey 결정 — 백엔드 한국어 detail 대신 i18n 키 전달
-      await _handleForceLogout(messageKey: _reissueMessageKey(apiError));
-      return handler.next(err);
-    }
-
     // 공개 API의 401은 토큰 재발급 대상이 아님
     if (_isPublicPath(err.requestOptions.path)) {
       return handler.next(err);
@@ -130,7 +121,10 @@ class AuthInterceptor extends QueuedInterceptor {
       _logReissueFailure(e);
       if (_isRefreshTokenRejected(e)) {
         // 서버가 명시적으로 refresh token을 거부(400/401/403) — 재시도해도 소용 없음
-        await _handleForceLogout(messageKey: 'errorAuthExpired');
+        final apiError = e is DioException
+            ? ApiErrorResponse.tryParse(e.response?.data)
+            : null;
+        await _handleForceLogout(messageKey: _reissueMessageKey(apiError));
         return handler.next(err);
       }
 
@@ -145,7 +139,6 @@ class AuthInterceptor extends QueuedInterceptor {
 
     if (kDebugMode) {
       debugPrint('🔑 [Reissue] 응답 수신: statusCode=${response.statusCode}');
-      debugPrint('   responseData: ${response.data}');
     }
 
     if (response.statusCode != 200) {
@@ -159,7 +152,7 @@ class AuthInterceptor extends QueuedInterceptor {
     final tokens = _parseTokens(response.data);
     if (tokens == null) {
       if (kDebugMode) {
-        debugPrint('❌ 토큰 재발급 응답 파싱 실패: responseData=${response.data}');
+        debugPrint('❌ 토큰 재발급 응답 파싱 실패: statusCode=${response.statusCode}');
       }
       // 200이지만 토큰 형식이 잘못됨 → 서버 응답 이상, 일시 오류로 안내
       await _handleForceLogout(messageKey: 'errorTemporaryRetry');
@@ -215,11 +208,8 @@ class AuthInterceptor extends QueuedInterceptor {
   _ReissuedTokens? _parseTokens(dynamic data) {
     if (data is! Map<String, dynamic>) return null;
 
-    final tokens = data['tokens'];
-    if (tokens is! Map<String, dynamic>) return null;
-
-    final accessToken = tokens['accessToken'];
-    final refreshToken = tokens['refreshToken'];
+    final accessToken = data['accessToken'];
+    final refreshToken = data['refreshToken'];
     if (accessToken is! String || refreshToken is! String) return null;
     if (accessToken.trim().isEmpty || refreshToken.trim().isEmpty) return null;
 
@@ -230,23 +220,20 @@ class AuthInterceptor extends QueuedInterceptor {
   }
 
   void _logReissueFailure(Object error) {
-    if (kDebugMode) {
-      if (error is DioException) {
-        debugPrint('❌ [Reissue] 토큰 재발급 실패');
-        debugPrint('   statusCode: ${error.response?.statusCode}');
-        debugPrint('   responseData: ${error.response?.data}');
-        debugPrint('   requestURL: ${error.requestOptions.uri}');
-        debugPrint('   requestData: ${error.requestOptions.data}');
-        final apiError = ApiErrorResponse.tryParse(error.response?.data);
-        if (apiError != null) {
-          debugPrint('   RFC7807 title: ${apiError.title}');
-          debugPrint('   RFC7807 errorCode: ${apiError.errorCode}');
-          debugPrint('   RFC7807 detail: ${apiError.detail}');
-          debugPrint('   RFC7807 instance: ${apiError.instance}');
-        }
-      } else {
-        debugPrint('❌ [Reissue] 토큰 재발급 실패 (non-Dio): $error');
+    if (!kDebugMode) return;
+
+    if (error is DioException) {
+      debugPrint('❌ [Reissue] 토큰 재발급 실패');
+      debugPrint('   statusCode: ${error.response?.statusCode}');
+      debugPrint('   path: ${error.requestOptions.path}');
+      // 요청/응답 본문에는 refreshToken이 들어 있어 출력하지 않는다.
+      final apiError = ApiErrorResponse.tryParse(error.response?.data);
+      if (apiError != null) {
+        debugPrint('   errorCode: ${apiError.errorCode}');
+        debugPrint('   errorMessage: ${apiError.errorMessage}');
       }
+    } else {
+      debugPrint('❌ [Reissue] 토큰 재발급 실패 (non-Dio): $error');
     }
   }
 
@@ -306,12 +293,13 @@ class AuthInterceptor extends QueuedInterceptor {
 
   /// reissue 에러 응답을 분석해 강제 로그아웃 messageKey를 결정합니다.
   ///
-  /// 토큰 관련 errorCode → 세션 만료 키, 그 외 → 일시 오류 키로 매핑.
+  /// 정본 errorCode 기준. `REFRESH_TOKEN_NOT_FOUND`는 "다른 기기 로그인으로
+  /// 무효화됨"도 포함하는데, 사용자 입장에서는 세션 만료와 동일하므로 같이 묶는다.
   String _reissueMessageKey(ApiErrorResponse? apiError) {
     switch (apiError?.errorCode) {
-      case 'REFRESH_TOKEN_EXPIRED':
-      case 'ACCESS_TOKEN_EXPIRED':
       case 'INVALID_TOKEN':
+      case 'REFRESH_TOKEN_NOT_FOUND':
+      case 'REFRESH_TOKEN_MISMATCH':
         return 'errorAuthExpired';
       default:
         return 'errorTemporaryRetry';

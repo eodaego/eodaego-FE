@@ -9,19 +9,19 @@ part of 'login_request_model.dart';
 _$LoginRequestModelImpl _$$LoginRequestModelImplFromJson(
   Map<String, dynamic> json,
 ) => _$LoginRequestModelImpl(
-  socialPlatform: json['socialPlatform'] as String,
   idToken: json['idToken'] as String,
-  fcmToken: json['fcmToken'] as String,
+  socialType: json['socialType'] as String,
   deviceType: json['deviceType'] as String,
   deviceId: json['deviceId'] as String,
+  fcmToken: json['fcmToken'] as String?,
 );
 
 Map<String, dynamic> _$$LoginRequestModelImplToJson(
   _$LoginRequestModelImpl instance,
 ) => <String, dynamic>{
-  'socialPlatform': instance.socialPlatform,
   'idToken': instance.idToken,
-  'fcmToken': instance.fcmToken,
+  'socialType': instance.socialType,
   'deviceType': instance.deviceType,
   'deviceId': instance.deviceId,
+  if (instance.fcmToken case final value?) 'fcmToken': value,
 };

@@ -34,8 +34,9 @@ class HomePage extends StatelessWidget {
                 children: [
                   Text(
                     '어대GO',
-                    style: AppTextStyles.display19
-                        .copyWith(color: AppColors.ink),
+                    style: AppTextStyles.display19.copyWith(
+                      color: AppColors.ink,
+                    ),
                   ),
                   const Spacer(),
                   IconButton(
@@ -89,8 +90,7 @@ class _ParkStatusBar extends StatelessWidget {
           SizedBox(width: 8.w),
           Text(
             '${mockParkStatus.weatherLabel} ${mockParkStatus.temperatureC}°',
-            style:
-                AppTextStyles.label16Semibold.copyWith(color: AppColors.ink),
+            style: AppTextStyles.label16Semibold.copyWith(color: AppColors.ink),
           ),
           const Spacer(),
           Text(
@@ -133,14 +133,14 @@ class _CoursePreviewCard extends ConsumerWidget {
             children: [
               Text(
                 '오늘의 추천 코스',
-                style: AppTextStyles.display16
-                    .copyWith(color: AppColors.primaryDark),
+                style: AppTextStyles.display16.copyWith(
+                  color: AppColors.primaryDark,
+                ),
               ),
               SizedBox(height: 8.h),
               Text(
                 course.title,
-                style:
-                    AppTextStyles.display19.copyWith(color: AppColors.ink),
+                style: AppTextStyles.display19.copyWith(color: AppColors.ink),
               ),
               SizedBox(height: 10.h),
               Row(
@@ -185,9 +185,7 @@ class _DogamProgressCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final counts = {
       for (final c in DogamCategory.values)
-        c: mockDogamItems
-            .where((e) => e.category == c && e.collected)
-            .length,
+        c: mockDogamItems.where((e) => e.category == c && e.collected).length,
     };
     return Material(
       color: AppColors.surface,
@@ -207,8 +205,9 @@ class _DogamProgressCard extends StatelessWidget {
                 children: [
                   Text(
                     '나의 도감',
-                    style: AppTextStyles.display16
-                        .copyWith(color: AppColors.ink),
+                    style: AppTextStyles.display16.copyWith(
+                      color: AppColors.ink,
+                    ),
                   ),
                   const Spacer(),
                   AppBadge(
@@ -274,8 +273,9 @@ class _LinkRow extends StatelessWidget {
             children: [
               Text(
                 label,
-                style: AppTextStyles.label16Semibold
-                    .copyWith(color: AppColors.ink),
+                style: AppTextStyles.label16Semibold.copyWith(
+                  color: AppColors.ink,
+                ),
               ),
               const Spacer(),
               Icon(icon, size: 22.w, color: AppColors.muted),

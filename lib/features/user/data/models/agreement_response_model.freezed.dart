@@ -29,10 +29,10 @@ mixin _$AgreementResponseModel {
   /// 개인정보처리방침 동의 여부
   bool get privacyPolicyAgreed => throw _privateConstructorUsedError;
 
-  /// 위치정보 이용약관 동의 여부
-  bool get locationTermsAgreed => throw _privateConstructorUsedError;
+  /// 위치정보 수집 동의 여부
+  bool get locationInfoAgreed => throw _privateConstructorUsedError;
 
-  /// 마케팅 수신 동의 여부
+  /// 마케팅 정보 수신 동의 여부
   bool get marketingAgreed => throw _privateConstructorUsedError;
 
   /// 필수 약관 최초 동의 시각 (미동의 시 null)
@@ -61,7 +61,7 @@ abstract class $AgreementResponseModelCopyWith<$Res> {
   $Res call({
     bool termsOfServiceAgreed,
     bool privacyPolicyAgreed,
-    bool locationTermsAgreed,
+    bool locationInfoAgreed,
     bool marketingAgreed,
     String? termsAgreedAt,
     String? marketingAgreedAt,
@@ -88,7 +88,7 @@ class _$AgreementResponseModelCopyWithImpl<
   $Res call({
     Object? termsOfServiceAgreed = null,
     Object? privacyPolicyAgreed = null,
-    Object? locationTermsAgreed = null,
+    Object? locationInfoAgreed = null,
     Object? marketingAgreed = null,
     Object? termsAgreedAt = freezed,
     Object? marketingAgreedAt = freezed,
@@ -103,9 +103,9 @@ class _$AgreementResponseModelCopyWithImpl<
                 ? _value.privacyPolicyAgreed
                 : privacyPolicyAgreed // ignore: cast_nullable_to_non_nullable
                       as bool,
-            locationTermsAgreed: null == locationTermsAgreed
-                ? _value.locationTermsAgreed
-                : locationTermsAgreed // ignore: cast_nullable_to_non_nullable
+            locationInfoAgreed: null == locationInfoAgreed
+                ? _value.locationInfoAgreed
+                : locationInfoAgreed // ignore: cast_nullable_to_non_nullable
                       as bool,
             marketingAgreed: null == marketingAgreed
                 ? _value.marketingAgreed
@@ -137,7 +137,7 @@ abstract class _$$AgreementResponseModelImplCopyWith<$Res>
   $Res call({
     bool termsOfServiceAgreed,
     bool privacyPolicyAgreed,
-    bool locationTermsAgreed,
+    bool locationInfoAgreed,
     bool marketingAgreed,
     String? termsAgreedAt,
     String? marketingAgreedAt,
@@ -161,7 +161,7 @@ class __$$AgreementResponseModelImplCopyWithImpl<$Res>
   $Res call({
     Object? termsOfServiceAgreed = null,
     Object? privacyPolicyAgreed = null,
-    Object? locationTermsAgreed = null,
+    Object? locationInfoAgreed = null,
     Object? marketingAgreed = null,
     Object? termsAgreedAt = freezed,
     Object? marketingAgreedAt = freezed,
@@ -176,9 +176,9 @@ class __$$AgreementResponseModelImplCopyWithImpl<$Res>
             ? _value.privacyPolicyAgreed
             : privacyPolicyAgreed // ignore: cast_nullable_to_non_nullable
                   as bool,
-        locationTermsAgreed: null == locationTermsAgreed
-            ? _value.locationTermsAgreed
-            : locationTermsAgreed // ignore: cast_nullable_to_non_nullable
+        locationInfoAgreed: null == locationInfoAgreed
+            ? _value.locationInfoAgreed
+            : locationInfoAgreed // ignore: cast_nullable_to_non_nullable
                   as bool,
         marketingAgreed: null == marketingAgreed
             ? _value.marketingAgreed
@@ -201,10 +201,10 @@ class __$$AgreementResponseModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$AgreementResponseModelImpl implements _AgreementResponseModel {
   const _$AgreementResponseModelImpl({
-    required this.termsOfServiceAgreed,
-    required this.privacyPolicyAgreed,
-    required this.locationTermsAgreed,
-    required this.marketingAgreed,
+    this.termsOfServiceAgreed = false,
+    this.privacyPolicyAgreed = false,
+    this.locationInfoAgreed = false,
+    this.marketingAgreed = false,
     this.termsAgreedAt,
     this.marketingAgreedAt,
   });
@@ -214,18 +214,22 @@ class _$AgreementResponseModelImpl implements _AgreementResponseModel {
 
   /// 이용약관 동의 여부
   @override
+  @JsonKey()
   final bool termsOfServiceAgreed;
 
   /// 개인정보처리방침 동의 여부
   @override
+  @JsonKey()
   final bool privacyPolicyAgreed;
 
-  /// 위치정보 이용약관 동의 여부
+  /// 위치정보 수집 동의 여부
   @override
-  final bool locationTermsAgreed;
+  @JsonKey()
+  final bool locationInfoAgreed;
 
-  /// 마케팅 수신 동의 여부
+  /// 마케팅 정보 수신 동의 여부
   @override
+  @JsonKey()
   final bool marketingAgreed;
 
   /// 필수 약관 최초 동의 시각 (미동의 시 null)
@@ -238,7 +242,7 @@ class _$AgreementResponseModelImpl implements _AgreementResponseModel {
 
   @override
   String toString() {
-    return 'AgreementResponseModel(termsOfServiceAgreed: $termsOfServiceAgreed, privacyPolicyAgreed: $privacyPolicyAgreed, locationTermsAgreed: $locationTermsAgreed, marketingAgreed: $marketingAgreed, termsAgreedAt: $termsAgreedAt, marketingAgreedAt: $marketingAgreedAt)';
+    return 'AgreementResponseModel(termsOfServiceAgreed: $termsOfServiceAgreed, privacyPolicyAgreed: $privacyPolicyAgreed, locationInfoAgreed: $locationInfoAgreed, marketingAgreed: $marketingAgreed, termsAgreedAt: $termsAgreedAt, marketingAgreedAt: $marketingAgreedAt)';
   }
 
   @override
@@ -250,8 +254,8 @@ class _$AgreementResponseModelImpl implements _AgreementResponseModel {
                 other.termsOfServiceAgreed == termsOfServiceAgreed) &&
             (identical(other.privacyPolicyAgreed, privacyPolicyAgreed) ||
                 other.privacyPolicyAgreed == privacyPolicyAgreed) &&
-            (identical(other.locationTermsAgreed, locationTermsAgreed) ||
-                other.locationTermsAgreed == locationTermsAgreed) &&
+            (identical(other.locationInfoAgreed, locationInfoAgreed) ||
+                other.locationInfoAgreed == locationInfoAgreed) &&
             (identical(other.marketingAgreed, marketingAgreed) ||
                 other.marketingAgreed == marketingAgreed) &&
             (identical(other.termsAgreedAt, termsAgreedAt) ||
@@ -266,7 +270,7 @@ class _$AgreementResponseModelImpl implements _AgreementResponseModel {
     runtimeType,
     termsOfServiceAgreed,
     privacyPolicyAgreed,
-    locationTermsAgreed,
+    locationInfoAgreed,
     marketingAgreed,
     termsAgreedAt,
     marketingAgreedAt,
@@ -292,10 +296,10 @@ class _$AgreementResponseModelImpl implements _AgreementResponseModel {
 
 abstract class _AgreementResponseModel implements AgreementResponseModel {
   const factory _AgreementResponseModel({
-    required final bool termsOfServiceAgreed,
-    required final bool privacyPolicyAgreed,
-    required final bool locationTermsAgreed,
-    required final bool marketingAgreed,
+    final bool termsOfServiceAgreed,
+    final bool privacyPolicyAgreed,
+    final bool locationInfoAgreed,
+    final bool marketingAgreed,
     final String? termsAgreedAt,
     final String? marketingAgreedAt,
   }) = _$AgreementResponseModelImpl;
@@ -311,11 +315,11 @@ abstract class _AgreementResponseModel implements AgreementResponseModel {
   @override
   bool get privacyPolicyAgreed;
 
-  /// 위치정보 이용약관 동의 여부
+  /// 위치정보 수집 동의 여부
   @override
-  bool get locationTermsAgreed;
+  bool get locationInfoAgreed;
 
-  /// 마케팅 수신 동의 여부
+  /// 마케팅 정보 수신 동의 여부
   @override
   bool get marketingAgreed;
 

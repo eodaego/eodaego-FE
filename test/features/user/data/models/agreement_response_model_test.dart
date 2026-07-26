@@ -7,7 +7,7 @@ void main() {
       final json = {
         'termsOfServiceAgreed': true,
         'privacyPolicyAgreed': false,
-        'locationTermsAgreed': true,
+        'locationInfoAgreed': true,
         'marketingAgreed': false,
         'termsAgreedAt': '2026-04-15T10:00:00+09:00',
         'marketingAgreedAt': null,
@@ -17,7 +17,7 @@ void main() {
 
       expect(model.termsOfServiceAgreed, true);
       expect(model.privacyPolicyAgreed, false);
-      expect(model.locationTermsAgreed, true);
+      expect(model.locationInfoAgreed, true);
       expect(model.marketingAgreed, false);
       expect(model.termsAgreedAt, '2026-04-15T10:00:00+09:00');
       expect(model.marketingAgreedAt, isNull);
@@ -27,7 +27,7 @@ void main() {
       final json = {
         'termsOfServiceAgreed': false,
         'privacyPolicyAgreed': false,
-        'locationTermsAgreed': false,
+        'locationInfoAgreed': false,
         'marketingAgreed': false,
       };
 

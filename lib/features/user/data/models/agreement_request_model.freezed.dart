@@ -23,17 +23,17 @@ AgreementRequestModel _$AgreementRequestModelFromJson(
 
 /// @nodoc
 mixin _$AgreementRequestModel {
-  /// 이용약관 동의 여부 (필수)
-  bool get termsOfService => throw _privateConstructorUsedError;
+  /// 이용약관 동의 여부 (필수, true여야 함)
+  bool get termsOfServiceAgreed => throw _privateConstructorUsedError;
 
-  /// 개인정보 처리방침 동의 여부 (필수)
-  bool get privacyPolicy => throw _privateConstructorUsedError;
+  /// 개인정보처리방침 동의 여부 (필수, true여야 함)
+  bool get privacyPolicyAgreed => throw _privateConstructorUsedError;
 
-  /// 위치정보 이용약관 동의 여부 (필수)
-  bool get locationTerms => throw _privateConstructorUsedError;
+  /// 위치정보 수집 동의 여부 (필수, true여야 함)
+  bool get locationInfoAgreed => throw _privateConstructorUsedError;
 
-  /// 마케팅 수신 동의 여부 (선택)
-  bool get marketing => throw _privateConstructorUsedError;
+  /// 마케팅 정보 수신 동의 여부 (선택)
+  bool get marketingAgreed => throw _privateConstructorUsedError;
 
   /// Serializes this AgreementRequestModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -53,10 +53,10 @@ abstract class $AgreementRequestModelCopyWith<$Res> {
   ) = _$AgreementRequestModelCopyWithImpl<$Res, AgreementRequestModel>;
   @useResult
   $Res call({
-    bool termsOfService,
-    bool privacyPolicy,
-    bool locationTerms,
-    bool marketing,
+    bool termsOfServiceAgreed,
+    bool privacyPolicyAgreed,
+    bool locationInfoAgreed,
+    bool marketingAgreed,
   });
 }
 
@@ -78,28 +78,28 @@ class _$AgreementRequestModelCopyWithImpl<
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? termsOfService = null,
-    Object? privacyPolicy = null,
-    Object? locationTerms = null,
-    Object? marketing = null,
+    Object? termsOfServiceAgreed = null,
+    Object? privacyPolicyAgreed = null,
+    Object? locationInfoAgreed = null,
+    Object? marketingAgreed = null,
   }) {
     return _then(
       _value.copyWith(
-            termsOfService: null == termsOfService
-                ? _value.termsOfService
-                : termsOfService // ignore: cast_nullable_to_non_nullable
+            termsOfServiceAgreed: null == termsOfServiceAgreed
+                ? _value.termsOfServiceAgreed
+                : termsOfServiceAgreed // ignore: cast_nullable_to_non_nullable
                       as bool,
-            privacyPolicy: null == privacyPolicy
-                ? _value.privacyPolicy
-                : privacyPolicy // ignore: cast_nullable_to_non_nullable
+            privacyPolicyAgreed: null == privacyPolicyAgreed
+                ? _value.privacyPolicyAgreed
+                : privacyPolicyAgreed // ignore: cast_nullable_to_non_nullable
                       as bool,
-            locationTerms: null == locationTerms
-                ? _value.locationTerms
-                : locationTerms // ignore: cast_nullable_to_non_nullable
+            locationInfoAgreed: null == locationInfoAgreed
+                ? _value.locationInfoAgreed
+                : locationInfoAgreed // ignore: cast_nullable_to_non_nullable
                       as bool,
-            marketing: null == marketing
-                ? _value.marketing
-                : marketing // ignore: cast_nullable_to_non_nullable
+            marketingAgreed: null == marketingAgreed
+                ? _value.marketingAgreed
+                : marketingAgreed // ignore: cast_nullable_to_non_nullable
                       as bool,
           )
           as $Val,
@@ -117,10 +117,10 @@ abstract class _$$AgreementRequestModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    bool termsOfService,
-    bool privacyPolicy,
-    bool locationTerms,
-    bool marketing,
+    bool termsOfServiceAgreed,
+    bool privacyPolicyAgreed,
+    bool locationInfoAgreed,
+    bool marketingAgreed,
   });
 }
 
@@ -139,28 +139,28 @@ class __$$AgreementRequestModelImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? termsOfService = null,
-    Object? privacyPolicy = null,
-    Object? locationTerms = null,
-    Object? marketing = null,
+    Object? termsOfServiceAgreed = null,
+    Object? privacyPolicyAgreed = null,
+    Object? locationInfoAgreed = null,
+    Object? marketingAgreed = null,
   }) {
     return _then(
       _$AgreementRequestModelImpl(
-        termsOfService: null == termsOfService
-            ? _value.termsOfService
-            : termsOfService // ignore: cast_nullable_to_non_nullable
+        termsOfServiceAgreed: null == termsOfServiceAgreed
+            ? _value.termsOfServiceAgreed
+            : termsOfServiceAgreed // ignore: cast_nullable_to_non_nullable
                   as bool,
-        privacyPolicy: null == privacyPolicy
-            ? _value.privacyPolicy
-            : privacyPolicy // ignore: cast_nullable_to_non_nullable
+        privacyPolicyAgreed: null == privacyPolicyAgreed
+            ? _value.privacyPolicyAgreed
+            : privacyPolicyAgreed // ignore: cast_nullable_to_non_nullable
                   as bool,
-        locationTerms: null == locationTerms
-            ? _value.locationTerms
-            : locationTerms // ignore: cast_nullable_to_non_nullable
+        locationInfoAgreed: null == locationInfoAgreed
+            ? _value.locationInfoAgreed
+            : locationInfoAgreed // ignore: cast_nullable_to_non_nullable
                   as bool,
-        marketing: null == marketing
-            ? _value.marketing
-            : marketing // ignore: cast_nullable_to_non_nullable
+        marketingAgreed: null == marketingAgreed
+            ? _value.marketingAgreed
+            : marketingAgreed // ignore: cast_nullable_to_non_nullable
                   as bool,
       ),
     );
@@ -171,34 +171,34 @@ class __$$AgreementRequestModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$AgreementRequestModelImpl implements _AgreementRequestModel {
   const _$AgreementRequestModelImpl({
-    required this.termsOfService,
-    required this.privacyPolicy,
-    required this.locationTerms,
-    required this.marketing,
+    required this.termsOfServiceAgreed,
+    required this.privacyPolicyAgreed,
+    required this.locationInfoAgreed,
+    required this.marketingAgreed,
   });
 
   factory _$AgreementRequestModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$AgreementRequestModelImplFromJson(json);
 
-  /// 이용약관 동의 여부 (필수)
+  /// 이용약관 동의 여부 (필수, true여야 함)
   @override
-  final bool termsOfService;
+  final bool termsOfServiceAgreed;
 
-  /// 개인정보 처리방침 동의 여부 (필수)
+  /// 개인정보처리방침 동의 여부 (필수, true여야 함)
   @override
-  final bool privacyPolicy;
+  final bool privacyPolicyAgreed;
 
-  /// 위치정보 이용약관 동의 여부 (필수)
+  /// 위치정보 수집 동의 여부 (필수, true여야 함)
   @override
-  final bool locationTerms;
+  final bool locationInfoAgreed;
 
-  /// 마케팅 수신 동의 여부 (선택)
+  /// 마케팅 정보 수신 동의 여부 (선택)
   @override
-  final bool marketing;
+  final bool marketingAgreed;
 
   @override
   String toString() {
-    return 'AgreementRequestModel(termsOfService: $termsOfService, privacyPolicy: $privacyPolicy, locationTerms: $locationTerms, marketing: $marketing)';
+    return 'AgreementRequestModel(termsOfServiceAgreed: $termsOfServiceAgreed, privacyPolicyAgreed: $privacyPolicyAgreed, locationInfoAgreed: $locationInfoAgreed, marketingAgreed: $marketingAgreed)';
   }
 
   @override
@@ -206,24 +206,24 @@ class _$AgreementRequestModelImpl implements _AgreementRequestModel {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$AgreementRequestModelImpl &&
-            (identical(other.termsOfService, termsOfService) ||
-                other.termsOfService == termsOfService) &&
-            (identical(other.privacyPolicy, privacyPolicy) ||
-                other.privacyPolicy == privacyPolicy) &&
-            (identical(other.locationTerms, locationTerms) ||
-                other.locationTerms == locationTerms) &&
-            (identical(other.marketing, marketing) ||
-                other.marketing == marketing));
+            (identical(other.termsOfServiceAgreed, termsOfServiceAgreed) ||
+                other.termsOfServiceAgreed == termsOfServiceAgreed) &&
+            (identical(other.privacyPolicyAgreed, privacyPolicyAgreed) ||
+                other.privacyPolicyAgreed == privacyPolicyAgreed) &&
+            (identical(other.locationInfoAgreed, locationInfoAgreed) ||
+                other.locationInfoAgreed == locationInfoAgreed) &&
+            (identical(other.marketingAgreed, marketingAgreed) ||
+                other.marketingAgreed == marketingAgreed));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
     runtimeType,
-    termsOfService,
-    privacyPolicy,
-    locationTerms,
-    marketing,
+    termsOfServiceAgreed,
+    privacyPolicyAgreed,
+    locationInfoAgreed,
+    marketingAgreed,
   );
 
   /// Create a copy of AgreementRequestModel
@@ -246,30 +246,30 @@ class _$AgreementRequestModelImpl implements _AgreementRequestModel {
 
 abstract class _AgreementRequestModel implements AgreementRequestModel {
   const factory _AgreementRequestModel({
-    required final bool termsOfService,
-    required final bool privacyPolicy,
-    required final bool locationTerms,
-    required final bool marketing,
+    required final bool termsOfServiceAgreed,
+    required final bool privacyPolicyAgreed,
+    required final bool locationInfoAgreed,
+    required final bool marketingAgreed,
   }) = _$AgreementRequestModelImpl;
 
   factory _AgreementRequestModel.fromJson(Map<String, dynamic> json) =
       _$AgreementRequestModelImpl.fromJson;
 
-  /// 이용약관 동의 여부 (필수)
+  /// 이용약관 동의 여부 (필수, true여야 함)
   @override
-  bool get termsOfService;
+  bool get termsOfServiceAgreed;
 
-  /// 개인정보 처리방침 동의 여부 (필수)
+  /// 개인정보처리방침 동의 여부 (필수, true여야 함)
   @override
-  bool get privacyPolicy;
+  bool get privacyPolicyAgreed;
 
-  /// 위치정보 이용약관 동의 여부 (필수)
+  /// 위치정보 수집 동의 여부 (필수, true여야 함)
   @override
-  bool get locationTerms;
+  bool get locationInfoAgreed;
 
-  /// 마케팅 수신 동의 여부 (선택)
+  /// 마케팅 정보 수신 동의 여부 (선택)
   @override
-  bool get marketing;
+  bool get marketingAgreed;
 
   /// Create a copy of AgreementRequestModel
   /// with the given fields replaced by the non-null parameter values.

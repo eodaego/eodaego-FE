@@ -29,15 +29,15 @@ import 'dialog_spacing.dart';
 /// AppDialog.show(
 ///   context: context,
 ///   title: '알림',
-///   message: '저장이 완료되었어요',
+///   message: '저장했어요',
 /// );
 ///
 /// // 확인/취소 다이얼로그 (2버튼)
 /// AppDialog.show(
 ///   context: context,
 ///   title: '삭제할까요?',
-///   message: '이 항목을 삭제합니다',
-///   cancelText: '취소',
+///   message: '이 항목을 지워요',
+///   cancelText: '닫기',
 ///   onConfirm: () => delete(),
 /// );
 ///
@@ -46,7 +46,7 @@ import 'dialog_spacing.dart';
 ///   context: context,
 ///   title: '코드 입력',
 ///   customContent: AppTextField(controller: ctrl, maxLength: 6),
-///   cancelText: '취소',
+///   cancelText: '닫기',
 ///   confirmText: '확인',
 ///   validator: () => ctrl.text.trim().length == 6,
 ///   onConfirm: () => submitCode(ctrl.text.trim()),
@@ -285,7 +285,7 @@ class AppDialog extends StatefulWidget {
         title: title,
         message: message,
         confirmText: confirmText ?? '확인',
-        cancelText: cancelText ?? '취소',
+        cancelText: cancelText ?? '닫기',
         isDestructive: isDestructive,
         showAvatar: showAvatar,
         avatarWidget: avatarWidget,

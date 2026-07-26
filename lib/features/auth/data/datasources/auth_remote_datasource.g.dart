@@ -27,7 +27,7 @@ class _AuthRemoteDataSource implements AuthRemoteDataSource {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/api/auth/login',
+            '/api/1/auth/login',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -45,51 +45,22 @@ class _AuthRemoteDataSource implements AuthRemoteDataSource {
   }
 
   @override
-  Future<void> logout(LogoutRequestModel request) async {
+  Future<void> logout() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = request;
+    const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<void>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/api/auth/logout',
+            '/api/1/auth/logout',
             queryParameters: queryParameters,
             data: _data,
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     await _dio.fetch<void>(_options);
-  }
-
-  @override
-  Future<TokenReissueResponseModel> reissue(
-    TokenReissueRequestModel request,
-  ) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final _data = request;
-    final _options = _setStreamType<TokenReissueResponseModel>(
-      Options(method: 'POST', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            '/api/auth/reissue',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
-    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late TokenReissueResponseModel _value;
-    try {
-      _value = TokenReissueResponseModel.fromJson(_result.data!);
-    } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
-      rethrow;
-    }
-    return _value;
   }
 
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {

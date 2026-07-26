@@ -21,9 +21,7 @@ class MainTabShell extends StatelessWidget {
       // centerDocked 기본은 절반(37) 돌출이라 과함 — 아래로 내려 돌출 완화
       floatingActionButton: Transform.translate(
         offset: Offset(0, 14.h),
-        child: _CameraFab(
-          onTap: () => context.push(RoutePaths.scan),
-        ),
+        child: _CameraFab(onTap: () => context.push(RoutePaths.scan)),
       ),
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(

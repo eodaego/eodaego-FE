@@ -18,49 +18,32 @@ class _UserRemoteDataSource implements UserRemoteDataSource {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<NicknameCheckResponseModel> checkNickname(String nickname) async {
+  Future<NicknameResponseModel> updateNickname(
+    NicknameUpdateRequestModel request,
+  ) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'nickname': nickname};
+    final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<NicknameCheckResponseModel>(
-      Options(method: 'GET', headers: _headers, extra: _extra)
+    final _data = request;
+    final _options = _setStreamType<NicknameResponseModel>(
+      Options(method: 'PATCH', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/api/user/check-nickname',
+            '/api/1/members/me/nickname',
             queryParameters: queryParameters,
             data: _data,
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late NicknameCheckResponseModel _value;
+    late NicknameResponseModel _value;
     try {
-      _value = NicknameCheckResponseModel.fromJson(_result.data!);
+      _value = NicknameResponseModel.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;
     }
     return _value;
-  }
-
-  @override
-  Future<void> updateNickname(NicknameUpdateRequestModel request) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final _data = request;
-    final _options = _setStreamType<void>(
-      Options(method: 'PATCH', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            '/api/user/me/nickname',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
-    await _dio.fetch<void>(_options);
   }
 
   @override
@@ -73,7 +56,7 @@ class _UserRemoteDataSource implements UserRemoteDataSource {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/api/user/me',
+            '/api/1/members/me',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -100,7 +83,7 @@ class _UserRemoteDataSource implements UserRemoteDataSource {
       Options(method: 'DELETE', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/api/user/me',
+            '/api/1/members/me',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -127,7 +110,7 @@ class _UserRemoteDataSource implements UserRemoteDataSource {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/api/user/agreements',
+            '/api/1/members/me/agreements',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -151,10 +134,10 @@ class _UserRemoteDataSource implements UserRemoteDataSource {
     final _headers = <String, dynamic>{};
     final _data = request;
     final _options = _setStreamType<void>(
-      Options(method: 'PUT', headers: _headers, extra: _extra)
+      Options(method: 'PATCH', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/api/user/agreements',
+            '/api/1/members/me/agreements',
             queryParameters: queryParameters,
             data: _data,
           )
