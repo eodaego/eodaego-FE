@@ -132,23 +132,19 @@ class AuthRepositoryImpl implements AuthRepository {
       await _cleanupFirebaseSession(provider);
       throw DioExceptionHandler.handle(e);
     } on FirebaseAuthException catch (e) {
+      // 취소만 타입으로 구분한다. 나머지는 코드별로 나누지 않는다 —
+      // 사용자가 할 수 있는 행동이 "다시 시도" 하나뿐이라, 실제 노출 문구는
+      // AuthNotifier._signIn이 loginNoticeKey('loginFailed')로 결정한다.
+      // 따라서 message는 로그 전용이며 messageKey를 두지 않는다.
       if (e.code == 'ERROR_ABORTED_BY_USER') {
         throw const AuthCancelledException();
       }
-      throw AuthException(
-        message: '로그인 중 오류가 발생했습니다.',
-        messageKey: 'errorLoginGeneric',
-        originalException: e,
-      );
+      throw AuthException(message: '로그인 중 오류가 발생했습니다.', originalException: e);
     } catch (e) {
       // 예상치 못한 에러
       if (e is AppException) rethrow;
 
-      throw AuthException(
-        message: '로그인 중 오류가 발생했습니다.',
-        messageKey: 'errorLoginGeneric',
-        originalException: e,
-      );
+      throw AuthException(message: '로그인 중 오류가 발생했습니다.', originalException: e);
     }
   }
 
