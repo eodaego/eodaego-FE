@@ -397,12 +397,20 @@ jobs:
       # android/gradlew는 android/.gitignore에 막혀 저장소에 없어 chmod가 실패한다.
       # Play Store 배포 워크플로우도 같은 방식(gradlew 미사용)으로 동작한다.
 
-      # APK 빌드
+      # APK 빌드 (debug)
+      #
+      # release로 빌드하지 않는다. build.gradle.kts의 release signingConfig가
+      # key.properties와 keystore를 요구하는데, 이 워크플로우는 그것들을
+      # 복원하지 않아 :app:packageRelease에서 storeFile 누락으로 실패한다.
+      # 서명된 산출물이 필요하면 TEST-APK / PLAYSTORE 워크플로우가 담당한다.
+      #
+      # 여기서 볼 것은 "컴파일이 되는가"뿐이라 debug로 충분하다.
+      # iOS 잡이 --no-codesign으로 서명을 건너뛰는 것과 같은 이유다.
       - name: Build APK
         id: build
         run: |
           echo "📦 Flutter APK 빌드 시작..."
-          flutter build apk --release
+          flutter build apk --debug
           echo "✅ APK 빌드 완료"
           ls -la ./build/app/outputs/flutter-apk/ || true
 
