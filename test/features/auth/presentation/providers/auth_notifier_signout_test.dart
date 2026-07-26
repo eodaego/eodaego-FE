@@ -25,7 +25,7 @@ class _FakeAuthRepository implements AuthRepository {
 class _TestAuthNotifier extends AuthNotifier {
   @override
   Future<AuthResultEntity?> build() async => const AuthResultEntity(
-    userId: 1,
+    userId: 'test-user-uuid',
     nickname: '테스트',
     isNewUser: false,
     requiresAgreement: false,

@@ -17,8 +17,8 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$AuthResultEntity {
-  /// 사용자 ID
-  int get userId => throw _privateConstructorUsedError;
+  /// 사용자 ID (UUID)
+  String get userId => throw _privateConstructorUsedError;
 
   /// 닉네임 (서버에서 자동 생성)
   String get nickname => throw _privateConstructorUsedError;
@@ -49,7 +49,7 @@ abstract class $AuthResultEntityCopyWith<$Res> {
   ) = _$AuthResultEntityCopyWithImpl<$Res, AuthResultEntity>;
   @useResult
   $Res call({
-    int userId,
+    String userId,
     String nickname,
     bool isNewUser,
     bool requiresAgreement,
@@ -81,7 +81,7 @@ class _$AuthResultEntityCopyWithImpl<$Res, $Val extends AuthResultEntity>
             userId: null == userId
                 ? _value.userId
                 : userId // ignore: cast_nullable_to_non_nullable
-                      as int,
+                      as String,
             nickname: null == nickname
                 ? _value.nickname
                 : nickname // ignore: cast_nullable_to_non_nullable
@@ -110,7 +110,7 @@ abstract class _$$AuthResultEntityImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    int userId,
+    String userId,
     String nickname,
     bool isNewUser,
     bool requiresAgreement,
@@ -141,7 +141,7 @@ class __$$AuthResultEntityImplCopyWithImpl<$Res>
         userId: null == userId
             ? _value.userId
             : userId // ignore: cast_nullable_to_non_nullable
-                  as int,
+                  as String,
         nickname: null == nickname
             ? _value.nickname
             : nickname // ignore: cast_nullable_to_non_nullable
@@ -169,9 +169,9 @@ class _$AuthResultEntityImpl implements _AuthResultEntity {
     required this.requiresAgreement,
   });
 
-  /// 사용자 ID
+  /// 사용자 ID (UUID)
   @override
-  final int userId;
+  final String userId;
 
   /// 닉네임 (서버에서 자동 생성)
   @override
@@ -227,15 +227,15 @@ class _$AuthResultEntityImpl implements _AuthResultEntity {
 
 abstract class _AuthResultEntity implements AuthResultEntity {
   const factory _AuthResultEntity({
-    required final int userId,
+    required final String userId,
     required final String nickname,
     required final bool isNewUser,
     required final bool requiresAgreement,
   }) = _$AuthResultEntityImpl;
 
-  /// 사용자 ID
+  /// 사용자 ID (UUID)
   @override
-  int get userId;
+  String get userId;
 
   /// 닉네임 (서버에서 자동 생성)
   @override

@@ -108,8 +108,7 @@ class FirebaseAuthDataSource {
         );
       }
       if (kDebugMode) {
-        developer.log('🔥 Firebase ID Token length: ${idToken.length}');
-        developer.log('🔥 Firebase ID Token: $idToken');
+        developer.log('🔥 Firebase ID Token 획득 (length: ${idToken.length})');
       }
 
       return idToken;

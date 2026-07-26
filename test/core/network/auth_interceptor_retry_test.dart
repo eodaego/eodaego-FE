@@ -208,7 +208,7 @@ void main() {
       reissueDio.httpClientAdapter = _StubHttpClientAdapter((options) async {
         if (options.path == ApiEndpoints.reissue) {
           return _jsonResponse(
-            '{"tokens":{"accessToken":"new-access-token","refreshToken":"new-refresh-token"}}',
+            '{"accessToken":"new-access-token","refreshToken":"new-refresh-token"}',
             200,
           );
         }
@@ -276,7 +276,7 @@ void main() {
       final reissueDio = Dio(BaseOptions(baseUrl: 'https://test.api'));
 
       reissueDio.httpClientAdapter = _StubHttpClientAdapter((options) async {
-        return _jsonResponse('{"detail":"temporary server error"}', 500);
+        return _jsonResponse('{"errorMessage":"temporary server error"}', 500);
       });
 
       final dio = _protectedDio(
@@ -311,7 +311,7 @@ void main() {
 
         reissueDio.httpClientAdapter = _StubHttpClientAdapter((options) async {
           return _jsonResponse(
-            '{"detail":"refresh token rejected"}',
+            '{"errorCode":"REFRESH_TOKEN_MISMATCH","errorMessage":"refresh token rejected"}',
             statusCode,
           );
         });
@@ -341,10 +341,7 @@ void main() {
       final reissueDio = Dio(BaseOptions(baseUrl: 'https://test.api'));
 
       reissueDio.httpClientAdapter = _StubHttpClientAdapter((options) async {
-        return _jsonResponse(
-          '{"tokens":{"accessToken":"new-access-token"}}',
-          200,
-        );
+        return _jsonResponse('{"accessToken":"new-access-token"}', 200);
       });
 
       final dio = _protectedDio(
@@ -373,7 +370,7 @@ void main() {
       reissueDio.httpClientAdapter = _StubHttpClientAdapter((options) async {
         if (options.path == ApiEndpoints.reissue) {
           return _jsonResponse(
-            '{"tokens":{"accessToken":"new-access-token","refreshToken":"new-refresh-token"}}',
+            '{"accessToken":"new-access-token","refreshToken":"new-refresh-token"}',
             200,
           );
         }
@@ -413,7 +410,7 @@ void main() {
       reissueDio.httpClientAdapter = _StubHttpClientAdapter((options) async {
         if (options.path == ApiEndpoints.reissue) {
           return _jsonResponse(
-            '{"tokens":{"accessToken":"new-access-token","refreshToken":"new-refresh-token"}}',
+            '{"accessToken":"new-access-token","refreshToken":"new-refresh-token"}',
             200,
           );
         }
@@ -453,7 +450,7 @@ void main() {
       reissueDio.httpClientAdapter = _StubHttpClientAdapter((options) async {
         if (options.path == ApiEndpoints.reissue) {
           return _jsonResponse(
-            '{"tokens":{"accessToken":"new-access-token","refreshToken":"new-refresh-token"}}',
+            '{"accessToken":"new-access-token","refreshToken":"new-refresh-token"}',
             200,
           );
         }
@@ -494,7 +491,7 @@ void main() {
       reissueDio.httpClientAdapter = _StubHttpClientAdapter((options) async {
         reissueCalled = true;
         return _jsonResponse(
-          '{"tokens":{"accessToken":"new-access-token","refreshToken":"new-refresh-token"}}',
+          '{"accessToken":"new-access-token","refreshToken":"new-refresh-token"}',
           200,
         );
       });

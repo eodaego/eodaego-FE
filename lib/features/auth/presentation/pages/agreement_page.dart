@@ -45,7 +45,7 @@ class AgreementPage extends ConsumerWidget {
                     ? () async {
                         final result = await notifier.submit();
                         if (result == AgreementSubmitResult.success) {
-                          ref
+                          await ref
                               .read(authNotifierProvider.notifier)
                               .markAgreementCompleted();
                         } else if (context.mounted) {

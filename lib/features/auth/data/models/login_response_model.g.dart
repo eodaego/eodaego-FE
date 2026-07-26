@@ -9,31 +9,21 @@ part of 'login_response_model.dart';
 _$LoginResponseModelImpl _$$LoginResponseModelImplFromJson(
   Map<String, dynamic> json,
 ) => _$LoginResponseModelImpl(
-  userId: (json['userId'] as num).toInt(),
-  nickname: json['nickname'] as String,
-  tokens: TokensModel.fromJson(json['tokens'] as Map<String, dynamic>),
-  isNewUser: json['isNewUser'] as bool,
-  requiresAgreement: json['requiresAgreement'] as bool,
+  accessToken: json['accessToken'] as String,
+  refreshToken: json['refreshToken'] as String,
+  userId: json['userId'] as String,
+  requiresAgreement: json['requiresAgreement'] as bool? ?? true,
+  firstLogin: json['firstLogin'] as bool? ?? false,
+  nickname: json['nickname'] as String? ?? '',
 );
 
 Map<String, dynamic> _$$LoginResponseModelImplToJson(
   _$LoginResponseModelImpl instance,
 ) => <String, dynamic>{
+  'accessToken': instance.accessToken,
+  'refreshToken': instance.refreshToken,
   'userId': instance.userId,
-  'nickname': instance.nickname,
-  'tokens': instance.tokens,
-  'isNewUser': instance.isNewUser,
   'requiresAgreement': instance.requiresAgreement,
+  'firstLogin': instance.firstLogin,
+  'nickname': instance.nickname,
 };
-
-_$TokensModelImpl _$$TokensModelImplFromJson(Map<String, dynamic> json) =>
-    _$TokensModelImpl(
-      accessToken: json['accessToken'] as String,
-      refreshToken: json['refreshToken'] as String,
-    );
-
-Map<String, dynamic> _$$TokensModelImplToJson(_$TokensModelImpl instance) =>
-    <String, dynamic>{
-      'accessToken': instance.accessToken,
-      'refreshToken': instance.refreshToken,
-    };

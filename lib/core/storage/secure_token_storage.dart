@@ -43,6 +43,8 @@ class SecureTokenStorage {
   static const String _refreshTokenKey = 'refresh_token';
   static const String _userIdKey = 'user_id';
   static const String _isNewUserKey = 'is_new_user';
+  static const String _nicknameKey = 'nickname';
+  static const String _requiresAgreementKey = 'requires_agreement';
 
   // ============================================
   // Token 저장
@@ -64,10 +66,9 @@ class SecureTokenStorage {
 
   /// 사용자 ID 저장
   ///
-  /// 로그인 성공 시 백엔드에서 반환한 userId를 저장합니다.
-  /// 앱 재시작 시 AuthNotifier에서 복원에 사용됩니다.
-  Future<void> saveUserId(int userId) async {
-    await _storage.write(key: _userIdKey, value: userId.toString());
+  /// 로그인 성공 시 백엔드에서 반환한 userId(UUID)를 저장합니다.
+  Future<void> saveUserId(String userId) async {
+    await _storage.write(key: _userIdKey, value: userId);
   }
 
   /// 신규 회원 여부 저장
@@ -77,6 +78,25 @@ class SecureTokenStorage {
   /// 닉네임 설정 완료 시 `false`로 갱신됩니다.
   Future<void> saveIsNewUser(bool value) async {
     await _storage.write(key: _isNewUserKey, value: value ? 'true' : 'false');
+  }
+
+  /// 닉네임 저장
+  ///
+  /// 로그인 성공 시 백엔드 응답의 `nickname`을 저장합니다.
+  /// 닉네임 설정 완료 시 서버가 확정한 값으로 갱신됩니다.
+  Future<void> saveNickname(String nickname) async {
+    await _storage.write(key: _nicknameKey, value: nickname);
+  }
+
+  /// 필수 약관 미동의 여부 저장
+  ///
+  /// 로그인 성공 시 백엔드 응답의 `requiresAgreement`를 저장합니다.
+  /// 약관 동의 완료 시 `false`로 갱신됩니다.
+  Future<void> saveRequiresAgreement(bool value) async {
+    await _storage.write(
+      key: _requiresAgreementKey,
+      value: value ? 'true' : 'false',
+    );
   }
 
   // ============================================
@@ -100,9 +120,8 @@ class SecureTokenStorage {
   /// 사용자 ID 조회
   ///
   /// 저장된 userId가 없으면 null 반환
-  Future<int?> getUserId() async {
-    final value = await _storage.read(key: _userIdKey);
-    return value != null ? int.tryParse(value) : null;
+  Future<String?> getUserId() async {
+    return await _storage.read(key: _userIdKey);
   }
 
   /// 신규 회원 여부 조회
@@ -111,6 +130,24 @@ class SecureTokenStorage {
   /// fail-safe 설계: 예외적 상황에서도 항상 false로 폴백 (기존 유저로 취급).
   Future<bool> getIsNewUser() async {
     final value = await _storage.read(key: _isNewUserKey);
+    return value == 'true';
+  }
+
+  /// 닉네임 조회
+  ///
+  /// 저장된 값이 없으면 null 반환
+  Future<String?> getNickname() async {
+    return await _storage.read(key: _nicknameKey);
+  }
+
+  /// 필수 약관 미동의 여부 조회
+  ///
+  /// **저장된 적이 없으면 null을 반환합니다.** 호출자는 null(미저장)과
+  /// false(동의 완료)를 반드시 구분해야 합니다 — 미저장을 false로 취급하면
+  /// 약관 게이트를 우회하게 됩니다.
+  Future<bool?> getRequiresAgreement() async {
+    final value = await _storage.read(key: _requiresAgreementKey);
+    if (value == null) return null;
     return value == 'true';
   }
 
@@ -127,6 +164,8 @@ class SecureTokenStorage {
       _storage.delete(key: _refreshTokenKey),
       _storage.delete(key: _userIdKey),
       _storage.delete(key: _isNewUserKey),
+      _storage.delete(key: _nicknameKey),
+      _storage.delete(key: _requiresAgreementKey),
     ]);
     if (kDebugMode) {
       debugPrint('✅ 토큰 삭제 완료');
