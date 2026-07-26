@@ -45,10 +45,7 @@ DioException _dioError(int statusCode) => DioException(
   response: Response(
     requestOptions: RequestOptions(path: '/api/1/members/me/agreements'),
     statusCode: statusCode,
-    data: {
-      'errorCode': 'INVALID_REQUEST',
-      'errorMessage': '잘못된 요청입니다.',
-    },
+    data: {'errorCode': 'INVALID_REQUEST', 'errorMessage': '잘못된 요청입니다.'},
   ),
   type: DioExceptionType.badResponse,
 );

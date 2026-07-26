@@ -30,9 +30,7 @@ void main() {
     });
 
     test('parses_when_only_error_message_present', () {
-      final result = ApiErrorResponse.tryParse({
-        'errorMessage': '서버 오류',
-      });
+      final result = ApiErrorResponse.tryParse({'errorMessage': '서버 오류'});
 
       expect(result, isNotNull);
       expect(result!.errorCode, isNull);

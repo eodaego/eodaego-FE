@@ -34,14 +34,16 @@ class QuizRewardPage extends StatelessWidget {
               SizedBox(height: 16.h),
               Text(
                 '${mockQuizItem.name}을 만났어요!',
-                style: AppTextStyles.display26
-                    .copyWith(color: AppColors.rewardDark),
+                style: AppTextStyles.display26.copyWith(
+                  color: AppColors.rewardDark,
+                ),
               ),
               SizedBox(height: 8.h),
               Text(
                 '도감에 새 친구 등록',
-                style: AppTextStyles.body15
-                    .copyWith(color: AppColors.rewardDark),
+                style: AppTextStyles.body15.copyWith(
+                  color: AppColors.rewardDark,
+                ),
               ),
               SizedBox(height: 24.h),
               // scale-in 0.8 → 1.0, easeOutBack 400ms — 앱 유일 진입 애니메이션

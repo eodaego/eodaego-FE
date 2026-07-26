@@ -29,11 +29,7 @@ class ApiErrorResponse {
   /// 디버깅 로그 전용.
   final List<FieldErrorDetail>? fieldErrors;
 
-  const ApiErrorResponse({
-    this.errorCode,
-    this.errorMessage,
-    this.fieldErrors,
-  });
+  const ApiErrorResponse({this.errorCode, this.errorMessage, this.fieldErrors});
 
   /// 응답 데이터에서 안전하게 파싱 시도
   ///

@@ -24,9 +24,11 @@ class _CollectionPageState extends State<CollectionPage> {
   String _query = '';
 
   List<MockDogamItem> get _visible => mockDogamItems
-      .where((e) =>
-          (_filter == null || e.category == _filter) &&
-          (_query.isEmpty || e.name.contains(_query)))
+      .where(
+        (e) =>
+            (_filter == null || e.category == _filter) &&
+            (_query.isEmpty || e.name.contains(_query)),
+      )
       .toList();
 
   @override
@@ -44,8 +46,9 @@ class _CollectionPageState extends State<CollectionPage> {
                 children: [
                   Text(
                     '도감',
-                    style: AppTextStyles.display19
-                        .copyWith(color: AppColors.ink),
+                    style: AppTextStyles.display19.copyWith(
+                      color: AppColors.ink,
+                    ),
                   ),
                   SizedBox(width: 8.w),
                   AppBadge(
@@ -83,10 +86,10 @@ class _CollectionPageState extends State<CollectionPage> {
                 style: AppTextStyles.body15.copyWith(color: AppColors.ink),
                 decoration: InputDecoration(
                   hintText: '이름으로 찾기',
-                  hintStyle: AppTextStyles.body15
-                      .copyWith(color: AppColors.disabled),
-                  prefixIcon:
-                      const Icon(Icons.search, color: AppColors.muted),
+                  hintStyle: AppTextStyles.body15.copyWith(
+                    color: AppColors.disabled,
+                  ),
+                  prefixIcon: const Icon(Icons.search, color: AppColors.muted),
                   filled: true,
                   fillColor: AppColors.surface,
                   contentPadding: EdgeInsets.symmetric(vertical: 12.h),
@@ -115,8 +118,8 @@ class _CollectionPageState extends State<CollectionPage> {
                     return DogamCard(
                       key: ValueKey(item.id),
                       item: item,
-                      onTap: () => context
-                          .push(RoutePaths.collectionDetail(item.id)),
+                      onTap: () =>
+                          context.push(RoutePaths.collectionDetail(item.id)),
                     );
                   },
                 ),

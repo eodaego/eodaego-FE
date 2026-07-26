@@ -56,8 +56,7 @@ class CourseSheet extends ConsumerWidget {
               SizedBox(height: 12.h),
               Text(
                 '지금 보는 코스',
-                style:
-                    AppTextStyles.caption14.copyWith(color: AppColors.muted),
+                style: AppTextStyles.caption14.copyWith(color: AppColors.muted),
               ),
               SizedBox(height: 6.h),
               Text(
@@ -78,8 +77,9 @@ class CourseSheet extends ConsumerWidget {
                       SizedBox(width: 10.w),
                       Text(
                         course.places[i].name,
-                        style: AppTextStyles.body15
-                            .copyWith(color: AppColors.ink),
+                        style: AppTextStyles.body15.copyWith(
+                          color: AppColors.ink,
+                        ),
                       ),
                       const Spacer(),
                       AppBadge.category(course.places[i].category),

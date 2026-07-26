@@ -27,12 +27,13 @@ class _TestAuthNotifier extends AuthNotifier {
 /// AgreementPage 진입 시 `agreementNotifierProvider`가 실제 네트워크를 타지 않도록 하는 fake.
 class _FakeUserRepository implements UserRepository {
   @override
-  Future<AgreementStatusEntity> getAgreements() async => const AgreementStatusEntity(
-    termsOfService: false,
-    privacyPolicy: false,
-    locationTerms: false,
-    marketing: false,
-  );
+  Future<AgreementStatusEntity> getAgreements() async =>
+      const AgreementStatusEntity(
+        termsOfService: false,
+        privacyPolicy: false,
+        locationTerms: false,
+        marketing: false,
+      );
 
   @override
   Future<String> updateNickname(String nickname) => throw UnimplementedError();
@@ -117,20 +118,21 @@ void main() {
   );
 
   group('router redirect', () {
-    testWidgets('requiresAgreement:true 상태로 /nickname-setup 접근 시 /agreement로 리다이렉트', (
-      tester,
-    ) async {
-      final handle = await _buildRouterAt(
-        tester,
-        requiresAgreementUser,
-        RoutePaths.nicknameSetup,
-        extraOverrides: [
-          userRepositoryProvider.overrideWithValue(_FakeUserRepository()),
-        ],
-      );
+    testWidgets(
+      'requiresAgreement:true 상태로 /nickname-setup 접근 시 /agreement로 리다이렉트',
+      (tester) async {
+        final handle = await _buildRouterAt(
+          tester,
+          requiresAgreementUser,
+          RoutePaths.nicknameSetup,
+          extraOverrides: [
+            userRepositoryProvider.overrideWithValue(_FakeUserRepository()),
+          ],
+        );
 
-      expect(handle.currentPath, RoutePaths.agreement);
-    });
+        expect(handle.currentPath, RoutePaths.agreement);
+      },
+    );
 
     testWidgets('isNewUser:true 상태로 /agreement 접근 시 /nickname-setup으로 리다이렉트', (
       tester,
@@ -158,12 +160,17 @@ void main() {
       },
     );
 
-    testWidgets('requiresAgreement/isNewUser 모두 false 상태로 /home에 머무르면 리다이렉트되지 않는다', (
-      tester,
-    ) async {
-      final handle = await _buildRouterAt(tester, onboardedUser, RoutePaths.home);
+    testWidgets(
+      'requiresAgreement/isNewUser 모두 false 상태로 /home에 머무르면 리다이렉트되지 않는다',
+      (tester) async {
+        final handle = await _buildRouterAt(
+          tester,
+          onboardedUser,
+          RoutePaths.home,
+        );
 
-      expect(handle.currentPath, RoutePaths.home);
-    });
+        expect(handle.currentPath, RoutePaths.home);
+      },
+    );
   });
 }

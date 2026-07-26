@@ -120,24 +120,21 @@ void main() {
       expect(result.requiresAgreement, isFalse);
     });
 
-    test(
-      'requiresAgreement가 없으면 null을 반환하고 세션을 정리한다 (약관 게이트 우회 방지)',
-      () async {
-        await storage.saveTokens(
-          accessToken: 'access-1',
-          refreshToken: 'refresh-1',
-        );
-        await storage.saveUserId('user-1');
-        // requiresAgreement는 저장하지 않음 — 불완전한 스냅샷 시뮬레이션
+    test('requiresAgreement가 없으면 null을 반환하고 세션을 정리한다 (약관 게이트 우회 방지)', () async {
+      await storage.saveTokens(
+        accessToken: 'access-1',
+        refreshToken: 'refresh-1',
+      );
+      await storage.saveUserId('user-1');
+      // requiresAgreement는 저장하지 않음 — 불완전한 스냅샷 시뮬레이션
 
-        final container = containerWith();
+      final container = containerWith();
 
-        final result = await container.read(authNotifierProvider.future);
+      final result = await container.read(authNotifierProvider.future);
 
-        expect(result, isNull);
-        expect(await storage.getAccessToken(), isNull);
-      },
-    );
+      expect(result, isNull);
+      expect(await storage.getAccessToken(), isNull);
+    });
 
     test('userId가 없으면 null을 반환하고 세션을 정리한다', () async {
       await storage.saveTokens(

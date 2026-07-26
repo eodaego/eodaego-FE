@@ -87,8 +87,9 @@ class _QuizPageState extends State<QuizPage> {
               Center(
                 child: Text(
                   '앗, 다시 골라 볼까요?',
-                  style: AppTextStyles.caption14
-                      .copyWith(color: AppColors.muted),
+                  style: AppTextStyles.caption14.copyWith(
+                    color: AppColors.muted,
+                  ),
                 ),
               ),
             SizedBox(height: 24.h),

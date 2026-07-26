@@ -78,8 +78,9 @@ class CollectionDetailPage extends StatelessWidget {
                 children: [
                   Text(
                     '어린이 눈높이 설명',
-                    style: AppTextStyles.display16
-                        .copyWith(color: item.category.dark),
+                    style: AppTextStyles.display16.copyWith(
+                      color: item.category.dark,
+                    ),
                   ),
                   SizedBox(height: 10.h),
                   Text(
@@ -101,8 +102,9 @@ class CollectionDetailPage extends StatelessWidget {
                   SizedBox(width: 6.w),
                   Text(
                     '수집일 ${item.collectedAt}',
-                    style: AppTextStyles.caption14
-                        .copyWith(color: AppColors.muted),
+                    style: AppTextStyles.caption14.copyWith(
+                      color: AppColors.muted,
+                    ),
                   ),
                 ],
               ),
