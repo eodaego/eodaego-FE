@@ -139,7 +139,6 @@ class AuthInterceptor extends QueuedInterceptor {
 
     if (kDebugMode) {
       debugPrint('🔑 [Reissue] 응답 수신: statusCode=${response.statusCode}');
-      debugPrint('   responseData: ${response.data}');
     }
 
     if (response.statusCode != 200) {
@@ -153,7 +152,7 @@ class AuthInterceptor extends QueuedInterceptor {
     final tokens = _parseTokens(response.data);
     if (tokens == null) {
       if (kDebugMode) {
-        debugPrint('❌ 토큰 재발급 응답 파싱 실패: responseData=${response.data}');
+        debugPrint('❌ 토큰 재발급 응답 파싱 실패: statusCode=${response.statusCode}');
       }
       // 200이지만 토큰 형식이 잘못됨 → 서버 응답 이상, 일시 오류로 안내
       await _handleForceLogout(messageKey: 'errorTemporaryRetry');

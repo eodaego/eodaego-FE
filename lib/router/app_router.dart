@@ -105,6 +105,7 @@ GoRouter router(Ref ref) {
 
         if (path == RoutePaths.login) return RoutePaths.home;
         if (path == RoutePaths.agreement) return RoutePaths.home;
+        if (path == RoutePaths.nicknameSetup) return RoutePaths.home;
         if (path == RoutePaths.splash) return RoutePaths.home;
         return null;
       } catch (e, stack) {
