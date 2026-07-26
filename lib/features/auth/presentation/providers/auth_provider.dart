@@ -16,6 +16,7 @@ import '../../domain/repositories/auth_repository.dart';
 import '../../domain/usecases/sign_in_with_apple_usecase.dart';
 import '../../domain/usecases/sign_in_with_google_usecase.dart';
 import '../../domain/usecases/sign_out_usecase.dart';
+import '../../../user/presentation/providers/user_provider.dart';
 
 part 'auth_provider.g.dart';
 
@@ -163,22 +164,30 @@ class AuthNotifier extends _$AuthNotifier {
     }
   }
 
-  /// 닉네임 설정 완료 → isNewUser=false 로 갱신 (영속 포함)
-  Future<void> updateNicknameCompleted(String nickname) async {
-    final current = state.value;
+  /// 닉네임 설정 — 서버에 저장하고 성공한 경우에만 상태를 갱신한다.
+  ///
+  /// 서버가 닉네임을 정규화할 수 있으므로 입력값이 아니라 **응답값**을 반영한다.
+  /// 실패 시 상태를 바꾸지 않고 예외를 다시 던져, 화면이 안내 후 재시도할 수 있게 한다.
+  ///
+  /// Throws: 409 중복 시 `code == 'NICKNAME_ALREADY_EXISTS'`인 [AppException]
+  Future<void> updateNickname(String nickname) async {
+    final current = state.valueOrNull;
     if (current == null) return;
+
+    final confirmed = await ref
+        .read(userRepositoryProvider)
+        .updateNickname(nickname);
+
     state = AsyncValue.data(
-      AuthResultEntity(
-        userId: current.userId,
-        nickname: nickname,
-        isNewUser: false,
-        requiresAgreement: current.requiresAgreement,
-      ),
+      current.copyWith(nickname: confirmed, isNewUser: false),
     );
+
     try {
-      await ref.read(secureTokenStorageProvider).saveIsNewUser(false);
+      final storage = ref.read(secureTokenStorageProvider);
+      await storage.saveNickname(confirmed);
+      await storage.saveIsNewUser(false);
     } catch (e) {
-      debugPrint('⚠️ [AuthNotifier] saveIsNewUser(false) 실패: $e');
+      debugPrint('⚠️ [AuthNotifier] 닉네임 로컬 저장 실패: $e');
     }
   }
 
