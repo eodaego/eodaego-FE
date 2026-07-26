@@ -85,10 +85,9 @@ env:
   # 🔧 프로젝트별 설정
   FLUTTER_VERSION: "3.35.5"
   JAVA_VERSION: "17"
-  # 러너 이미지(macos-26-arm64)에 실제로 설치된 버전을 적어야 한다.
-  # 26.0은 없고 26.0.1이 iOS 26.0 SDK를 갖고 있다. 버전이 어긋나면
-  # xcode-select는 통과하지만 빌드 단계에서 destination을 못 찾고 실패한다.
-  XCODE_VERSION: "26.0.1"
+  # XCODE_VERSION은 현재 사용하지 않는다 — iOS 잡이 러너 기본 Xcode를 쓴다.
+  # 사유는 iOS 잡의 "Show Xcode and SDK info" 스텝 주석 참조.
+  # XCODE_VERSION: "26.0.1"
   ENV_FILE_PATH: ".env"     # 환경변수 파일 경로 (커스터마이징 가능)
 
 concurrency:
@@ -458,8 +457,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Select Xcode version
-        run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app/Contents/Developer
+      # Xcode를 명시적으로 고르지 않고 러너 기본값을 쓴다.
+      #
+      # 러너 이미지에는 여러 Xcode가 깔려 있지만 iOS 플랫폼(SDK)까지
+      # 갖춘 건 기본 Xcode뿐이다. 26.0.1을 지정했을 때 xcode-select와
+      # 컴파일은 통과했지만 storyboard 단계에서
+      # "iOS 26.0 Platform Not Installed"로 실패했다.
+      # (Xcode 16부터 플랫폼 SDK가 본체에서 분리돼 별도 설치 대상이 됐다.)
+      #
+      # 기본값을 쓰면 러너 이미지가 갱신돼도 버전을 쫓아다닐 필요가 없다.
+      # 특정 버전이 꼭 필요해지면 xcode-select로 고르되,
+      # 그 버전에 iOS 플랫폼이 실제로 있는지 아래 -showsdks로 먼저 확인할 것.
+      - name: Show Xcode and SDK info
+        run: |
+          xcodebuild -version
+          echo "--- installed iOS SDKs ---"
+          xcodebuild -showsdks | grep -i ios || echo "⚠️ iOS SDK 없음"
 
       # .env 파일 생성
       - name: Create .env file
