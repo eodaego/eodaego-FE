@@ -58,7 +58,7 @@ void main() {
         ..responseToReturn = const AgreementResponseModel(
           termsOfServiceAgreed: true,
           privacyPolicyAgreed: true,
-          locationTermsAgreed: true,
+          locationInfoAgreed: true,
           marketingAgreed: false,
         );
       final repo = UserRepositoryImpl(fake);
@@ -88,10 +88,10 @@ void main() {
       await repo.updateAgreements(marketing: true);
 
       expect(fake.lastUpdateRequest, isNotNull);
-      expect(fake.lastUpdateRequest!.termsOfService, true);
-      expect(fake.lastUpdateRequest!.privacyPolicy, true);
-      expect(fake.lastUpdateRequest!.locationTerms, true);
-      expect(fake.lastUpdateRequest!.marketing, true);
+      expect(fake.lastUpdateRequest!.termsOfServiceAgreed, true);
+      expect(fake.lastUpdateRequest!.privacyPolicyAgreed, true);
+      expect(fake.lastUpdateRequest!.locationInfoAgreed, true);
+      expect(fake.lastUpdateRequest!.marketingAgreed, true);
     });
 
     test('marketing=false도 정상 전달된다', () async {
@@ -100,7 +100,7 @@ void main() {
 
       await repo.updateAgreements(marketing: false);
 
-      expect(fake.lastUpdateRequest!.marketing, false);
+      expect(fake.lastUpdateRequest!.marketingAgreed, false);
     });
 
     test('DioException은 AppException으로 변환된다', () async {

@@ -62,11 +62,11 @@ abstract class UserRemoteDataSource {
   /// 약관 동의 저장
   ///
   /// 현재 로그인한 사용자의 약관 동의 정보를 저장합니다.
-  /// 필수 3종(termsOfService, privacyPolicy, locationTerms)은 모두 true여야 합니다.
+  /// 필수 3종(termsOfServiceAgreed, privacyPolicyAgreed, locationInfoAgreed)은 모두 true여야 합니다.
   ///
   /// - 204: 저장 성공 (응답 본문 없음)
   /// - 400: 유효성 검사 실패 (필수 약관 미동의)
   /// - 401: 인증 실패
-  @PUT(ApiEndpoints.agreements)
+  @PATCH(ApiEndpoints.agreements)
   Future<void> updateAgreements(@Body() AgreementRequestModel request);
 }

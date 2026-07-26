@@ -9,17 +9,17 @@ part of 'agreement_request_model.dart';
 _$AgreementRequestModelImpl _$$AgreementRequestModelImplFromJson(
   Map<String, dynamic> json,
 ) => _$AgreementRequestModelImpl(
-  termsOfService: json['termsOfService'] as bool,
-  privacyPolicy: json['privacyPolicy'] as bool,
-  locationTerms: json['locationTerms'] as bool,
-  marketing: json['marketing'] as bool,
+  termsOfServiceAgreed: json['termsOfServiceAgreed'] as bool,
+  privacyPolicyAgreed: json['privacyPolicyAgreed'] as bool,
+  locationInfoAgreed: json['locationInfoAgreed'] as bool,
+  marketingAgreed: json['marketingAgreed'] as bool,
 );
 
 Map<String, dynamic> _$$AgreementRequestModelImplToJson(
   _$AgreementRequestModelImpl instance,
 ) => <String, dynamic>{
-  'termsOfService': instance.termsOfService,
-  'privacyPolicy': instance.privacyPolicy,
-  'locationTerms': instance.locationTerms,
-  'marketing': instance.marketing,
+  'termsOfServiceAgreed': instance.termsOfServiceAgreed,
+  'privacyPolicyAgreed': instance.privacyPolicyAgreed,
+  'locationInfoAgreed': instance.locationInfoAgreed,
+  'marketingAgreed': instance.marketingAgreed,
 };

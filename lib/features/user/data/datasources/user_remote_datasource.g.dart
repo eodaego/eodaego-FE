@@ -124,7 +124,7 @@ class _UserRemoteDataSource implements UserRemoteDataSource {
     final _headers = <String, dynamic>{};
     final _data = request;
     final _options = _setStreamType<void>(
-      Options(method: 'PUT', headers: _headers, extra: _extra)
+      Options(method: 'PATCH', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
             '/api/1/members/me/agreements',

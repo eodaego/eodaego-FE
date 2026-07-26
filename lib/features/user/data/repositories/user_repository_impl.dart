@@ -95,7 +95,7 @@ class UserRepositoryImpl implements UserRepository {
           '✅ 약관 동의 상태 조회: '
           'terms=${response.termsOfServiceAgreed}, '
           'privacy=${response.privacyPolicyAgreed}, '
-          'location=${response.locationTermsAgreed}, '
+          'location=${response.locationInfoAgreed}, '
           'marketing=${response.marketingAgreed}',
         );
       }
@@ -103,7 +103,7 @@ class UserRepositoryImpl implements UserRepository {
       return AgreementStatusEntity(
         termsOfService: response.termsOfServiceAgreed,
         privacyPolicy: response.privacyPolicyAgreed,
-        locationTerms: response.locationTermsAgreed,
+        locationTerms: response.locationInfoAgreed,
         marketing: response.marketingAgreed,
       );
     } on DioException catch (e) {
@@ -123,10 +123,10 @@ class UserRepositoryImpl implements UserRepository {
     try {
       await _dataSource.updateAgreements(
         AgreementRequestModel(
-          termsOfService: true,
-          privacyPolicy: true,
-          locationTerms: true,
-          marketing: marketing,
+          termsOfServiceAgreed: true,
+          privacyPolicyAgreed: true,
+          locationInfoAgreed: true,
+          marketingAgreed: marketing,
         ),
       );
 
