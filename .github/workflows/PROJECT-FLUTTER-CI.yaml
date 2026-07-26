@@ -76,10 +76,7 @@ env:
   ANALYZE_ONLY: "false"     # true: analyze만 실행 (빌드 스킵), false: analyze + 빌드
 
   # 🎯 빌드 대상 플랫폼 설정 (ANALYZE_ONLY=false일 때만 적용)
-  # Android는 비활성화 상태다 — android/gradlew가 android/.gitignore에 막혀
-  # 저장소에 없어, CI가 체크아웃 후 gradlew를 찾지 못하고 chmod 단계에서 중단된다.
-  # .gitignore에서 /gradlew를 빼고 wrapper를 커밋하면 다시 켤 수 있다.
-  ENABLE_ANDROID: "false"   # Android 빌드 활성화 (true/false)
+  ENABLE_ANDROID: "true"    # Android 빌드 활성화 (true/false)
   ENABLE_IOS: "true"        # iOS 빌드 활성화 (true/false)
 
   # 🔧 프로젝트별 설정
@@ -395,12 +392,10 @@ jobs:
           echo "✅ Java setup completed"
           java -version
 
-      # Gradle 셋업
-      - name: Setup Gradle
-        working-directory: android
-        run: |
-          chmod +x gradlew
-          echo "✅ Gradle wrapper permissions set"
+      # gradlew에 실행 권한을 주는 스텝은 두지 않는다.
+      # flutter build apk가 Gradle을 대신 호출하므로 wrapper를 직접 쓸 일이 없고,
+      # android/gradlew는 android/.gitignore에 막혀 저장소에 없어 chmod가 실패한다.
+      # Play Store 배포 워크플로우도 같은 방식(gradlew 미사용)으로 동작한다.
 
       # APK 빌드
       - name: Build APK
