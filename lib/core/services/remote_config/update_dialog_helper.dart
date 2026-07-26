@@ -51,7 +51,7 @@ class UpdateDialogHelper {
     return AppDialog.show(
       context: context,
       title: '새 버전 안내',
-      message: '더 좋아진 새 버전이 있어요.\n업데이트하시겠어요?',
+      message: '더 좋아진 새 버전이 있어요.\n지금 업데이트할까요?',
       confirmText: '업데이트',
       cancelText: '나중에',
       barrierDismissible: true,
@@ -66,7 +66,7 @@ class UpdateDialogHelper {
     return AppDialog.show(
       context: context,
       title: '업데이트 안내',
-      message: '새로운 버전이 출시되었어요.\n업데이트하시겠어요?',
+      message: '새로운 버전이 나왔어요.\n지금 업데이트할까요?',
       confirmText: '업데이트',
       cancelText: '나중에',
       barrierDismissible: true,

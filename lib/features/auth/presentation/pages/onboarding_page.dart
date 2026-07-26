@@ -17,7 +17,7 @@ class OnboardingPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('어대GO에 오신 걸 환영해요', style: AppTextStyles.display24),
+            Text('어대GO에 온 걸 환영해요', style: AppTextStyles.display24),
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () => context.go(RoutePaths.login),

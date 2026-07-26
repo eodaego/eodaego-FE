@@ -40,7 +40,7 @@ class QuizRewardPage extends StatelessWidget {
               ),
               SizedBox(height: 8.h),
               Text(
-                '도감에 새 친구 등록',
+                '도감에 새 친구를 등록했어요',
                 style: AppTextStyles.body15.copyWith(
                   color: AppColors.rewardDark,
                 ),

@@ -225,7 +225,7 @@ class _CourseRecommendPageState extends ConsumerState<CourseRecommendPage> {
           ),
           SizedBox(height: 8.h),
           Text(
-            '건너뛰어도 돼요 — 안 고르면 전체에서 추천해요',
+            '건너뛰면 전체에서 골라 추천해요',
             style: AppTextStyles.caption14.copyWith(color: AppColors.muted),
           ),
           SizedBox(height: 24.h),
@@ -251,7 +251,7 @@ class _CourseRecommendPageState extends ConsumerState<CourseRecommendPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              '조건에 맞는 코스가 없어요',
+              '조건을 바꾸면 코스를 찾을 수 있어요',
               textAlign: TextAlign.center,
               style: AppTextStyles.body15.copyWith(color: AppColors.muted),
             ),

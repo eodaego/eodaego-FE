@@ -23,7 +23,7 @@ class ForceUpdatePage extends StatelessWidget {
                 Text('업데이트가 필요해요', style: AppTextStyles.display24),
                 const SizedBox(height: 12),
                 Text(
-                  '원활한 이용을 위해\n최신 버전으로 업데이트해 주세요.',
+                  '더 편하게 쓰려면\n최신 버전으로 업데이트해 주세요',
                   textAlign: TextAlign.center,
                   style: AppTextStyles.body15.copyWith(color: AppColors.muted),
                 ),

@@ -141,7 +141,7 @@ class MyPage extends ConsumerWidget {
                 backgroundColor: AppColors.surface,
                 foregroundColor: AppColors.danger,
                 showBorder: true,
-                subtitle: '모든 기록이 완전히 삭제돼요',
+                subtitle: '모든 기록을 완전히 지워요',
                 subtitleColor: AppColors.muted,
                 width: double.infinity,
                 height: 72.h,

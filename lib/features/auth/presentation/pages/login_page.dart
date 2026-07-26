@@ -23,15 +23,15 @@ import '../providers/auth_provider.dart';
 ({String message, Color color}) loginNoticeFor(String key) {
   switch (key) {
     case 'logoutSuccess':
-      return (message: '로그아웃되었습니다', color: AppColors.ink);
+      return (message: '로그아웃했어요', color: AppColors.ink);
     case 'logoutUnexpected':
-      return (message: '로그아웃 중 문제가 있었어요', color: AppColors.danger);
+      return (message: '로그아웃하는 중에 문제가 생겼어요', color: AppColors.danger);
     case 'errorAuthExpired':
-      return (message: '세션이 만료되었어요. 다시 로그인해 주세요.', color: AppColors.danger);
+      return (message: '로그인 시간이 지났어요. 다시 로그인해 주세요.', color: AppColors.danger);
     case 'errorTemporaryRetry':
-      return (message: '일시적인 오류가 발생했어요. 다시 시도해 주세요.', color: AppColors.danger);
+      return (message: '잠깐 문제가 생겼어요. 다시 시도해 주세요.', color: AppColors.danger);
     case 'loginFailed':
-      return (message: '로그인에 실패했어요. 잠시 후 다시 시도해 주세요.', color: AppColors.danger);
+      return (message: '로그인하지 못했어요. 잠시 후 다시 시도해 주세요.', color: AppColors.danger);
     default:
       return (message: '다시 로그인해 주세요.', color: AppColors.ink);
   }
@@ -230,7 +230,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       text: TextSpan(
         style: AppTextStyles.caption14.copyWith(color: AppColors.muted),
         children: [
-          const TextSpan(text: '가입을 진행하면 '),
+          const TextSpan(text: '가입하면 '),
           TextSpan(
             text: '개인정보처리방침',
             style: linkStyle,
@@ -248,7 +248,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             style: linkStyle,
             recognizer: _locationRecognizer,
           ),
-          const TextSpan(text: '에 동의하게 됩니다.'),
+          const TextSpan(text: '에 동의하는 거예요.'),
         ],
       ),
     );
