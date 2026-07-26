@@ -18,7 +18,7 @@ import 'api_error_response.dart';
 /// ```
 ///
 /// **동작**:
-/// 1. 에러 응답 본문에서 RFC 7807 필드(title, status, detail, instance) 파싱
+/// 1. 에러 응답 본문에서 errorCode/errorMessage/fieldErrors 파싱
 /// 2. kDebugMode에서 전체 에러 정보 debugPrint 출력
 /// 3. HTTP 상태 코드별 적절한 AppException 타입으로 변환
 class DioExceptionHandler {
@@ -168,9 +168,13 @@ class DioExceptionHandler {
 
     if (apiError != null) {
       debugPrint('❌ API 에러 [$statusCode] $method $path');
-      debugPrint('   title: ${apiError.title}');
-      debugPrint('   detail: ${apiError.detail}');
-      debugPrint('   instance: ${apiError.instance}');
+      debugPrint('   errorCode: ${apiError.errorCode}');
+      debugPrint('   errorMessage: ${apiError.errorMessage}');
+      if (apiError.fieldErrors != null && apiError.fieldErrors!.isNotEmpty) {
+        for (final fe in apiError.fieldErrors!) {
+          debugPrint('   fieldError: ${fe.field} — ${fe.reason}');
+        }
+      }
     } else {
       debugPrint('❌ API 에러 [$statusCode] $method $path');
       debugPrint('   type: ${e.type}');

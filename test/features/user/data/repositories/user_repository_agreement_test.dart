@@ -4,7 +4,6 @@ import 'package:eodaego/features/user/data/models/agreement_request_model.dart';
 import 'package:eodaego/features/user/data/models/agreement_response_model.dart';
 import 'package:eodaego/features/user/data/models/delete_account_response_model.dart';
 import 'package:eodaego/features/user/data/models/my_page_response_model.dart';
-import 'package:eodaego/features/user/data/models/nickname_check_response_model.dart';
 import 'package:eodaego/features/user/data/models/nickname_update_request_model.dart';
 import 'package:eodaego/features/user/data/repositories/user_repository_impl.dart';
 import 'package:dio/dio.dart';
@@ -28,10 +27,6 @@ class _FakeUserRemoteDataSource implements UserRemoteDataSource {
   }
 
   @override
-  Future<NicknameCheckResponseModel> checkNickname(String nickname) =>
-      throw UnimplementedError();
-
-  @override
   Future<void> updateNickname(NicknameUpdateRequestModel request) =>
       throw UnimplementedError();
 
@@ -44,15 +39,13 @@ class _FakeUserRemoteDataSource implements UserRemoteDataSource {
 }
 
 DioException _dioError(int statusCode) => DioException(
-  requestOptions: RequestOptions(path: '/api/user/agreements'),
+  requestOptions: RequestOptions(path: '/api/1/members/me/agreements'),
   response: Response(
-    requestOptions: RequestOptions(path: '/api/user/agreements'),
+    requestOptions: RequestOptions(path: '/api/1/members/me/agreements'),
     statusCode: statusCode,
     data: {
-      'title': 'error',
-      'status': statusCode,
-      'detail': 'msg',
-      'instance': '/api/user/agreements',
+      'errorCode': 'INVALID_REQUEST',
+      'errorMessage': '잘못된 요청입니다.',
     },
   ),
   type: DioExceptionType.badResponse,

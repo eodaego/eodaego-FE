@@ -54,7 +54,6 @@ class AuthInterceptor extends QueuedInterceptor {
   static const List<String> _publicPaths = [
     ApiEndpoints.login,
     ApiEndpoints.reissue,
-    ApiEndpoints.checkNickname, // 닉네임 중복 확인 (인증 불필요)
   ];
 
   /// 해당 경로가 인증 불필요한 공개 API인지 확인
@@ -230,23 +229,20 @@ class AuthInterceptor extends QueuedInterceptor {
   }
 
   void _logReissueFailure(Object error) {
-    if (kDebugMode) {
-      if (error is DioException) {
-        debugPrint('❌ [Reissue] 토큰 재발급 실패');
-        debugPrint('   statusCode: ${error.response?.statusCode}');
-        debugPrint('   responseData: ${error.response?.data}');
-        debugPrint('   requestURL: ${error.requestOptions.uri}');
-        debugPrint('   requestData: ${error.requestOptions.data}');
-        final apiError = ApiErrorResponse.tryParse(error.response?.data);
-        if (apiError != null) {
-          debugPrint('   RFC7807 title: ${apiError.title}');
-          debugPrint('   RFC7807 errorCode: ${apiError.errorCode}');
-          debugPrint('   RFC7807 detail: ${apiError.detail}');
-          debugPrint('   RFC7807 instance: ${apiError.instance}');
-        }
-      } else {
-        debugPrint('❌ [Reissue] 토큰 재발급 실패 (non-Dio): $error');
+    if (!kDebugMode) return;
+
+    if (error is DioException) {
+      debugPrint('❌ [Reissue] 토큰 재발급 실패');
+      debugPrint('   statusCode: ${error.response?.statusCode}');
+      debugPrint('   path: ${error.requestOptions.path}');
+      // 요청/응답 본문에는 refreshToken이 들어 있어 출력하지 않는다.
+      final apiError = ApiErrorResponse.tryParse(error.response?.data);
+      if (apiError != null) {
+        debugPrint('   errorCode: ${apiError.errorCode}');
+        debugPrint('   errorMessage: ${apiError.errorMessage}');
       }
+    } else {
+      debugPrint('❌ [Reissue] 토큰 재발급 실패 (non-Dio): $error');
     }
   }
 

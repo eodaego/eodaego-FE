@@ -12,10 +12,7 @@ DioException _serverError(int status, {String? errorCode}) {
       statusCode: status,
       data: {
         if (errorCode != null) 'errorCode': errorCode,
-        'title': '오류',
-        'status': status,
-        'detail': '한국어 detail',
-        'instance': '/api/x',
+        'errorMessage': '한국어 에러 메시지',
       },
     ),
     type: DioExceptionType.badResponse,

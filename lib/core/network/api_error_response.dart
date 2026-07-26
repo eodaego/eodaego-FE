@@ -1,73 +1,89 @@
-/// 백엔드 공통 에러 응답 모델 (RFC 7807 Problem Details)
+/// 백엔드 공통 에러 응답 모델
 ///
 /// 백엔드의 모든 에러 응답은 이 형식을 따릅니다:
 /// ```json
 /// {
-///   "errorCode": "INVALID_INVITE_CODE",
-///   "title": "유효하지 않은 입력값",
-///   "status": 400,
-///   "detail": "idToken: 소셜 인증 토큰(ID Token)은 필수입니다.",
-///   "instance": "/api/auth/login"
+///   "errorCode": "NICKNAME_ALREADY_EXISTS",
+///   "errorMessage": "이미 사용 중인 닉네임입니다.",
+///   "fieldErrors": [
+///     { "field": "socialType", "reason": "널이어서는 안됩니다" }
+///   ]
 /// }
 /// ```
 ///
-/// v2.8.0부터 errorCode 필드가 추가됨 (SCREAMING_SNAKE_CASE).
-/// 명세: docs/api-docs.json 의 components.schemas.ErrorResponse 참조
+/// 명세: `docs/api-docs.json`의 `components.schemas.ErrorResponse`.
+/// OpenAPI에 `required` 선언이 없으므로 모든 필드를 nullable로 둔다.
 class ApiErrorResponse {
-  /// 에러 코드 (예: "INVALID_INVITE_CODE") — v2.8.0 이상에서 제공
-  /// i18n 메시지 매핑 키로 사용
+  /// 에러 코드 (SCREAMING_SNAKE_CASE). 클라이언트는 이 값으로 분기한다.
   final String? errorCode;
 
-  /// 에러 제목 (예: "유효하지 않은 입력값", "소셜 로그인 실패")
-  final String title;
+  /// 사용자에게 표시 가능한 에러 메시지.
+  ///
+  /// 백엔드가 한국어로 고정 반환하므로 **로깅 용도로만** 사용한다.
+  /// 사용자 노출은 항상 `AppException.messageKey` 경유.
+  final String? errorMessage;
 
-  /// HTTP 상태 코드
-  final int status;
-
-  /// 에러 상세 설명 (사용자에게 표시할 메시지)
-  final String detail;
-
-  /// 요청 경로 (예: "/api/auth/login")
-  final String instance;
+  /// 요청 바디 검증(Bean Validation) 실패 시에만 포함되는 필드별 오류 목록.
+  ///
+  /// 검증 실패가 아닌 에러(인증 실패 등)에서는 응답에 포함되지 않는다.
+  /// 디버깅 로그 전용.
+  final List<FieldErrorDetail>? fieldErrors;
 
   const ApiErrorResponse({
     this.errorCode,
-    required this.title,
-    required this.status,
-    required this.detail,
-    required this.instance,
+    this.errorMessage,
+    this.fieldErrors,
   });
-
-  /// JSON Map에서 ApiErrorResponse 생성
-  factory ApiErrorResponse.fromJson(Map<String, dynamic> json) {
-    return ApiErrorResponse(
-      errorCode: json['errorCode'] as String?,
-      title: json['title'] as String? ?? '',
-      status: json['status'] as int? ?? 0,
-      detail: json['detail'] as String? ?? '',
-      instance: json['instance'] as String? ?? '',
-    );
-  }
 
   /// 응답 데이터에서 안전하게 파싱 시도
   ///
-  /// 파싱 실패 시 null 반환 (백엔드가 RFC 7807 형식이 아닌 경우)
-  /// errorCode만 있는 응답도 에러 응답으로 인식 (v2.8.0 이상 호환)
+  /// 에러 응답 형식이 아니면 null을 반환한다.
   static ApiErrorResponse? tryParse(dynamic data) {
-    if (data == null || data is! Map<String, dynamic>) return null;
+    if (data is! Map<String, dynamic>) return null;
 
-    // errorCode, title, detail 중 하나라도 있으면 에러 응답으로 판단
-    if (data['errorCode'] == null &&
-        data['title'] == null &&
-        data['detail'] == null) {
+    // errorCode 또는 errorMessage 중 하나라도 있으면 에러 응답으로 판단
+    if (data['errorCode'] == null && data['errorMessage'] == null) {
       return null;
     }
 
-    return ApiErrorResponse.fromJson(data);
+    final rawFieldErrors = data['fieldErrors'];
+    return ApiErrorResponse(
+      errorCode: data['errorCode'] as String?,
+      errorMessage: data['errorMessage'] as String?,
+      fieldErrors: rawFieldErrors is List
+          ? rawFieldErrors
+                .whereType<Map<String, dynamic>>()
+                .map(FieldErrorDetail.fromJson)
+                .toList()
+          : null,
+    );
   }
 
   @override
   String toString() {
-    return '[$status] $errorCode | $title | $detail (instance: $instance)';
+    final fields = fieldErrors?.map((e) => e.toString()).join(', ');
+    return '$errorCode | $errorMessage'
+        '${fields != null && fields.isNotEmpty ? ' | fields: [$fields]' : ''}';
   }
+}
+
+/// 요청 바디 검증 실패 시 필드별 상세
+class FieldErrorDetail {
+  /// 검증에 실패한 요청 필드명 (예: `socialType`)
+  final String? field;
+
+  /// 검증 실패 사유 (예: `널이어서는 안됩니다`)
+  final String? reason;
+
+  const FieldErrorDetail({this.field, this.reason});
+
+  factory FieldErrorDetail.fromJson(Map<String, dynamic> json) {
+    return FieldErrorDetail(
+      field: json['field'] as String?,
+      reason: json['reason'] as String?,
+    );
+  }
+
+  @override
+  String toString() => '$field: $reason';
 }

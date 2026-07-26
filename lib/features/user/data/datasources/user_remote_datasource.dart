@@ -6,7 +6,6 @@ import '../models/agreement_request_model.dart';
 import '../models/agreement_response_model.dart';
 import '../models/delete_account_response_model.dart';
 import '../models/my_page_response_model.dart';
-import '../models/nickname_check_response_model.dart';
 import '../models/nickname_update_request_model.dart';
 
 part 'user_remote_datasource.g.dart';
@@ -16,25 +15,12 @@ part 'user_remote_datasource.g.dart';
 /// Retrofit 기반으로 User API를 호출합니다.
 ///
 /// **엔드포인트**:
-/// - `GET /api/user/check-nickname` - 닉네임 중복 확인 (인증 불필요)
-/// - `PATCH /api/user/me/nickname` - 닉네임 변경 (JWT 필요)
-/// - `GET /api/user/me` - 내 정보 조회 (JWT 필요)
-/// - `DELETE /api/user/me` - 회원 탈퇴 (JWT 필요)
+/// - `PATCH /api/1/members/me/nickname` - 닉네임 변경 (JWT 필요)
+/// - `GET /api/1/members/me` - 내 정보 조회 (JWT 필요)
+/// - `DELETE /api/1/members/me` - 회원 탈퇴 (JWT 필요)
 @RestApi()
 abstract class UserRemoteDataSource {
   factory UserRemoteDataSource(Dio dio) = _UserRemoteDataSource;
-
-  /// 닉네임 중복 확인
-  ///
-  /// 닉네임의 사용 가능 여부를 확인합니다.
-  /// 인증 토큰이 필요하지 않습니다.
-  ///
-  /// - 200: 확인 결과 (isAvailable, message)
-  /// - 400: 파라미터 누락
-  @GET(ApiEndpoints.checkNickname)
-  Future<NicknameCheckResponseModel> checkNickname(
-    @Query('nickname') String nickname,
-  );
 
   /// 닉네임 변경
   ///
