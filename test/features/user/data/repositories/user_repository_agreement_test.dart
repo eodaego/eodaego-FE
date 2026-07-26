@@ -4,6 +4,7 @@ import 'package:eodaego/features/user/data/models/agreement_request_model.dart';
 import 'package:eodaego/features/user/data/models/agreement_response_model.dart';
 import 'package:eodaego/features/user/data/models/delete_account_response_model.dart';
 import 'package:eodaego/features/user/data/models/my_page_response_model.dart';
+import 'package:eodaego/features/user/data/models/nickname_response_model.dart';
 import 'package:eodaego/features/user/data/models/nickname_update_request_model.dart';
 import 'package:eodaego/features/user/data/repositories/user_repository_impl.dart';
 import 'package:dio/dio.dart';
@@ -27,8 +28,9 @@ class _FakeUserRemoteDataSource implements UserRemoteDataSource {
   }
 
   @override
-  Future<void> updateNickname(NicknameUpdateRequestModel request) =>
-      throw UnimplementedError();
+  Future<NicknameResponseModel> updateNickname(
+    NicknameUpdateRequestModel request,
+  ) => throw UnimplementedError();
 
   @override
   Future<MyPageResponseModel> getMyPage() => throw UnimplementedError();

@@ -19,18 +19,21 @@ class UserRepositoryImpl implements UserRepository {
   UserRepositoryImpl(this._dataSource);
 
   @override
-  Future<void> updateNickname(String nickname) async {
+  Future<String> updateNickname(String nickname) async {
     try {
-      await _dataSource.updateNickname(
+      final response = await _dataSource.updateNickname(
         NicknameUpdateRequestModel(nickname: nickname),
       );
 
       if (kDebugMode) {
-        debugPrint('✅ 닉네임 변경 성공: $nickname');
+        debugPrint('✅ 닉네임 변경 성공: ${response.nickname}');
       }
+
+      return response.nickname;
     } on DioException catch (e) {
       throw DioExceptionHandler.handle(e);
     } catch (e) {
+      if (e is AppException) rethrow;
       throw ServerException(
         message: '닉네임 변경 중 예기치 않은 오류가 발생했습니다.',
         messageKey: 'errorNicknameUpdateUnexpected',

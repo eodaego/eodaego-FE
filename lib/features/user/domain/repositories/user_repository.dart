@@ -8,8 +8,10 @@ abstract class UserRepository {
   /// 닉네임 변경
   ///
   /// 현재 로그인한 사용자의 닉네임을 [nickname]으로 변경합니다.
-  /// 성공 시 아무것도 반환하지 않습니다 (204 No Content).
-  Future<void> updateNickname(String nickname);
+  ///
+  /// Returns: 서버가 확정한 닉네임 (정규화될 수 있으므로 입력값과 다를 수 있음)
+  /// Throws: 409 중복 시 `code == 'NICKNAME_ALREADY_EXISTS'`인 [AppException]
+  Future<String> updateNickname(String nickname);
 
   /// 내 프로필 조회
   ///

@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'nickname_update_request_model.dart';
+part of 'nickname_response_model.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -15,55 +15,51 @@ final _privateConstructorUsedError = UnsupportedError(
   'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
 );
 
-NicknameUpdateRequestModel _$NicknameUpdateRequestModelFromJson(
+NicknameResponseModel _$NicknameResponseModelFromJson(
   Map<String, dynamic> json,
 ) {
-  return _NicknameUpdateRequestModel.fromJson(json);
+  return _NicknameResponseModel.fromJson(json);
 }
 
 /// @nodoc
-mixin _$NicknameUpdateRequestModel {
-  /// 변경할 닉네임 (2~30자, 한글/영문/숫자)
+mixin _$NicknameResponseModel {
+  /// 변경된 닉네임
   String get nickname => throw _privateConstructorUsedError;
 
-  /// Serializes this NicknameUpdateRequestModel to a JSON map.
+  /// Serializes this NicknameResponseModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
-  /// Create a copy of NicknameUpdateRequestModel
+  /// Create a copy of NicknameResponseModel
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $NicknameUpdateRequestModelCopyWith<NicknameUpdateRequestModel>
-  get copyWith => throw _privateConstructorUsedError;
+  $NicknameResponseModelCopyWith<NicknameResponseModel> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $NicknameUpdateRequestModelCopyWith<$Res> {
-  factory $NicknameUpdateRequestModelCopyWith(
-    NicknameUpdateRequestModel value,
-    $Res Function(NicknameUpdateRequestModel) then,
-  ) =
-      _$NicknameUpdateRequestModelCopyWithImpl<
-        $Res,
-        NicknameUpdateRequestModel
-      >;
+abstract class $NicknameResponseModelCopyWith<$Res> {
+  factory $NicknameResponseModelCopyWith(
+    NicknameResponseModel value,
+    $Res Function(NicknameResponseModel) then,
+  ) = _$NicknameResponseModelCopyWithImpl<$Res, NicknameResponseModel>;
   @useResult
   $Res call({String nickname});
 }
 
 /// @nodoc
-class _$NicknameUpdateRequestModelCopyWithImpl<
+class _$NicknameResponseModelCopyWithImpl<
   $Res,
-  $Val extends NicknameUpdateRequestModel
+  $Val extends NicknameResponseModel
 >
-    implements $NicknameUpdateRequestModelCopyWith<$Res> {
-  _$NicknameUpdateRequestModelCopyWithImpl(this._value, this._then);
+    implements $NicknameResponseModelCopyWith<$Res> {
+  _$NicknameResponseModelCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of NicknameUpdateRequestModel
+  /// Create a copy of NicknameResponseModel
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -81,37 +77,34 @@ class _$NicknameUpdateRequestModelCopyWithImpl<
 }
 
 /// @nodoc
-abstract class _$$NicknameUpdateRequestModelImplCopyWith<$Res>
-    implements $NicknameUpdateRequestModelCopyWith<$Res> {
-  factory _$$NicknameUpdateRequestModelImplCopyWith(
-    _$NicknameUpdateRequestModelImpl value,
-    $Res Function(_$NicknameUpdateRequestModelImpl) then,
-  ) = __$$NicknameUpdateRequestModelImplCopyWithImpl<$Res>;
+abstract class _$$NicknameResponseModelImplCopyWith<$Res>
+    implements $NicknameResponseModelCopyWith<$Res> {
+  factory _$$NicknameResponseModelImplCopyWith(
+    _$NicknameResponseModelImpl value,
+    $Res Function(_$NicknameResponseModelImpl) then,
+  ) = __$$NicknameResponseModelImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String nickname});
 }
 
 /// @nodoc
-class __$$NicknameUpdateRequestModelImplCopyWithImpl<$Res>
+class __$$NicknameResponseModelImplCopyWithImpl<$Res>
     extends
-        _$NicknameUpdateRequestModelCopyWithImpl<
-          $Res,
-          _$NicknameUpdateRequestModelImpl
-        >
-    implements _$$NicknameUpdateRequestModelImplCopyWith<$Res> {
-  __$$NicknameUpdateRequestModelImplCopyWithImpl(
-    _$NicknameUpdateRequestModelImpl _value,
-    $Res Function(_$NicknameUpdateRequestModelImpl) _then,
+        _$NicknameResponseModelCopyWithImpl<$Res, _$NicknameResponseModelImpl>
+    implements _$$NicknameResponseModelImplCopyWith<$Res> {
+  __$$NicknameResponseModelImplCopyWithImpl(
+    _$NicknameResponseModelImpl _value,
+    $Res Function(_$NicknameResponseModelImpl) _then,
   ) : super(_value, _then);
 
-  /// Create a copy of NicknameUpdateRequestModel
+  /// Create a copy of NicknameResponseModel
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({Object? nickname = null}) {
     return _then(
-      _$NicknameUpdateRequestModelImpl(
+      _$NicknameResponseModelImpl(
         nickname: null == nickname
             ? _value.nickname
             : nickname // ignore: cast_nullable_to_non_nullable
@@ -123,27 +116,27 @@ class __$$NicknameUpdateRequestModelImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$NicknameUpdateRequestModelImpl implements _NicknameUpdateRequestModel {
-  const _$NicknameUpdateRequestModelImpl({required this.nickname});
+class _$NicknameResponseModelImpl implements _NicknameResponseModel {
+  const _$NicknameResponseModelImpl({this.nickname = ''});
 
-  factory _$NicknameUpdateRequestModelImpl.fromJson(
-    Map<String, dynamic> json,
-  ) => _$$NicknameUpdateRequestModelImplFromJson(json);
+  factory _$NicknameResponseModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$NicknameResponseModelImplFromJson(json);
 
-  /// 변경할 닉네임 (2~30자, 한글/영문/숫자)
+  /// 변경된 닉네임
   @override
+  @JsonKey()
   final String nickname;
 
   @override
   String toString() {
-    return 'NicknameUpdateRequestModel(nickname: $nickname)';
+    return 'NicknameResponseModel(nickname: $nickname)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$NicknameUpdateRequestModelImpl &&
+            other is _$NicknameResponseModelImpl &&
             (identical(other.nickname, nickname) ||
                 other.nickname == nickname));
   }
@@ -152,39 +145,39 @@ class _$NicknameUpdateRequestModelImpl implements _NicknameUpdateRequestModel {
   @override
   int get hashCode => Object.hash(runtimeType, nickname);
 
-  /// Create a copy of NicknameUpdateRequestModel
+  /// Create a copy of NicknameResponseModel
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$NicknameUpdateRequestModelImplCopyWith<_$NicknameUpdateRequestModelImpl>
+  _$$NicknameResponseModelImplCopyWith<_$NicknameResponseModelImpl>
   get copyWith =>
-      __$$NicknameUpdateRequestModelImplCopyWithImpl<
-        _$NicknameUpdateRequestModelImpl
-      >(this, _$identity);
+      __$$NicknameResponseModelImplCopyWithImpl<_$NicknameResponseModelImpl>(
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$NicknameUpdateRequestModelImplToJson(this);
+    return _$$NicknameResponseModelImplToJson(this);
   }
 }
 
-abstract class _NicknameUpdateRequestModel
-    implements NicknameUpdateRequestModel {
-  const factory _NicknameUpdateRequestModel({required final String nickname}) =
-      _$NicknameUpdateRequestModelImpl;
+abstract class _NicknameResponseModel implements NicknameResponseModel {
+  const factory _NicknameResponseModel({final String nickname}) =
+      _$NicknameResponseModelImpl;
 
-  factory _NicknameUpdateRequestModel.fromJson(Map<String, dynamic> json) =
-      _$NicknameUpdateRequestModelImpl.fromJson;
+  factory _NicknameResponseModel.fromJson(Map<String, dynamic> json) =
+      _$NicknameResponseModelImpl.fromJson;
 
-  /// 변경할 닉네임 (2~30자, 한글/영문/숫자)
+  /// 변경된 닉네임
   @override
   String get nickname;
 
-  /// Create a copy of NicknameUpdateRequestModel
+  /// Create a copy of NicknameResponseModel
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$NicknameUpdateRequestModelImplCopyWith<_$NicknameUpdateRequestModelImpl>
+  _$$NicknameResponseModelImplCopyWith<_$NicknameResponseModelImpl>
   get copyWith => throw _privateConstructorUsedError;
 }

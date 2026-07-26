@@ -6,6 +6,7 @@ import '../models/agreement_request_model.dart';
 import '../models/agreement_response_model.dart';
 import '../models/delete_account_response_model.dart';
 import '../models/my_page_response_model.dart';
+import '../models/nickname_response_model.dart';
 import '../models/nickname_update_request_model.dart';
 
 part 'user_remote_datasource.g.dart';
@@ -26,11 +27,13 @@ abstract class UserRemoteDataSource {
   ///
   /// 현재 로그인한 사용자의 닉네임을 변경합니다.
   ///
-  /// - 204: 변경 성공 (응답 본문 없음)
-  /// - 400: 유효성 검사 실패
-  /// - 409: 닉네임 중복
+  /// - 200: 변경 성공 (변경된 닉네임 반환)
+  /// - 400: 형식 검증 실패 (INVALID_REQUEST)
+  /// - 409: 이미 사용 중인 닉네임 (NICKNAME_ALREADY_EXISTS)
   @PATCH(ApiEndpoints.updateNickname)
-  Future<void> updateNickname(@Body() NicknameUpdateRequestModel request);
+  Future<NicknameResponseModel> updateNickname(
+    @Body() NicknameUpdateRequestModel request,
+  );
 
   /// 내 정보 조회
   ///
