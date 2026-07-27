@@ -11,12 +11,21 @@
 
 ## 📚 상세 문서 링크
 
+**항상 로드되는 규칙** (`.claude/rules/`)
+
 | 문서 | 내용 |
 |------|------|
-| [01_ARCHITECTURE.md](01_ARCHITECTURE.md) | 아키텍처 전략, 기술 스택, 계층 구조 |
-| [02_FOLDER_STRUCTURE.md](02_FOLDER_STRUCTURE.md) | 폴더 구조, 파일 네이밍 규칙 |
-| [03_CODE_CONVENTIONS.md](03_CODE_CONVENTIONS.md) | 코드 작성 규칙, 주석, 에러 처리 |
-| [04_CODE_GENERATION_GUIDE.md](04_CODE_GENERATION_GUIDE.md) | Riverpod, Freezed, Retrofit 코드 생성 |
+| [01_CODE_CONVENTIONS.md](01_CODE_CONVENTIONS.md) | 로깅 이모지 규칙, 주석 규칙 |
+| [02_API_INTEGRATION_GUIDE.md](02_API_INTEGRATION_GUIDE.md) | API 연동 절차, 인증 인터셉터, 에러 처리 |
+| [03_TESTING_RULES.md](03_TESTING_RULES.md) | 테스트 작성 규칙 |
+
+**필요할 때 불러 쓰는 스킬** (`.claude/skills/`) — 컨텍스트 절약을 위해 지연 로딩
+
+| 스킬 | 언제 |
+|------|------|
+| `design-system` | UI 화면·위젯·스타일 작업 시 |
+| `deploy` | 배포, GitHub Actions 워크플로우 수정 시 |
+| `google-maps-setup` | 지도 빌드 오류, 신규 환경 세팅 시 |
 
 ---
 
@@ -36,12 +45,13 @@ Presentation → Domain ← Data
 
 ### 기술 스택
 
-- **언어**: Dart 3.9.2+, Flutter 3.9.2+
-- **상태 관리**: Riverpod 2.6.1 (코드 생성)
-- **데이터 모델**: Freezed 2.5.7 (불변 객체)
-- **네트워킹**: Dio 5.9.0, Retrofit 4.7.2
-- **실시간 통신**: STOMP (stomp_dart_client 2.0.0)
-- **에러 처리**: try-catch (Either 패턴 사용 안 함)
+패키지와 버전은 `pubspec.yaml`이 정본이다. 여기 옮겨 적지 않는다.
+
+문서로만 알 수 있는 결정:
+
+- **에러 처리**: try-catch + Custom Exception. **Either/dartz 사용 금지** (2025-12-30 제거)
+- **상태 관리**: Riverpod 코드 생성(`@riverpod`) 방식. 수동 Provider 선언 금지
+- **retrofit 버전 고정**: `pubspec.yaml` 주석 참조 (4.9.x `logError` 시그니처 비호환)
 
 ---
 
@@ -54,41 +64,17 @@ Presentation → Domain ← Data
 | **파일명** | snake_case | `user_profile_page.dart` |
 | **클래스명** | PascalCase | `UserProfilePage` |
 | **변수명** | camelCase | `userName` |
-| **상수** | camelCase | `maxPlayers` |
+| **상수** | camelCase | `maxCollectionCount` |
 | **Private** | _(언더스코어) 시작 | `_privateMethod()` |
 
 ### 폴더 구조
 
-```
-lib/
-├── core/
-│   ├── constants/      # 앱 전역 상수
-│   ├── config/         # 환경 설정 (EnvConfig)
-│   ├── network/        # Dio 클라이언트
-│   ├── realtime/       # WebSocket, STOMP
-│   ├── logging/        # Logger, ErrorReporter
-│   ├── services/       # FCM, Storage
-│   ├── utils/          # 유틸리티 함수
-│   ├── errors/         # Custom Exception
-│   └── widgets/        # 공통 UI 위젯
-│
-├── features/[기능명]/
-│   ├── data/
-│   │   ├── models/         # DTO (@freezed, @JsonSerializable)
-│   │   ├── datasources/    # API (@RestApi), Local DB
-│   │   └── repositories/   # Repository 구현
-│   ├── domain/
-│   │   ├── entities/       # Entity (@freezed)
-│   │   ├── repositories/   # Repository 인터페이스
-│   │   └── usecases/       # Use Case
-│   └── presentation/
-│       ├── providers/      # Riverpod Provider (@riverpod)
-│       ├── pages/          # 화면 (Page suffix)
-│       └── widgets/        # UI 컴포넌트 (Widget suffix)
-│
-├── router/             # 라우팅 설정
-└── main.dart           # 앱 진입점
-```
+실제 트리는 `ls lib/`로 확인한다. 규칙만 적는다.
+
+- **2개 이상 feature가 쓰면** → `lib/core/`
+- **1개 feature만 쓰면** → `lib/features/<기능>/`
+- feature 간 직접 import 금지. 공유가 필요하면 Provider로 참조한다.
+- 각 feature는 `data/` · `domain/` · `presentation/` 3계층을 유지한다.
 
 ### 파일 Suffix 규칙
 
@@ -108,7 +94,7 @@ lib/
 
 ### 변수 선언
 
-- **const**: 컴파일 타임 상수 (`const int maxPlayers = 30`)
+- **const**: 컴파일 타임 상수 (`const int maxCollectionCount = 30`)
 - **final**: 런타임에 한 번만 할당 (`final String id = uuid.v4()`)
 - **var**: 지양, 타입 명시 권장
 
@@ -238,7 +224,7 @@ flutter pub run build_runner watch --delete-conflicting-outputs
 ## 📌 자주 묻는 질문
 
 **Q: 파일을 어디에 만들어야 하나요?**
-A: [02_FOLDER_STRUCTURE.md](02_FOLDER_STRUCTURE.md) 참조
+A: 2개 이상 feature가 쓰면 `lib/core/`, 하나만 쓰면 `lib/features/<기능>/`. 위 "폴더 구조" 참조
 
 **Q: 코드 생성이 안 돼요**
 A: `flutter clean && flutter pub get && flutter pub run build_runner build --delete-conflicting-outputs`
@@ -247,7 +233,7 @@ A: `flutter clean && flutter pub get && flutter pub run build_runner build --del
 A: 아니요. 프로젝트에서 제거되었습니다. try-catch 사용
 
 **Q: Repository에서 에러를 어떻게 처리하나요?**
-A: Custom Exception을 throw합니다. [03_CODE_CONVENTIONS.md](03_CODE_CONVENTIONS.md#에러-처리) 참조
+A: `DioExceptionHandler.handle(e)`로 변환해 throw합니다. [02_API_INTEGRATION_GUIDE.md](02_API_INTEGRATION_GUIDE.md) 참조
 
 ---
 
