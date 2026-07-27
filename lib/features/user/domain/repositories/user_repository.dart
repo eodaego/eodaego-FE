@@ -1,5 +1,4 @@
 import '../entities/agreement_status_entity.dart';
-import '../entities/user_profile_entity.dart';
 
 /// User Repository 인터페이스
 ///
@@ -12,11 +11,6 @@ abstract class UserRepository {
   /// Returns: 서버가 확정한 닉네임 (정규화될 수 있으므로 입력값과 다를 수 있음)
   /// Throws: 409 중복 시 `code == 'NICKNAME_ALREADY_EXISTS'`인 [AppException]
   Future<String> updateNickname(String nickname);
-
-  /// 내 프로필 조회
-  ///
-  /// 현재 로그인한 사용자의 프로필 정보를 반환합니다.
-  Future<UserProfileEntity> getMyProfile();
 
   /// 회원 탈퇴
   ///

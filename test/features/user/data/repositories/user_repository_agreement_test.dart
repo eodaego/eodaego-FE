@@ -2,8 +2,6 @@ import 'package:eodaego/core/errors/app_exception.dart';
 import 'package:eodaego/features/user/data/datasources/user_remote_datasource.dart';
 import 'package:eodaego/features/user/data/models/agreement_request_model.dart';
 import 'package:eodaego/features/user/data/models/agreement_response_model.dart';
-import 'package:eodaego/features/user/data/models/delete_account_response_model.dart';
-import 'package:eodaego/features/user/data/models/my_page_response_model.dart';
 import 'package:eodaego/features/user/data/models/nickname_response_model.dart';
 import 'package:eodaego/features/user/data/models/nickname_update_request_model.dart';
 import 'package:eodaego/features/user/data/repositories/user_repository_impl.dart';
@@ -33,11 +31,7 @@ class _FakeUserRemoteDataSource implements UserRemoteDataSource {
   ) => throw UnimplementedError();
 
   @override
-  Future<MyPageResponseModel> getMyPage() => throw UnimplementedError();
-
-  @override
-  Future<DeleteAccountResponseModel> deleteAccount() =>
-      throw UnimplementedError();
+  Future<void> deleteAccount() async {}
 }
 
 DioException _dioError(int statusCode) => DioException(
