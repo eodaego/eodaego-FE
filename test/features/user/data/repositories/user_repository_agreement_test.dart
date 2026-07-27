@@ -71,6 +71,24 @@ void main() {
 
       expect(() => repo.getAgreements(), throwsA(isA<AppException>()));
     });
+
+    test('응답의 동의 일시를 엔티티로 옮긴다', () async {
+      final fake = _FakeUserRemoteDataSource()
+        ..responseToReturn = const AgreementResponseModel(
+          termsOfServiceAgreed: true,
+          privacyPolicyAgreed: true,
+          locationInfoAgreed: true,
+          marketingAgreed: true,
+          termsAgreedAt: '2026-07-12T10:00:00+09:00',
+          marketingAgreedAt: '2026-07-20T09:30:00+09:00',
+        );
+      final repository = UserRepositoryImpl(fake);
+
+      final entity = await repository.getAgreements();
+
+      expect(entity.termsAgreedAt, '2026-07-12T10:00:00+09:00');
+      expect(entity.marketingAgreedAt, '2026-07-20T09:30:00+09:00');
+    });
   });
 
   group('UserRepositoryImpl.updateAgreements', () {

@@ -80,6 +80,8 @@ class UserRepositoryImpl implements UserRepository {
         privacyPolicy: response.privacyPolicyAgreed,
         locationTerms: response.locationInfoAgreed,
         marketing: response.marketingAgreed,
+        termsAgreedAt: response.termsAgreedAt,
+        marketingAgreedAt: response.marketingAgreedAt,
       );
     } on DioException catch (e) {
       throw DioExceptionHandler.handle(e);

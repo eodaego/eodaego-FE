@@ -33,6 +33,8 @@ class RoutePaths {
   static const String quiz = '/quiz';
   static const String quizReward = '/quiz/reward';
   static const String mypage = '/mypage';
+  static const String mypageNickname = '/mypage/nickname';
+  static const String mypageAgreements = '/mypage/agreements';
   static const String courseRecommend = '/course/recommend';
 
   static const String mapName = 'map';
@@ -43,6 +45,8 @@ class RoutePaths {
   static const String quizName = 'quiz';
   static const String quizRewardName = 'quizReward';
   static const String mypageName = 'mypage';
+  static const String mypageNicknameName = 'mypageNickname';
+  static const String mypageAgreementsName = 'mypageAgreements';
   static const String courseRecommendName = 'courseRecommend';
 
   /// 도감 상세 경로 생성 (예: /collection/a1)
