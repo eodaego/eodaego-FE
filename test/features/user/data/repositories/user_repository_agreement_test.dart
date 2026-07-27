@@ -2,6 +2,7 @@ import 'package:eodaego/core/errors/app_exception.dart';
 import 'package:eodaego/features/user/data/datasources/user_remote_datasource.dart';
 import 'package:eodaego/features/user/data/models/agreement_request_model.dart';
 import 'package:eodaego/features/user/data/models/agreement_response_model.dart';
+import 'package:eodaego/features/user/data/models/nickname_availability_response_model.dart';
 import 'package:eodaego/features/user/data/models/nickname_response_model.dart';
 import 'package:eodaego/features/user/data/models/nickname_update_request_model.dart';
 import 'package:eodaego/features/user/data/repositories/user_repository_impl.dart';
@@ -18,6 +19,11 @@ class _FakeUserRemoteDataSource implements UserRemoteDataSource {
     if (errorToThrow != null) throw errorToThrow!;
     return responseToReturn!;
   }
+
+  @override
+  Future<NicknameAvailabilityResponseModel> checkNicknameAvailability(
+    String nickname,
+  ) => throw UnimplementedError();
 
   @override
   Future<void> updateAgreements(AgreementRequestModel request) async {

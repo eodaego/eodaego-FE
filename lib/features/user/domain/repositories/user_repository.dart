@@ -12,6 +12,18 @@ abstract class UserRepository {
   /// Throws: 409 중복 시 `code == 'NICKNAME_ALREADY_EXISTS'`인 [AppException]
   Future<String> updateNickname(String nickname);
 
+  /// 닉네임 사용 가능 여부 확인
+  ///
+  /// 저장 전에 미리 중복을 알려주기 위한 조회다. 저장 시점의 409는 이 확인과
+  /// 무관하게 여전히 발생할 수 있으므로(확인과 저장 사이에 남이 선점 가능),
+  /// 이 결과를 최종 보장으로 취급하지 않는다.
+  ///
+  /// 본인이 현재 쓰는 닉네임은 중복 대상에서 제외되어 `true`를 반환한다.
+  ///
+  /// Returns: 쓸 수 있으면 `true`
+  /// Throws: 형식 위반 시 [ValidationException], 그 외 [NetworkException] 등
+  Future<bool> isNicknameAvailable(String nickname);
+
   /// 회원 탈퇴
   ///
   /// 백엔드에서 사용자 계정을 삭제합니다.

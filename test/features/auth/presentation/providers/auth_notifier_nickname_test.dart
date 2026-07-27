@@ -77,6 +77,10 @@ class _FakeUserRepository implements UserRepository {
   }
 
   @override
+  Future<bool> isNicknameAvailable(String nickname) =>
+      throw UnimplementedError();
+
+  @override
   Future<void> deleteAccount() => throw UnimplementedError();
 
   @override

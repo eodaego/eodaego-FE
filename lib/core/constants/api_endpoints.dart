@@ -17,6 +17,12 @@ class ApiEndpoints {
   static const String agreements = '$_v1/members/me/agreements';
   static const String updateNickname = '$_v1/members/me/nickname';
 
+  /// 닉네임 중복 확인 (GET, `?nickname=`).
+  ///
+  /// 공개 API가 아니다 — Bearer 토큰이 필요하며, 본인이 쓰는 닉네임은
+  /// 중복 대상에서 제외되어 `available: true`로 응답한다.
+  static const String checkNickname = '$_v1/members/me/nickname/exists';
+
   // 회원탈퇴 (DELETE, 204 no body).
   static const String deleteAccount = '$_v1/members/me';
 }

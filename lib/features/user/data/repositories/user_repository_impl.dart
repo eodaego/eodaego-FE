@@ -42,6 +42,28 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
+  Future<bool> isNicknameAvailable(String nickname) async {
+    try {
+      final response = await _dataSource.checkNicknameAvailability(nickname);
+
+      if (kDebugMode) {
+        debugPrint('🔍 닉네임 중복 확인: $nickname → ${response.available}');
+      }
+
+      return response.available;
+    } on DioException catch (e) {
+      throw DioExceptionHandler.handle(e);
+    } catch (e) {
+      if (e is AppException) rethrow;
+      throw ServerException(
+        message: '닉네임 확인 중 예기치 않은 오류가 발생했습니다.',
+        messageKey: 'errorNicknameCheckUnexpected',
+        originalException: e,
+      );
+    }
+  }
+
+  @override
   Future<void> deleteAccount() async {
     try {
       await _dataSource.deleteAccount();

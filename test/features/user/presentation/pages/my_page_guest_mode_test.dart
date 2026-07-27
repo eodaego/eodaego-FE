@@ -29,7 +29,9 @@ void main() {
       await tester.pumpWidget(_wrapGuest());
       await tester.pumpAndSettle();
 
-      expect(find.text('닉네임 바꾸기'), findsNothing);
+      // 닉네임 편집은 아이콘으로만 노출된다. '닉네임 바꾸기'는 툴팁 문자열이라
+      // 화면에 그려지지 않으므로 find.text로는 게스트 여부와 무관하게 통과한다.
+      expect(find.byIcon(Icons.edit_rounded), findsNothing);
       expect(find.text('약관 및 정책'), findsNothing);
       expect(find.text('탈퇴하기'), findsNothing);
       expect(find.text('로그인하러 가기'), findsOneWidget);

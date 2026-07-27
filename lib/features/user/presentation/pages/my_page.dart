@@ -108,47 +108,54 @@ class _MyPageState extends ConsumerState<MyPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             SizedBox(height: 24.h),
-            Center(
-              child: Text(
-                nickname,
-                style: AppTextStyles.display26.copyWith(color: AppColors.ink),
-              ),
-            ),
-            SizedBox(height: 8.h),
-            // 게스트는 바꿀 닉네임(계정) 자체가 없으므로 버튼을 아예 숨긴다.
-            if (!isGuest)
+            // 게스트는 바꿀 닉네임(계정) 자체가 없으므로 아이콘을 아예 숨긴다.
+            if (isGuest)
               Center(
-                child: Material(
-                  color: AppColors.surface,
-                  shape: const StadiumBorder(
-                    side: BorderSide(color: AppColors.line),
-                  ),
-                  child: InkWell(
-                    customBorder: const StadiumBorder(),
-                    onTap: () => context.push(
-                      '${RoutePaths.mypageNickname}'
-                      '?nickname=${Uri.encodeComponent(nickname)}',
-                    ),
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(minHeight: 48.h),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 14.w,
-                          vertical: 8.h,
-                        ),
-                        child: Center(
-                          widthFactor: 1,
-                          child: Text(
-                            '닉네임 바꾸기',
-                            style: AppTextStyles.caption14.copyWith(
-                              color: AppColors.ink,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                child: Text(
+                  nickname,
+                  style: AppTextStyles.display26.copyWith(color: AppColors.ink),
                 ),
+              )
+            else
+              // 닉네임은 화면 정중앙에 두고 아이콘만 그 오른쪽에 붙인다.
+              // 좌우에 같은 폭의 슬롯을 둬야 아이콘이 닉네임을 왼쪽으로 밀지 않는다.
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(width: 48.w),
+                  Flexible(
+                    child: Text(
+                      nickname,
+                      style: AppTextStyles.display26.copyWith(
+                        color: AppColors.ink,
+                      ),
+                      textAlign: TextAlign.center,
+                      // 닉네임은 10자까지 허용된다 — 넘치면 줄바꿈 대신 줄임표.
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  SizedBox(
+                    width: 48.w,
+                    child: IconButton(
+                      onPressed: () => context.push(
+                        '${RoutePaths.mypageNickname}'
+                        '?nickname=${Uri.encodeComponent(nickname)}',
+                      ),
+                      icon: Icon(
+                        Icons.edit_rounded,
+                        size: 20.w,
+                        color: AppColors.primary,
+                      ),
+                      // 아이콘은 작지만 터치 영역은 48을 지킨다.
+                      constraints: BoxConstraints(
+                        minWidth: 48.w,
+                        minHeight: 48.h,
+                      ),
+                      padding: EdgeInsets.zero,
+                      tooltip: '닉네임 바꾸기',
+                    ),
+                  ),
+                ],
               ),
             SizedBox(height: 24.h),
             Row(

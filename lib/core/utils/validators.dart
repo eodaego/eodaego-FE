@@ -12,7 +12,7 @@ class Validators {
   static const int nicknameMinLength = 2;
 
   /// 닉네임 최대 길이 (정본 `NicknameUpdateRequest.maxLength`)
-  static const int nicknameMaxLength = 30;
+  static const int nicknameMaxLength = 10;
 
   /// 닉네임 검증
   ///

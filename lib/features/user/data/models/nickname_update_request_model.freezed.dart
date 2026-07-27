@@ -23,7 +23,7 @@ NicknameUpdateRequestModel _$NicknameUpdateRequestModelFromJson(
 
 /// @nodoc
 mixin _$NicknameUpdateRequestModel {
-  /// 변경할 닉네임 (2~30자, 한글/영문/숫자)
+  /// 변경할 닉네임 (2~10자, 한글/영문/숫자)
   String get nickname => throw _privateConstructorUsedError;
 
   /// Serializes this NicknameUpdateRequestModel to a JSON map.
@@ -130,7 +130,7 @@ class _$NicknameUpdateRequestModelImpl implements _NicknameUpdateRequestModel {
     Map<String, dynamic> json,
   ) => _$$NicknameUpdateRequestModelImplFromJson(json);
 
-  /// 변경할 닉네임 (2~30자, 한글/영문/숫자)
+  /// 변경할 닉네임 (2~10자, 한글/영문/숫자)
   @override
   final String nickname;
 
@@ -177,7 +177,7 @@ abstract class _NicknameUpdateRequestModel
   factory _NicknameUpdateRequestModel.fromJson(Map<String, dynamic> json) =
       _$NicknameUpdateRequestModelImpl.fromJson;
 
-  /// 변경할 닉네임 (2~30자, 한글/영문/숫자)
+  /// 변경할 닉네임 (2~10자, 한글/영문/숫자)
   @override
   String get nickname;
 

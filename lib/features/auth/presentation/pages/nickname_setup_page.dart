@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,6 +11,7 @@ import '../../../../core/errors/app_exception.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/app_back_app_bar.dart';
 import '../../../../core/widgets/app_button.dart';
+import '../../../user/presentation/providers/user_provider.dart';
 import '../providers/auth_provider.dart';
 
 /// 닉네임 설정 화면 — 신규 가입 온보딩과 마이페이지 설정 양쪽에서 쓴다.
@@ -38,6 +41,10 @@ class NicknameSetupPage extends ConsumerStatefulWidget {
   ConsumerState<NicknameSetupPage> createState() => _NicknameSetupPageState();
 }
 
+/// 중복 확인 결과. 입력이 바뀌면 항상 [unknown]으로 되돌린다 —
+/// 확인한 뒤 글자를 고쳤는데 옛 결과가 남아 있으면 사용자를 속이는 셈이다.
+enum _Availability { unknown, checking, available, taken }
+
 class _NicknameSetupPageState extends ConsumerState<NicknameSetupPage> {
   late final TextEditingController _controller = TextEditingController(
     text: widget.initialNickname ?? '',
@@ -48,6 +55,13 @@ class _NicknameSetupPageState extends ConsumerState<NicknameSetupPage> {
 
   bool _isSubmitting = false;
 
+  _Availability _availability = _Availability.unknown;
+
+  /// 입력이 멈춘 뒤 확인을 쏘기까지의 대기. 글자마다 서버를 부르지 않는다.
+  Timer? _debounce;
+
+  static const Duration _debounceDelay = Duration(milliseconds: 400);
+
   @override
   void initState() {
     super.initState();
@@ -56,6 +70,7 @@ class _NicknameSetupPageState extends ConsumerState<NicknameSetupPage> {
 
   @override
   void dispose() {
+    _debounce?.cancel();
     _controller.removeListener(_onChanged);
     _controller.dispose();
     super.dispose();
@@ -66,15 +81,125 @@ class _NicknameSetupPageState extends ConsumerState<NicknameSetupPage> {
     // 비어 있을 때는 오류를 띄우지 않는다 — 다 지웠을 뿐인데 빨간 글씨가
     // 뜨는 건 아직 아무것도 잘못하지 않은 사용자를 나무라는 셈이다.
     // 이때는 안내 문구를 유지하고 완료 버튼만 잠근다.
+    _debounce?.cancel();
+
     setState(() {
       _errorText = _controller.text.trim().isEmpty
           ? null
           : Validators.validateNickname(_controller.text);
+      // 확인 결과는 확인한 그 문자열에만 유효하다.
+      _availability = _Availability.unknown;
     });
+
+    // 형식부터 틀렸으면 서버에 물어볼 것도 없다.
+    if (Validators.validateNickname(_controller.text) != null) return;
+    // 설정 모드에서 원래 이름 그대로면 물어볼 이유가 없다 —
+    // 서버도 본인 닉네임은 중복에서 빼주므로 무의미한 왕복이다.
+    if (_isUnchanged) return;
+
+    _debounce = Timer(_debounceDelay, _checkAvailability);
   }
 
   bool get _canSubmit =>
-      !_isSubmitting && Validators.validateNickname(_controller.text) == null;
+      !_isSubmitting &&
+      _availability != _Availability.checking &&
+      // 이미 남이 쓰는 걸 아는데 저장을 시도할 이유가 없다.
+      _availability != _Availability.taken &&
+      Validators.validateNickname(_controller.text) == null;
+
+  /// 입력창 아래 한 줄. 오류가 성공 안내보다 우선하고, 둘 다 없으면 비운다.
+  /// (형식 안내는 그 아래 고정 줄이 늘 보여준다.)
+  String? get _statusText {
+    if (_errorText != null) return _errorText!;
+    if (_availability == _Availability.available) return '쓸 수 있는 이름이에요';
+    return null;
+  }
+
+  Color get _statusColor =>
+      _errorText != null ? AppColors.danger : AppColors.primary;
+
+  /// 테두리도 상태를 함께 말한다 — 아이콘 하나보다 눈에 먼저 들어온다.
+  Color get _fieldBorderColor {
+    if (_errorText != null) return AppColors.danger;
+    if (_availability == _Availability.available) return AppColors.primary;
+    return AppColors.line;
+  }
+
+  OutlineInputBorder _fieldBorder(Color color, {double width = 1}) =>
+      OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppRadius.md.r),
+        borderSide: BorderSide(color: color, width: width),
+      );
+
+  /// 입력창 오른쪽 상태 표시. 확인 중엔 스피너, 판정이 나면 아이콘.
+  Widget? get _statusIcon {
+    if (_availability == _Availability.checking) {
+      return Padding(
+        padding: EdgeInsets.only(right: AppSpacing.base.w),
+        child: Center(
+          widthFactor: 1,
+          child: SizedBox(
+            width: 18.w,
+            height: 18.w,
+            child: const CircularProgressIndicator(
+              strokeWidth: 2,
+              color: AppColors.primary,
+            ),
+          ),
+        ),
+      );
+    }
+
+    final IconData? icon = _errorText != null
+        ? Icons.close_rounded
+        : _availability == _Availability.available
+        ? Icons.check_rounded
+        : null;
+    if (icon == null) return null;
+
+    return Padding(
+      padding: EdgeInsets.only(right: AppSpacing.base.w),
+      child: Icon(icon, size: 22.w, color: _statusColor),
+    );
+  }
+
+  /// 저장 전에 쓸 수 있는 닉네임인지 물어본다.
+  ///
+  /// 결과는 확인 시점의 스냅샷일 뿐이다 — 확인과 저장 사이에 남이 선점할 수
+  /// 있으므로 저장 시점의 409 처리는 그대로 남겨 둔다.
+  Future<void> _checkAvailability() async {
+    final nickname = _controller.text.trim();
+    final formatError = Validators.validateNickname(nickname);
+    if (formatError != null) {
+      setState(() => _errorText = formatError);
+      return;
+    }
+
+    setState(() {
+      _availability = _Availability.checking;
+      _errorText = null;
+    });
+
+    try {
+      final available = await ref
+          .read(userRepositoryProvider)
+          .isNicknameAvailable(nickname);
+      // 확인이 도는 사이 저장이 시작됐다면 결과를 반영하지 않는다 —
+      // 저장이 세운 오류 문구를 늦게 도착한 확인이 지워버린다.
+      if (!mounted || _isSubmitting) return;
+      setState(() {
+        _availability = available
+            ? _Availability.available
+            : _Availability.taken;
+        _errorText = available ? null : '이미 사용 중인 닉네임이에요';
+      });
+    } catch (_) {
+      if (!mounted) return;
+      // 사용자가 요청한 확인이 아니라 자동으로 쏜 것이므로, 실패를 알리지 않고
+      // 조용히 물러난다. 저장 시점의 409가 최종 판정이라 막힐 일도 없다.
+      setState(() => _availability = _Availability.unknown);
+    }
+  }
 
   /// 설정 모드에서 닉네임을 그대로 둔 채 완료를 누른 경우.
   /// 서버를 부를 이유가 없으니 그냥 닫는다.
@@ -83,6 +208,10 @@ class _NicknameSetupPageState extends ConsumerState<NicknameSetupPage> {
       _controller.text.trim() == (widget.initialNickname ?? '').trim();
 
   Future<void> _submit() async {
+    // 저장을 시작하면 예약된 확인은 의미가 없다. 남겨두면 저장이 세운
+    // 오류 문구를 뒤늦게 덮어쓴다.
+    _debounce?.cancel();
+
     final nickname = _controller.text.trim();
     final formatError = Validators.validateNickname(nickname);
     if (formatError != null) {
@@ -136,7 +265,6 @@ class _NicknameSetupPageState extends ConsumerState<NicknameSetupPage> {
     // autoDispose provider가 비동기 작업 중 dispose되지 않도록 구독을 유지한다.
     ref.watch(authNotifierProvider);
 
-    final hasError = _errorText != null;
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
@@ -155,7 +283,7 @@ class _NicknameSetupPageState extends ConsumerState<NicknameSetupPage> {
                     : (AppSpacing.xxl * 2).h,
               ),
               Text(
-                '닉네임을 정해 주세요',
+                '어떻게 불러줄까요?',
                 style: AppTextStyles.display24.copyWith(color: AppColors.ink),
               ),
               SizedBox(height: AppSpacing.sm.h),
@@ -168,27 +296,54 @@ class _NicknameSetupPageState extends ConsumerState<NicknameSetupPage> {
                 controller: _controller,
                 enabled: !_isSubmitting,
                 maxLength: Validators.nicknameMaxLength,
-                textAlign: TextAlign.center,
                 textInputAction: TextInputAction.done,
                 onSubmitted: (_) {
                   if (_canSubmit) _submit();
                 },
                 style: AppTextStyles.body17.copyWith(color: AppColors.ink),
-                decoration: const InputDecoration(counterText: ''),
+                decoration: InputDecoration(
+                  counterText: '',
+                  filled: true,
+                  fillColor: AppColors.surface,
+                  hintText: '탐험가',
+                  hintStyle: AppTextStyles.body17.copyWith(
+                    color: AppColors.uncollected,
+                  ),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: AppSpacing.base.w,
+                    vertical: AppSpacing.base.h,
+                  ),
+                  border: _fieldBorder(AppColors.line),
+                  enabledBorder: _fieldBorder(_fieldBorderColor),
+                  focusedBorder: _fieldBorder(_fieldBorderColor, width: 2),
+                  // 상태는 아이콘 하나로만 말한다. 누를 것이 없으니
+                  // 아이가 '확인'이라는 절차를 배울 필요도 없다.
+                  suffixIcon: _statusIcon,
+                  suffixIconConstraints: BoxConstraints(
+                    minWidth: 44.w,
+                    minHeight: 44.h,
+                  ),
+                ),
               ),
               SizedBox(height: AppSpacing.sm.h),
-              // 오류와 안내를 한 자리에서 교체 표시한다.
-              // InputDecoration.errorText는 좌측 정렬이라 가운데 정렬한
-              // 입력과 축이 어긋난다.
+              // 상태 줄과 형식 안내 줄을 분리한다. 한 자리에서 갈아끼우면
+              // 오류가 뜰 때 형식 안내가 사라져, 정작 필요할 때 규칙을 못 본다.
+              SizedBox(
+                height: 20.h,
+                child: _statusText == null
+                    ? null
+                    : Text(
+                        _statusText!,
+                        style: AppTextStyles.caption14.copyWith(
+                          color: _statusColor,
+                        ),
+                      ),
+              ),
+              SizedBox(height: AppSpacing.xs.h),
               Text(
-                hasError
-                    ? _errorText!
-                    : '한글, 영문, 숫자로 '
-                          '${Validators.nicknameMinLength}~${Validators.nicknameMaxLength}자',
-                style: AppTextStyles.caption14.copyWith(
-                  color: hasError ? AppColors.danger : AppColors.muted,
-                ),
-                textAlign: TextAlign.center,
+                '한글·영문·숫자 '
+                '${Validators.nicknameMinLength}~${Validators.nicknameMaxLength}자',
+                style: AppTextStyles.caption14.copyWith(color: AppColors.muted),
               ),
               const Spacer(),
               AppButton(

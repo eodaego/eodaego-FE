@@ -53,6 +53,9 @@ class _FakeUserRepository implements UserRepository {
   Future<String> updateNickname(String nickname) async => nickname;
 
   @override
+  Future<bool> isNicknameAvailable(String nickname) async => true;
+
+  @override
   Future<void> deleteAccount() async {}
 }
 
