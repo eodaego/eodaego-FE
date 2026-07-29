@@ -25,4 +25,10 @@ class ApiEndpoints {
 
   // 회원탈퇴 (DELETE, 204 no body).
   static const String deleteAccount = '$_v1/members/me';
+
+  // Catalog — 회원별 도감 뷰.
+  // `/catalog/items/*`(Catalog Item 태그)는 관리용이라 앱이 호출하지 않는다.
+  static const String catalog = '$_v1/catalog';
+  static const String catalogSummary = '$_v1/catalog/summary';
+  static const String catalogDetail = '$_v1/catalog/{catalogItemId}';
 }
