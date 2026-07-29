@@ -1,0 +1,249 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'catalog_provider.dart';
+
+// **************************************************************************
+// RiverpodGenerator
+// **************************************************************************
+
+String _$catalogRemoteDataSourceHash() =>
+    r'c7f722bccb25c210598ed0e1919d6acebad2455f';
+
+/// CatalogRemoteDataSource Provider (Retrofit)
+///
+/// Copied from [catalogRemoteDataSource].
+@ProviderFor(catalogRemoteDataSource)
+final catalogRemoteDataSourceProvider =
+    AutoDisposeProvider<CatalogRemoteDataSource>.internal(
+      catalogRemoteDataSource,
+      name: r'catalogRemoteDataSourceProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$catalogRemoteDataSourceHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef CatalogRemoteDataSourceRef =
+    AutoDisposeProviderRef<CatalogRemoteDataSource>;
+String _$catalogRepositoryHash() => r'021fe2b4f60525543aefb02494f5ed9085b83f98';
+
+/// CatalogRepository Provider
+///
+/// Copied from [catalogRepository].
+@ProviderFor(catalogRepository)
+final catalogRepositoryProvider =
+    AutoDisposeProvider<CatalogRepository>.internal(
+      catalogRepository,
+      name: r'catalogRepositoryProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$catalogRepositoryHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef CatalogRepositoryRef = AutoDisposeProviderRef<CatalogRepository>;
+String _$catalogItemsHash() => r'e1506c5852a5ef28550c8ff2cc625033d12a89c8';
+
+/// 도감 전체 목록. 카테고리 필터·이름 검색은 화면에서 로컬로 건다.
+///
+/// Copied from [catalogItems].
+@ProviderFor(catalogItems)
+final catalogItemsProvider =
+    AutoDisposeFutureProvider<List<CatalogItemEntity>>.internal(
+      catalogItems,
+      name: r'catalogItemsProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$catalogItemsHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef CatalogItemsRef = AutoDisposeFutureProviderRef<List<CatalogItemEntity>>;
+String _$catalogItemDetailHash() => r'99cc2b551be77d9e5f4ff18aabf5389fb6ccdc85';
+
+/// Copied from Dart SDK
+class _SystemHash {
+  _SystemHash._();
+
+  static int combine(int hash, int value) {
+    // ignore: parameter_assignments
+    hash = 0x1fffffff & (hash + value);
+    // ignore: parameter_assignments
+    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
+    return hash ^ (hash >> 6);
+  }
+
+  static int finish(int hash) {
+    // ignore: parameter_assignments
+    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
+    // ignore: parameter_assignments
+    hash = hash ^ (hash >> 11);
+    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
+  }
+}
+
+/// 도감 상세. **수집한 항목에만 쓴다** — 미수집은 서버가 403으로 막는다.
+///
+/// Copied from [catalogItemDetail].
+@ProviderFor(catalogItemDetail)
+const catalogItemDetailProvider = CatalogItemDetailFamily();
+
+/// 도감 상세. **수집한 항목에만 쓴다** — 미수집은 서버가 403으로 막는다.
+///
+/// Copied from [catalogItemDetail].
+class CatalogItemDetailFamily
+    extends Family<AsyncValue<CatalogItemDetailEntity>> {
+  /// 도감 상세. **수집한 항목에만 쓴다** — 미수집은 서버가 403으로 막는다.
+  ///
+  /// Copied from [catalogItemDetail].
+  const CatalogItemDetailFamily();
+
+  /// 도감 상세. **수집한 항목에만 쓴다** — 미수집은 서버가 403으로 막는다.
+  ///
+  /// Copied from [catalogItemDetail].
+  CatalogItemDetailProvider call(String id) {
+    return CatalogItemDetailProvider(id);
+  }
+
+  @override
+  CatalogItemDetailProvider getProviderOverride(
+    covariant CatalogItemDetailProvider provider,
+  ) {
+    return call(provider.id);
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'catalogItemDetailProvider';
+}
+
+/// 도감 상세. **수집한 항목에만 쓴다** — 미수집은 서버가 403으로 막는다.
+///
+/// Copied from [catalogItemDetail].
+class CatalogItemDetailProvider
+    extends AutoDisposeFutureProvider<CatalogItemDetailEntity> {
+  /// 도감 상세. **수집한 항목에만 쓴다** — 미수집은 서버가 403으로 막는다.
+  ///
+  /// Copied from [catalogItemDetail].
+  CatalogItemDetailProvider(String id)
+    : this._internal(
+        (ref) => catalogItemDetail(ref as CatalogItemDetailRef, id),
+        from: catalogItemDetailProvider,
+        name: r'catalogItemDetailProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$catalogItemDetailHash,
+        dependencies: CatalogItemDetailFamily._dependencies,
+        allTransitiveDependencies:
+            CatalogItemDetailFamily._allTransitiveDependencies,
+        id: id,
+      );
+
+  CatalogItemDetailProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.id,
+  }) : super.internal();
+
+  final String id;
+
+  @override
+  Override overrideWith(
+    FutureOr<CatalogItemDetailEntity> Function(CatalogItemDetailRef provider)
+    create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: CatalogItemDetailProvider._internal(
+        (ref) => create(ref as CatalogItemDetailRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        id: id,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<CatalogItemDetailEntity> createElement() {
+    return _CatalogItemDetailProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is CatalogItemDetailProvider && other.id == id;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, id.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin CatalogItemDetailRef
+    on AutoDisposeFutureProviderRef<CatalogItemDetailEntity> {
+  /// The parameter `id` of this provider.
+  String get id;
+}
+
+class _CatalogItemDetailProviderElement
+    extends AutoDisposeFutureProviderElement<CatalogItemDetailEntity>
+    with CatalogItemDetailRef {
+  _CatalogItemDetailProviderElement(super.provider);
+
+  @override
+  String get id => (origin as CatalogItemDetailProvider).id;
+}
+
+String _$catalogSummaryHash() => r'd51ee7fbf2bca122d138e8e72ba25969f0e45c58';
+
+/// 수집 현황 요약. 홈 진행률 카드와 마이페이지 통계가 쓴다.
+///
+/// Copied from [catalogSummary].
+@ProviderFor(catalogSummary)
+final catalogSummaryProvider =
+    AutoDisposeFutureProvider<CatalogSummaryEntity>.internal(
+      catalogSummary,
+      name: r'catalogSummaryProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$catalogSummaryHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef CatalogSummaryRef = AutoDisposeFutureProviderRef<CatalogSummaryEntity>;
+// ignore_for_file: type=lint
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

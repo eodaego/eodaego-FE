@@ -1,8 +1,11 @@
+import 'package:eodaego/core/constants/dogam_category.dart';
 import 'package:eodaego/core/errors/app_exception.dart';
 import 'package:eodaego/core/storage/secure_token_storage.dart';
 import 'package:eodaego/features/auth/data/datasources/firebase_auth_datasource.dart';
 import 'package:eodaego/features/auth/domain/entities/auth_result_entity.dart';
 import 'package:eodaego/features/auth/presentation/providers/auth_provider.dart';
+import 'package:eodaego/features/collection/domain/entities/catalog_summary_entity.dart';
+import 'package:eodaego/features/collection/presentation/providers/catalog_provider.dart';
 import 'package:eodaego/features/user/domain/entities/agreement_status_entity.dart';
 import 'package:eodaego/features/user/domain/repositories/user_repository.dart';
 import 'package:eodaego/features/user/presentation/pages/my_page.dart';
@@ -120,6 +123,19 @@ class _FakeUserRepository implements UserRepository {
   Future<void> updateAgreements({required bool marketing}) async {}
 }
 
+// MyPage가 watch하는 catalogSummaryProvider용 고정값 — 실 Dio 호출(네트워크 경계)을
+// 막는다. 실패 폴백(0)과 구분되도록 0이 아닌 값을 쓴다.
+const _fakeCatalogSummary = CatalogSummaryEntity(
+  totalCount: 80,
+  collectedCount: 24,
+  collectionRate: 30,
+  collectedByCategory: {
+    DogamCategory.animal: 8,
+    DogamCategory.plant: 8,
+    DogamCategory.place: 8,
+  },
+);
+
 Widget _wrap(_FakeUserRepository repo) {
   final firebase = _MockFirebaseAuthDataSource();
   when(() => firebase.signOut()).thenAnswer((_) async {});
@@ -132,6 +148,7 @@ Widget _wrap(_FakeUserRepository repo) {
       secureTokenStorageProvider.overrideWithValue(
         SecureTokenStorage(storage: _FakeSecureStorage()),
       ),
+      catalogSummaryProvider.overrideWith((ref) => _fakeCatalogSummary),
     ],
     child: ScreenUtilInit(
       designSize: const Size(393, 852),
@@ -242,6 +259,7 @@ void main() {
           secureTokenStorageProvider.overrideWithValue(
             SecureTokenStorage(storage: _FakeSecureStorage()),
           ),
+          catalogSummaryProvider.overrideWith((ref) => _fakeCatalogSummary),
         ],
       );
       addTearDown(container.dispose);
@@ -296,6 +314,7 @@ void main() {
           secureTokenStorageProvider.overrideWithValue(
             SecureTokenStorage(storage: _FakeSecureStorage()),
           ),
+          catalogSummaryProvider.overrideWith((ref) => _fakeCatalogSummary),
         ],
       );
       addTearDown(container.dispose);

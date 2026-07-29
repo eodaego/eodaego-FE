@@ -7,14 +7,16 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/errors/app_exception.dart';
-import '../../../../core/mock/mock_dogam.dart';
 import '../../../../core/providers/guest_mode_provider.dart';
 import '../../../../core/widgets/app_back_app_bar.dart';
 import '../../../../core/widgets/app_button.dart';
+import '../../../../core/widgets/app_skeleton.dart';
 import '../../../../core/widgets/app_snackbar.dart';
 import '../../../../core/widgets/dialogs/app_dialog.dart';
 import '../../../../router/route_paths.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../collection/domain/entities/catalog_summary_entity.dart';
+import '../../../collection/presentation/providers/catalog_provider.dart';
 import '../providers/user_provider.dart';
 
 /// 내 정보 (MY-01/02) — 프로필·수집 통계·닉네임 변경·약관·로그아웃·탈퇴.
@@ -132,7 +134,14 @@ class _MyPageState extends ConsumerState<MyPage> {
     final nickname = isGuest
         ? '게스트'
         : ref.watch(authNotifierProvider).valueOrNull?.nickname ?? '탐험가';
-    final percent = (mockDogamCollected / mockDogamTotal * 100).round();
+    // Guest has no token. Calling the summary API here would 401, and the
+    // interceptor would misread that as an expired session and force-log-out
+    // a guest who was never logged in. So guests skip the request entirely —
+    // null signals "render zeros" to _StatsCard.
+    // 게스트는 토큰이 없다. 여기서 요약 API를 부르면 401이 나고, 인터셉터가
+    // 이를 세션 만료로 오인해 로그인한 적 없는 게스트를 강제 로그아웃시킨다.
+    // 그래서 게스트는 조회 자체를 하지 않는다 — null은 "0으로 보여준다"는 신호다.
+    final summaryAsync = isGuest ? null : ref.watch(catalogSummaryProvider);
     return Scaffold(
       backgroundColor: AppColors.canvas,
       appBar: const AppBackAppBar(title: '내 정보'),
@@ -159,8 +168,7 @@ class _MyPageState extends ConsumerState<MyPage> {
             ),
             SizedBox(height: 12.h),
             _StatsCard(
-              percentText: '$percent%',
-              countText: '$mockDogamCollected',
+              summaryAsync: summaryAsync,
               onTap: () => context.go(RoutePaths.collection),
             ),
             SizedBox(height: 32.h),
@@ -256,19 +264,19 @@ class _ProfileHeader extends StatelessWidget {
 }
 
 /// 수집 통계 카드 — 한 장을 세로 구분선으로 2분할, 탭하면 도감으로.
+///
+/// [summaryAsync]가 null이면 게스트다(조회 자체를 하지 않음) — 0을 그대로 보여준다.
+/// 로딩은 숫자 자리만 스켈레톤으로, 에러는 카드 틀은 유지한 채 숫자 대신
+/// 짧은 안내로 바꾼다. 0으로 단언하지 않는다.
 class _StatsCard extends StatelessWidget {
-  const _StatsCard({
-    required this.percentText,
-    required this.countText,
-    required this.onTap,
-  });
+  const _StatsCard({required this.summaryAsync, required this.onTap});
 
-  final String percentText;
-  final String countText;
+  final AsyncValue<CatalogSummaryEntity>? summaryAsync;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
+    final async = summaryAsync;
     return Material(
       color: AppColors.surface,
       shape: RoundedRectangleBorder(
@@ -280,33 +288,73 @@ class _StatsCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppRadius.lg.r),
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: 18.h),
-          child: IntrinsicHeight(
-            child: Row(
-              children: [
-                Expanded(
-                  child: _StatColumn(value: percentText, label: '수집률'),
+          child: async == null
+              ? const _StatsRow(percentText: '0%', countText: '0')
+              : async.when(
+                  loading: () => const _StatsRow(loading: true),
+                  // 카드 틀은 유지하고, 0을 사실처럼 보여주는 대신 짧게 알린다.
+                  error: (_, _) => Center(
+                    child: Text(
+                      '수집 현황을 불러오지 못했어요',
+                      style: AppTextStyles.body15.copyWith(
+                        color: AppColors.muted,
+                      ),
+                    ),
+                  ),
+                  data: (summary) => _StatsRow(
+                    percentText: '${summary.collectionRate.round()}%',
+                    countText: '${summary.collectedCount}',
+                  ),
                 ),
-                const VerticalDivider(
-                  color: AppColors.line,
-                  width: 1,
-                  thickness: 1,
-                ),
-                Expanded(
-                  child: _StatColumn(value: countText, label: '모은 도감'),
-                ),
-              ],
-            ),
-          ),
         ),
       ),
     );
   }
 }
 
-class _StatColumn extends StatelessWidget {
-  const _StatColumn({required this.value, required this.label});
+/// 두 칼럼(수집률/모은 도감) — 로딩이면 숫자 자리에 스켈레톤을 넣는다.
+class _StatsRow extends StatelessWidget {
+  const _StatsRow({this.percentText, this.countText, this.loading = false});
 
-  final String value;
+  final String? percentText;
+  final String? countText;
+  final bool loading;
+
+  @override
+  Widget build(BuildContext context) {
+    return IntrinsicHeight(
+      child: Row(
+        children: [
+          Expanded(
+            child: _StatColumn(
+              valueText: percentText,
+              loading: loading,
+              label: '수집률',
+            ),
+          ),
+          const VerticalDivider(color: AppColors.line, width: 1, thickness: 1),
+          Expanded(
+            child: _StatColumn(
+              valueText: countText,
+              loading: loading,
+              label: '모은 도감',
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatColumn extends StatelessWidget {
+  const _StatColumn({
+    this.valueText,
+    this.loading = false,
+    required this.label,
+  });
+
+  final String? valueText;
+  final bool loading;
   final String label;
 
   @override
@@ -329,10 +377,14 @@ class _StatColumn extends StatelessWidget {
           ],
         ),
         SizedBox(height: 6.h),
-        Text(
-          value,
-          style: AppTextStyles.display26.copyWith(color: AppColors.primary),
-        ),
+        loading
+            ? AppSkeleton(width: 48.w, height: 26.h)
+            : Text(
+                valueText ?? '',
+                style: AppTextStyles.display26.copyWith(
+                  color: AppColors.primary,
+                ),
+              ),
       ],
     );
   }

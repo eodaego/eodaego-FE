@@ -1,38 +1,85 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/dogam_category.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
-import '../../../../core/mock/mock_dogam.dart';
+import '../../../../core/providers/guest_mode_provider.dart';
 import '../../../../core/widgets/app_badge.dart';
+import '../../../../core/widgets/app_skeleton.dart';
 import '../../../../core/widgets/category_chip.dart';
 import '../../../../core/widgets/dogam_card.dart';
 import '../../../../router/route_paths.dart';
+import '../../domain/entities/catalog_item_entity.dart';
+import '../providers/catalog_provider.dart';
 
 /// 도감 (CATALOG-01~03) — 필터·검색·3열 그리드.
-class CollectionPage extends StatefulWidget {
+///
+/// 목록은 서버에서 한 번 받고 카테고리 필터·이름 검색은 로컬에서 건다.
+class CollectionPage extends ConsumerStatefulWidget {
   const CollectionPage({super.key});
 
   @override
-  State<CollectionPage> createState() => _CollectionPageState();
+  ConsumerState<CollectionPage> createState() => _CollectionPageState();
 }
 
-class _CollectionPageState extends State<CollectionPage> {
+class _CollectionPageState extends ConsumerState<CollectionPage> {
   DogamCategory? _filter; // null = 전체
   String _query = '';
 
-  List<MockDogamItem> get _visible => mockDogamItems
-      .where(
-        (e) =>
-            (_filter == null || e.category == _filter) &&
-            (_query.isEmpty || e.name.contains(_query)),
-      )
-      .toList();
+  // Applies the category filter only. 카테고리 필터만 적용한다.
+  // 카운트 뱃지는 검색어에 영향받지 않아야 하므로 검색 전 단계를 따로 둔다.
+  List<CatalogItemEntity> _inCategory(List<CatalogItemEntity> items) {
+    if (_filter == null) return items;
+    return items.where((e) => e.category == _filter).toList();
+  }
+
+  List<CatalogItemEntity> _visible(List<CatalogItemEntity> items) {
+    if (_query.isEmpty) return items;
+    return items.where((e) => (e.name ?? '').contains(_query)).toList();
+  }
+
+  // Pull-to-refresh. The shell keeps this page alive across tab switches, so
+  // the providers never auto-dispose and the catalog would otherwise be
+  // fetched once per app launch with no way to pick up new server data.
+  // 당겨서 새로고침. 셸이 탭을 옮겨도 이 페이지를 살려두기 때문에 프로바이더가
+  // 스스로 사라지지 않는다. 그래서 앱 실행당 한 번만 조회하고 새 서버 데이터를
+  // 받아올 방법이 없다.
+  Future<void> _refresh() async {
+    // 게스트는 애초에 조회하지 않는다 — 여기서 read하면 막아둔 요청이 나간다.
+    if (ref.read(guestModeProvider)) return;
+
+    // 홈·마이페이지가 함께 쓰는 요약도 같이 무효화한다. 목록만 갱신하면
+    // 도감 뱃지와 홈 카드 숫자가 어긋난다.
+    ref.invalidate(catalogItemsProvider);
+    ref.invalidate(catalogSummaryProvider);
+
+    try {
+      // 새 값이 도착할 때까지 인디케이터를 유지한다.
+      await ref.read(catalogItemsProvider.future);
+    } catch (_) {
+      // 실패는 화면이 에러 상태로 이미 알린다. 여기선 인디케이터만 닫는다.
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final isGuest = ref.watch(guestModeProvider);
+    // Guest has no token. Calling the list API here would 401, and the
+    // interceptor would misread that as an expired session and force-log-out
+    // a guest who was never logged in. So guests skip the request and see
+    // an empty catalog — truthful, since a guest has never collected anything.
+    // 게스트는 토큰이 없다. 여기서 목록 API를 부르면 401이 나고, 인터셉터가
+    // 이를 세션 만료로 오인해 로그인한 적 없는 게스트를 강제 로그아웃시킨다.
+    // 그래서 게스트는 조회를 하지 않고 빈 도감을 보여준다 — 게스트는 수집한
+    // 적이 없으니 사실과 같다.
+    final itemsAsync = isGuest
+        ? const AsyncValue<List<CatalogItemEntity>>.data(<CatalogItemEntity>[])
+        : ref.watch(catalogItemsProvider);
+
     return Scaffold(
       backgroundColor: AppColors.canvas,
       body: SafeArea(
@@ -51,10 +98,18 @@ class _CollectionPageState extends State<CollectionPage> {
                     ),
                   ),
                   SizedBox(width: 8.w),
-                  AppBadge(
-                    label: '$mockDogamCollected/$mockDogamTotal',
-                    background: AppColors.primaryTint,
-                    foreground: AppColors.primaryDark,
+                  itemsAsync.when(
+                    loading: () => AppSkeleton(width: 52.w, height: 22.h),
+                    error: (_, _) => const SizedBox.shrink(),
+                    data: (items) {
+                      final scoped = _inCategory(items);
+                      final collected = scoped.where((e) => e.collected).length;
+                      return AppBadge(
+                        label: '$collected/${scoped.length}',
+                        background: AppColors.primaryTint,
+                        foreground: AppColors.primaryDark,
+                      );
+                    },
                   ),
                 ],
               ),
@@ -105,28 +160,138 @@ class _CollectionPageState extends State<CollectionPage> {
               ),
               SizedBox(height: 12.h),
               Expanded(
-                child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    childAspectRatio: 3 / 3.6,
-                    mainAxisSpacing: 10.h,
-                    crossAxisSpacing: 10.w,
+                child: RefreshIndicator(
+                  onRefresh: _refresh,
+                  // 앱에 브랜드 colorScheme이 없어 기본값이 Material 보라로 나온다.
+                  // 진행바·활성 탭과 같은 primary를 쓰고, canvas 위에 얹히므로
+                  // 원 배경은 surface로 대비를 만든다.
+                  color: AppColors.primary,
+                  backgroundColor: AppColors.surface,
+                  // 어린이 기준으로 수치를 키우는 원칙에 맞춰 기본 2.0보다 두껍게.
+                  strokeWidth: 3,
+                  child: itemsAsync.when(
+                    loading: () => const _CollectionGridSkeleton(),
+                    error: (_, _) => _CollectionError(
+                      onRetry: () => ref.invalidate(catalogItemsProvider),
+                    ),
+                    data: (items) => _CollectionGrid(
+                      items: _visible(_inCategory(items)),
+                      isSearching: _query.isNotEmpty,
+                    ),
                   ),
-                  itemCount: _visible.length,
-                  itemBuilder: (context, index) {
-                    final item = _visible[index];
-                    return DogamCard(
-                      key: ValueKey(item.id),
-                      item: item,
-                      onTap: () =>
-                          context.push(RoutePaths.collectionDetail(item.id)),
-                    );
-                  },
                 ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// 3열 그리드 — 로딩·데이터가 같은 배치를 쓰도록 delegate를 공유한다.
+SliverGridDelegate _gridDelegate() {
+  return SliverGridDelegateWithFixedCrossAxisCount(
+    crossAxisCount: 3,
+    childAspectRatio: 3 / 3.6,
+    mainAxisSpacing: 10.h,
+    crossAxisSpacing: 10.w,
+  );
+}
+
+class _CollectionGrid extends StatelessWidget {
+  const _CollectionGrid({required this.items, required this.isSearching});
+
+  final List<CatalogItemEntity> items;
+
+  /// 검색어가 있는 상태에서 결과가 없는 것인지 — 빈 문구를 가른다.
+  final bool isSearching;
+
+  @override
+  Widget build(BuildContext context) {
+    if (items.isEmpty) {
+      // 검색 결과가 없을 때만 검색 관련 문구를 보여준다. 카테고리 필터·빈
+      // 도감·게스트 모드처럼 검색과 무관한 빈 상태에는 긍정형 안내를 쓴다.
+      final message = isSearching
+          ? '찾는 이름이 없어요. 다른 이름으로 찾아보세요'
+          : '공원에서 만나면 여기에 모아둘 수 있어요';
+      // The empty state is exactly when a refresh is most wanted, so it has to
+      // stay draggable — a plain Center gives RefreshIndicator nothing to pull.
+      // 비어 있을 때가 새로고침이 가장 필요한 순간이라 당겨지는 상태를 유지한다.
+      // 그냥 Center를 두면 RefreshIndicator가 당길 대상을 못 찾는다.
+      return LayoutBuilder(
+        builder: (context, constraints) => SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Center(
+              child: Text(
+                message,
+                style: AppTextStyles.body15.copyWith(color: AppColors.muted),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return GridView.builder(
+      // 항목이 한 화면을 못 채워도 당겨서 새로고침이 되게 한다.
+      physics: const AlwaysScrollableScrollPhysics(),
+      gridDelegate: _gridDelegate(),
+      itemCount: items.length,
+      itemBuilder: (context, index) {
+        final item = items[index];
+        return DogamCard(
+          key: ValueKey(item.id),
+          category: item.category,
+          collected: item.collected,
+          name: item.name,
+          imageUrl: item.imageUrl,
+          onTap: () =>
+              context.push(RoutePaths.collectionDetail(item.id), extra: item),
+        );
+      },
+    );
+  }
+}
+
+class _CollectionGridSkeleton extends StatelessWidget {
+  const _CollectionGridSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: _gridDelegate(),
+      itemCount: 12,
+      itemBuilder: (context, index) => AppSkeleton(
+        width: double.infinity,
+        height: double.infinity,
+        borderRadius: BorderRadius.circular(AppRadius.sm.r),
+      ),
+    );
+  }
+}
+
+class _CollectionError extends StatelessWidget {
+  const _CollectionError({required this.onRetry});
+
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            '도감을 불러오지 못했어요',
+            style: AppTextStyles.body17.copyWith(color: AppColors.ink),
+          ),
+          SizedBox(height: 12.h),
+          TextButton(onPressed: onRetry, child: const Text('다시 시도')),
+        ],
       ),
     );
   }

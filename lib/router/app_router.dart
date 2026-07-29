@@ -11,6 +11,7 @@ import '../features/auth/presentation/pages/nickname_setup_page.dart';
 import '../features/auth/presentation/pages/onboarding_page.dart';
 import '../features/auth/presentation/pages/splash_page.dart';
 import '../features/auth/presentation/providers/auth_provider.dart';
+import '../features/collection/domain/entities/catalog_item_entity.dart';
 import '../features/collection/presentation/pages/collection_detail_page.dart';
 import '../features/collection/presentation/pages/collection_page.dart';
 import '../features/course/presentation/pages/course_recommend_page.dart';
@@ -199,6 +200,8 @@ GoRouter router(Ref ref) {
                       key: state.pageKey,
                       child: CollectionDetailPage(
                         itemId: state.pathParameters['id']!,
+                        // 목록에서 넘긴 항목. 없으면(딥링크 등) 상세를 직접 조회한다.
+                        item: state.extra as CatalogItemEntity?,
                       ),
                     ),
                   ),
