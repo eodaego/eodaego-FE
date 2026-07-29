@@ -5,6 +5,7 @@ import '../constants/app_colors.dart';
 import '../constants/dogam_category.dart';
 import '../constants/spacing_and_radius.dart';
 import '../constants/text_styles.dart';
+import 'app_skeleton.dart';
 
 /// 도감 카드 — 수집: 2px 카테고리 테두리 + 사진(없으면 아이콘) + 이름 /
 /// 미수집: surfaceDim + `?`.
@@ -90,6 +91,14 @@ class DogamCard extends StatelessWidget {
         height: double.infinity,
         // 사진을 못 받아도 화면이 비지 않게 기존 아이콘으로 되돌린다
         errorBuilder: (context, error, stackTrace) => _categoryIcon(),
+        // 로딩 중에는 스켈레톤을 보여준다 (spec §8)
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return const AppSkeleton(
+            width: double.infinity,
+            height: double.infinity,
+          );
+        },
       ),
     );
   }

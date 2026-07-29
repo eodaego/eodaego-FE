@@ -22,8 +22,6 @@ mixin _$CatalogSummaryEntity {
   double get collectionRate => throw _privateConstructorUsedError;
   Map<DogamCategory, int> get collectedByCategory =>
       throw _privateConstructorUsedError;
-  Map<DogamCategory, int> get totalByCategory =>
-      throw _privateConstructorUsedError;
 
   /// Create a copy of CatalogSummaryEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -44,7 +42,6 @@ abstract class $CatalogSummaryEntityCopyWith<$Res> {
     int collectedCount,
     double collectionRate,
     Map<DogamCategory, int> collectedByCategory,
-    Map<DogamCategory, int> totalByCategory,
   });
 }
 
@@ -70,7 +67,6 @@ class _$CatalogSummaryEntityCopyWithImpl<
     Object? collectedCount = null,
     Object? collectionRate = null,
     Object? collectedByCategory = null,
-    Object? totalByCategory = null,
   }) {
     return _then(
       _value.copyWith(
@@ -89,10 +85,6 @@ class _$CatalogSummaryEntityCopyWithImpl<
             collectedByCategory: null == collectedByCategory
                 ? _value.collectedByCategory
                 : collectedByCategory // ignore: cast_nullable_to_non_nullable
-                      as Map<DogamCategory, int>,
-            totalByCategory: null == totalByCategory
-                ? _value.totalByCategory
-                : totalByCategory // ignore: cast_nullable_to_non_nullable
                       as Map<DogamCategory, int>,
           )
           as $Val,
@@ -114,7 +106,6 @@ abstract class _$$CatalogSummaryEntityImplCopyWith<$Res>
     int collectedCount,
     double collectionRate,
     Map<DogamCategory, int> collectedByCategory,
-    Map<DogamCategory, int> totalByCategory,
   });
 }
 
@@ -136,7 +127,6 @@ class __$$CatalogSummaryEntityImplCopyWithImpl<$Res>
     Object? collectedCount = null,
     Object? collectionRate = null,
     Object? collectedByCategory = null,
-    Object? totalByCategory = null,
   }) {
     return _then(
       _$CatalogSummaryEntityImpl(
@@ -156,10 +146,6 @@ class __$$CatalogSummaryEntityImplCopyWithImpl<$Res>
             ? _value._collectedByCategory
             : collectedByCategory // ignore: cast_nullable_to_non_nullable
                   as Map<DogamCategory, int>,
-        totalByCategory: null == totalByCategory
-            ? _value._totalByCategory
-            : totalByCategory // ignore: cast_nullable_to_non_nullable
-                  as Map<DogamCategory, int>,
       ),
     );
   }
@@ -173,9 +159,7 @@ class _$CatalogSummaryEntityImpl implements _CatalogSummaryEntity {
     required this.collectedCount,
     required this.collectionRate,
     required final Map<DogamCategory, int> collectedByCategory,
-    required final Map<DogamCategory, int> totalByCategory,
-  }) : _collectedByCategory = collectedByCategory,
-       _totalByCategory = totalByCategory;
+  }) : _collectedByCategory = collectedByCategory;
 
   @override
   final int totalCount;
@@ -192,17 +176,9 @@ class _$CatalogSummaryEntityImpl implements _CatalogSummaryEntity {
     return EqualUnmodifiableMapView(_collectedByCategory);
   }
 
-  final Map<DogamCategory, int> _totalByCategory;
-  @override
-  Map<DogamCategory, int> get totalByCategory {
-    if (_totalByCategory is EqualUnmodifiableMapView) return _totalByCategory;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableMapView(_totalByCategory);
-  }
-
   @override
   String toString() {
-    return 'CatalogSummaryEntity(totalCount: $totalCount, collectedCount: $collectedCount, collectionRate: $collectionRate, collectedByCategory: $collectedByCategory, totalByCategory: $totalByCategory)';
+    return 'CatalogSummaryEntity(totalCount: $totalCount, collectedCount: $collectedCount, collectionRate: $collectionRate, collectedByCategory: $collectedByCategory)';
   }
 
   @override
@@ -219,10 +195,6 @@ class _$CatalogSummaryEntityImpl implements _CatalogSummaryEntity {
             const DeepCollectionEquality().equals(
               other._collectedByCategory,
               _collectedByCategory,
-            ) &&
-            const DeepCollectionEquality().equals(
-              other._totalByCategory,
-              _totalByCategory,
             ));
   }
 
@@ -233,7 +205,6 @@ class _$CatalogSummaryEntityImpl implements _CatalogSummaryEntity {
     collectedCount,
     collectionRate,
     const DeepCollectionEquality().hash(_collectedByCategory),
-    const DeepCollectionEquality().hash(_totalByCategory),
   );
 
   /// Create a copy of CatalogSummaryEntity
@@ -255,7 +226,6 @@ abstract class _CatalogSummaryEntity implements CatalogSummaryEntity {
     required final int collectedCount,
     required final double collectionRate,
     required final Map<DogamCategory, int> collectedByCategory,
-    required final Map<DogamCategory, int> totalByCategory,
   }) = _$CatalogSummaryEntityImpl;
 
   @override
@@ -266,8 +236,6 @@ abstract class _CatalogSummaryEntity implements CatalogSummaryEntity {
   double get collectionRate;
   @override
   Map<DogamCategory, int> get collectedByCategory;
-  @override
-  Map<DogamCategory, int> get totalByCategory;
 
   /// Create a copy of CatalogSummaryEntity
   /// with the given fields replaced by the non-null parameter values.

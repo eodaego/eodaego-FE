@@ -65,11 +65,6 @@ const _fakeCatalogSummary = CatalogSummaryEntity(
     DogamCategory.plant: 8,
     DogamCategory.place: 8,
   },
-  totalByCategory: {
-    DogamCategory.animal: 27,
-    DogamCategory.plant: 27,
-    DogamCategory.place: 26,
-  },
 );
 
 /// [Finding 1] 라우터 리다이렉트 회귀 테스트.

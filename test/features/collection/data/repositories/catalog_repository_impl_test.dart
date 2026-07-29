@@ -201,7 +201,6 @@ void main() {
         // 서버가 계산한 값을 그대로 쓴다
         expect(summary.collectionRate, 30.0);
         expect(summary.collectedByCategory[DogamCategory.animal], 12);
-        expect(summary.totalByCategory[DogamCategory.animal], 30);
         // 알 수 없는 카테고리는 무시한다
         expect(summary.collectedByCategory.length, 1);
       },

@@ -39,7 +39,6 @@ class _FakeCatalogRepository implements CatalogRepository {
         collectedCount: 0,
         collectionRate: 0,
         collectedByCategory: {},
-        totalByCategory: {},
       );
 }
 
@@ -85,7 +84,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('?'), findsWidgets);
+      // [Finding 3] 히어로도 물음표를 보여준다 — 카테고리 아이콘이 아니다.
+      // 히어로(사진 영역) + 본문(_UncollectedBody) 두 곳에서 '?'가 나온다.
+      expect(find.text('?'), findsNWidgets(2));
+      expect(find.byIcon(DogamCategory.plant.icon), findsNothing);
       expect(find.text('미수집'), findsOneWidget);
     },
   );
@@ -124,5 +126,9 @@ void main() {
     expect(find.text('수달'), findsOneWidget);
     expect(find.text('물가에서 헤엄치는 재주꾼'), findsOneWidget);
     expect(find.text('2026.07.05에 만났어요'), findsOneWidget);
+    // [Finding 3] 수집했지만 사진이 없으면 히어로는 물음표가 아니라
+    // 카테고리 아이콘을 보여준다 — 미수집과 같은 화면이 되면 안 된다.
+    expect(find.text('?'), findsNothing);
+    expect(find.byIcon(DogamCategory.animal.icon), findsOneWidget);
   });
 }

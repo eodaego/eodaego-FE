@@ -33,6 +33,7 @@ class CollectionDetailPage extends ConsumerWidget {
     if (listItem != null && !listItem.collected) {
       return _DetailScaffold(
         category: listItem.category,
+        collected: false,
         child: const _UncollectedBody(),
       );
     }
@@ -43,10 +44,15 @@ class CollectionDetailPage extends ConsumerWidget {
       loading: () => _DetailScaffold(
         // 카테고리를 이미 아니까 색을 즉시 칠한다. 회색에서 컬러로 튀지 않는다.
         category: listItem?.category,
+        // 목록이 이미 들고 있는 사진을 그대로 써서 로딩 중 깜빡임을 막는다.
+        imageUrl: listItem?.imageUrl,
+        collected: listItem?.collected ?? true,
         child: const _LoadingBody(),
       ),
       error: (_, _) => _DetailScaffold(
         category: listItem?.category,
+        imageUrl: listItem?.imageUrl,
+        collected: listItem?.collected ?? true,
         child: _ErrorBody(
           onRetry: () => ref.invalidate(catalogItemDetailProvider(itemId)),
         ),
@@ -54,6 +60,7 @@ class CollectionDetailPage extends ConsumerWidget {
       data: (detail) => _DetailScaffold(
         category: detail.category,
         imageUrl: detail.imageUrl,
+        collected: true,
         child: _LoadedBody(detail: detail),
       ),
     );
@@ -62,9 +69,17 @@ class CollectionDetailPage extends ConsumerWidget {
 
 /// 상세 화면 뼈대 — 사진 영역과 본문 사이의 공통 배치.
 class _DetailScaffold extends StatelessWidget {
-  const _DetailScaffold({required this.child, this.category, this.imageUrl});
+  const _DetailScaffold({
+    required this.child,
+    required this.collected,
+    this.category,
+    this.imageUrl,
+  });
 
   final Widget child;
+
+  /// 히어로가 `?`(미수집)와 아이콘(사진 없음/실패)을 가르는 기준.
+  final bool collected;
   final DogamCategory? category;
   final String? imageUrl;
 
@@ -78,7 +93,7 @@ class _DetailScaffold extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _Hero(category: category, imageUrl: imageUrl),
+            _Hero(category: category, imageUrl: imageUrl, collected: collected),
             SizedBox(height: 16.h),
             child,
             SizedBox(height: 32.h),
@@ -89,10 +104,12 @@ class _DetailScaffold extends StatelessWidget {
   }
 }
 
-/// 사진 영역 — 사진이 있으면 사진, 없으면 카테고리 아이콘.
+/// 사진 영역 — 사진이 있으면 사진, 없으면 미수집은 `?`, 수집인데 사진이
+/// 없거나(또는 실패) 카테고리만 아는 경우엔 아이콘 (spec §8).
 class _Hero extends StatelessWidget {
-  const _Hero({this.category, this.imageUrl});
+  const _Hero({required this.collected, this.category, this.imageUrl});
 
+  final bool collected;
   final DogamCategory? category;
   final String? imageUrl;
 
@@ -110,6 +127,15 @@ class _Hero extends StatelessWidget {
           width: double.infinity,
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) => _placeholder(radius),
+          // 로딩 중에는 스켈레톤을 보여준다 (spec §8)
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            return AppSkeleton(
+              width: double.infinity,
+              height: 260.h,
+              borderRadius: radius,
+            );
+          },
         ),
       );
     }
@@ -127,9 +153,16 @@ class _Hero extends StatelessWidget {
         borderRadius: radius,
       ),
       child: Center(
-        child: c == null
-            ? const SizedBox.shrink()
-            : Icon(c.icon, size: 72.w, color: c.color),
+        child: !collected
+            ? Text(
+                '?',
+                style: AppTextStyles.display34.copyWith(
+                  color: AppColors.uncollected,
+                ),
+              )
+            : (c == null
+                  ? const SizedBox.shrink()
+                  : Icon(c.icon, size: 72.w, color: c.color)),
       ),
     );
   }

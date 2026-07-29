@@ -15,6 +15,5 @@ class CatalogSummaryEntity with _$CatalogSummaryEntity {
     required int collectedCount,
     required double collectionRate,
     required Map<DogamCategory, int> collectedByCategory,
-    required Map<DogamCategory, int> totalByCategory,
   }) = _CatalogSummaryEntity;
 }

@@ -24,10 +24,16 @@ class CatalogRepositoryImpl implements CatalogRepository {
       final response = await _dataSource.getCatalog();
 
       final items = <CatalogItemEntity>[];
+      // Unknown category values seen in this response, collected instead of
+      // logged per item — a new server category would otherwise print once
+      // per affected item (up to 50 lines for one load).
+      // 이번 응답에서 본 미지 카테고리 값들 — 항목마다 찍지 않고 모아둔다.
+      // 서버에 카테고리가 추가되면 항목당(최대 50줄) 로그가 찍히는 걸 막는다.
+      final unknownCategories = <String>{};
       for (final dto in response.items) {
         final category = DogamCategory.fromServer(dto.category);
         if (category == null) {
-          debugPrint('[Catalog] ⚠️ 알 수 없는 카테고리: ${dto.category} (항목 제외)');
+          unknownCategories.add(dto.category);
           continue;
         }
         items.add(
@@ -38,6 +44,14 @@ class CatalogRepositoryImpl implements CatalogRepository {
             name: dto.name,
             imageUrl: dto.imageUrl,
           ),
+        );
+      }
+
+      if (unknownCategories.isNotEmpty) {
+        final excludedCount = response.items.length - items.length;
+        debugPrint(
+          '[Catalog] ⚠️ 알 수 없는 카테고리 ${unknownCategories.length}종 '
+          '(${unknownCategories.join(', ')}) — $excludedCount개 항목 제외',
         );
       }
 
@@ -103,7 +117,6 @@ class CatalogRepositoryImpl implements CatalogRepository {
       final dto = await _dataSource.getCatalogSummary();
 
       final collectedByCategory = <DogamCategory, int>{};
-      final totalByCategory = <DogamCategory, int>{};
       for (final entry in dto.byCategory) {
         final category = DogamCategory.fromServer(entry.category);
         if (category == null) {
@@ -111,7 +124,6 @@ class CatalogRepositoryImpl implements CatalogRepository {
           continue;
         }
         collectedByCategory[category] = entry.collectedCount;
-        totalByCategory[category] = entry.totalCount;
       }
 
       if (kDebugMode) {
@@ -126,7 +138,6 @@ class CatalogRepositoryImpl implements CatalogRepository {
         collectedCount: dto.collectedCount,
         collectionRate: dto.collectionRate,
         collectedByCategory: collectedByCategory,
-        totalByCategory: totalByCategory,
       );
     } on DioException catch (e) {
       throw DioExceptionHandler.handle(e);
