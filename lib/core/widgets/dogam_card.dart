@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -84,8 +85,8 @@ class DogamCard extends StatelessWidget {
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(AppRadius.xs.r),
-      child: Image.network(
-        url,
+      child: CachedNetworkImage(
+        imageUrl: url,
         fit: BoxFit.cover,
         width: double.infinity,
         height: double.infinity,
@@ -94,17 +95,12 @@ class DogamCard extends StatelessWidget {
         // and the catalog runs to hundreds of items.
         // 썸네일 크기로 디코딩한다. 3열 타일은 110dp 남짓이라 원본 해상도로
         // 디코딩하면 보이는 차이 없이 메모리만 13배 쓴다. 도감 항목은 수백 개다.
-        cacheWidth: _thumbnailCacheWidth,
+        memCacheWidth: _thumbnailCacheWidth,
         // 사진을 못 받아도 화면이 비지 않게 기존 아이콘으로 되돌린다
-        errorBuilder: (context, error, stackTrace) => _categoryIcon(),
+        errorWidget: (context, url, error) => _categoryIcon(),
         // 로딩 중에는 스켈레톤을 보여준다 (spec §8)
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return const AppSkeleton(
-            width: double.infinity,
-            height: double.infinity,
-          );
-        },
+        placeholder: (context, url) =>
+            const AppSkeleton(width: double.infinity, height: double.infinity),
       ),
     );
   }

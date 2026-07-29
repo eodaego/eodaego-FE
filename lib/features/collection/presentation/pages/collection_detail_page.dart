@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -121,21 +122,18 @@ class _Hero extends StatelessWidget {
     if (url != null && url.isNotEmpty) {
       return ClipRRect(
         borderRadius: radius,
-        child: Image.network(
-          url,
+        child: CachedNetworkImage(
+          imageUrl: url,
           height: 260.h,
           width: double.infinity,
           fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) => _placeholder(radius),
+          errorWidget: (context, url, error) => _placeholder(radius),
           // 로딩 중에는 스켈레톤을 보여준다 (spec §8)
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child;
-            return AppSkeleton(
-              width: double.infinity,
-              height: 260.h,
-              borderRadius: radius,
-            );
-          },
+          placeholder: (context, url) => AppSkeleton(
+            width: double.infinity,
+            height: 260.h,
+            borderRadius: radius,
+          ),
         ),
       );
     }
