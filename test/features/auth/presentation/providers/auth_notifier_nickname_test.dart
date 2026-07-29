@@ -3,7 +3,6 @@ import 'package:eodaego/core/storage/secure_token_storage.dart';
 import 'package:eodaego/features/auth/domain/entities/auth_result_entity.dart';
 import 'package:eodaego/features/auth/presentation/providers/auth_provider.dart';
 import 'package:eodaego/features/user/domain/entities/agreement_status_entity.dart';
-import 'package:eodaego/features/user/domain/entities/user_profile_entity.dart';
 import 'package:eodaego/features/user/domain/repositories/user_repository.dart';
 import 'package:eodaego/features/user/presentation/providers/user_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -78,7 +77,8 @@ class _FakeUserRepository implements UserRepository {
   }
 
   @override
-  Future<UserProfileEntity> getMyProfile() => throw UnimplementedError();
+  Future<bool> isNicknameAvailable(String nickname) =>
+      throw UnimplementedError();
 
   @override
   Future<void> deleteAccount() => throw UnimplementedError();

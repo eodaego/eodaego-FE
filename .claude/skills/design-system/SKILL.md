@@ -1,4 +1,11 @@
 ---
+name: design-system
+description: 어대GO 디자인 시스템 — 색상 토큰(동물 주황/식물 초록/장소 파랑, 보상 노랑), 2폰트 타이포(Cafe24 Ssurround + Pretendard), radius 스케일, AppButton 프리셋, 컴포넌트 규칙. UI 화면·위젯·스타일 작업 시 사용.
+---
+
+## 디자인 토큰
+
+```yaml
 version: 1.0
 name: eodaego-design-system
 description: 서울어린이대공원 탐방·도감 수집 앱 "어대GO"의 디자인 시스템. 어린이(+보호자) 타깃이라 큰 폰트, 큰 터치 영역, 둥근 형태, 색으로 읽는 정보 구조가 원칙이다. 웜 아이보리 캔버스(#FAF7F0) 위에 숲 초록(#3DA35D)을 메인으로, 도감 3분류가 고정 카테고리 컬러(동물=주황, 식물=초록, 장소=파랑)를 가지며 이 색 언어가 도감·지도 마커·촬영 모드·코스 스텝 전반을 관통한다. 보상 노랑(#FFC93C)은 도감 획득/축하 순간에만 등장하는 단일 하이라이트다. 타이포는 2폰트 체계 — 제목·버튼·도감 이름은 Cafe24 Ssurround(둥근 디스플레이), 본문·설명은 Pretendard Variable. radius는 "외부 = 내부 × 2, 패딩 = 내부 radius" 규칙 위에서 8/12/24/32 4단 스케일만 사용한다.
@@ -260,7 +267,8 @@ components:
     fill: "{colors.primary}"
     height: 12
     rounded: 6
----
+```
+
 
 # 어대GO 디자인 시스템
 

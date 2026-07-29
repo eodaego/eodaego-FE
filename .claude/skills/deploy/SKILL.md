@@ -1,3 +1,8 @@
+---
+name: deploy
+description: CI/CD 배포 가이드 — GitHub Actions 워크플로우 목록, Fastlane Bundler 설치 방식(gem 충돌 회피), 버전 관리(version.yml), 필수 GitHub Secrets. 배포·워크플로우 수정 시 사용.
+---
+
 # CI/CD 가이드
 
 ## 워크플로우 파일 목록

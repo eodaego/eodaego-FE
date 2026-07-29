@@ -190,7 +190,7 @@ class _EmptyState extends StatelessWidget {
           ),
           SizedBox(height: 16.h),
           Text(
-            '아직 저장한 코스가 없어요\n지도에서 마음에 드는 코스에 하트를 눌러요',
+            '마음에 드는 코스에 하트를 누르면\n여기에 모아둘 수 있어요',
             textAlign: TextAlign.center,
             style: AppTextStyles.body15.copyWith(color: AppColors.muted),
           ),

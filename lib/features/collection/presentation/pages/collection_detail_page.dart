@@ -101,7 +101,7 @@ class CollectionDetailPage extends StatelessWidget {
                   ),
                   SizedBox(width: 6.w),
                   Text(
-                    '수집일 ${item.collectedAt}',
+                    '${item.collectedAt}에 만났어요',
                     style: AppTextStyles.caption14.copyWith(
                       color: AppColors.muted,
                     ),

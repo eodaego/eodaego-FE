@@ -10,20 +10,20 @@ void main() {
       expect(Validators.validateNickname('12'), isNull);
     });
 
-    test('accepts_boundary_lengths_2_and_30', () {
-      expect(Validators.validateNickname('가나'), isNull);
-      expect(Validators.validateNickname('a' * 30), isNull);
-    });
-
     test('rejects_empty_or_whitespace_only', () {
       expect(Validators.validateNickname(null), '닉네임을 입력해 주세요');
       expect(Validators.validateNickname(''), '닉네임을 입력해 주세요');
       expect(Validators.validateNickname('   '), '닉네임을 입력해 주세요');
     });
 
-    test('rejects_lengths_outside_2_to_30', () {
-      expect(Validators.validateNickname('가'), '2자에서 30자 사이로 입력해 주세요');
-      expect(Validators.validateNickname('a' * 31), '2자에서 30자 사이로 입력해 주세요');
+    test('rejects_lengths_outside_2_to_10', () {
+      expect(Validators.validateNickname('가'), '2자에서 10자 사이로 입력해 주세요');
+      expect(Validators.validateNickname('a' * 11), '2자에서 10자 사이로 입력해 주세요');
+    });
+
+    test('accepts_boundary_lengths_2_and_10', () {
+      expect(Validators.validateNickname('가나'), isNull);
+      expect(Validators.validateNickname('a' * 10), isNull);
     });
 
     test('rejects_special_characters_and_inner_whitespace', () {

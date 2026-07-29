@@ -20,6 +20,7 @@ import '../features/map/presentation/pages/map_page.dart';
 import '../features/quiz/presentation/pages/quiz_page.dart';
 import '../features/quiz/presentation/pages/quiz_reward_page.dart';
 import '../features/scan/presentation/pages/scan_page.dart';
+import '../features/user/presentation/pages/agreements_page.dart';
 import '../features/user/presentation/pages/my_page.dart';
 import '../core/providers/guest_mode_provider.dart';
 import '../core/widgets/main_tab_shell.dart';
@@ -243,6 +244,27 @@ GoRouter router(Ref ref) {
         name: RoutePaths.mypageName,
         pageBuilder: (context, state) =>
             NoTransitionPage(key: state.pageKey, child: const MyPage()),
+        routes: [
+          GoRoute(
+            path: 'nickname',
+            name: RoutePaths.mypageNicknameName,
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: NicknameSetupPage(
+                initialNickname: state.uri.queryParameters['nickname'],
+                isSettings: true,
+              ),
+            ),
+          ),
+          GoRoute(
+            path: 'agreements',
+            name: RoutePaths.mypageAgreementsName,
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const AgreementsPage(),
+            ),
+          ),
+        ],
       ),
       GoRoute(
         path: RoutePaths.courseRecommend,

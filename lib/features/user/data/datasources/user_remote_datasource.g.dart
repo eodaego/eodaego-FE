@@ -47,25 +47,27 @@ class _UserRemoteDataSource implements UserRemoteDataSource {
   }
 
   @override
-  Future<MyPageResponseModel> getMyPage() async {
+  Future<NicknameAvailabilityResponseModel> checkNicknameAvailability(
+    String nickname,
+  ) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'nickname': nickname};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<MyPageResponseModel>(
+    final _options = _setStreamType<NicknameAvailabilityResponseModel>(
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/api/1/members/me',
+            '/api/1/members/me/nickname/exists',
             queryParameters: queryParameters,
             data: _data,
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late MyPageResponseModel _value;
+    late NicknameAvailabilityResponseModel _value;
     try {
-      _value = MyPageResponseModel.fromJson(_result.data!);
+      _value = NicknameAvailabilityResponseModel.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;
@@ -74,12 +76,12 @@ class _UserRemoteDataSource implements UserRemoteDataSource {
   }
 
   @override
-  Future<DeleteAccountResponseModel> deleteAccount() async {
+  Future<void> deleteAccount() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<DeleteAccountResponseModel>(
+    final _options = _setStreamType<void>(
       Options(method: 'DELETE', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -89,15 +91,7 @@ class _UserRemoteDataSource implements UserRemoteDataSource {
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
-    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late DeleteAccountResponseModel _value;
-    try {
-      _value = DeleteAccountResponseModel.fromJson(_result.data!);
-    } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
-      rethrow;
-    }
-    return _value;
+    await _dio.fetch<void>(_options);
   }
 
   @override

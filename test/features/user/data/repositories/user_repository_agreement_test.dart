@@ -2,8 +2,7 @@ import 'package:eodaego/core/errors/app_exception.dart';
 import 'package:eodaego/features/user/data/datasources/user_remote_datasource.dart';
 import 'package:eodaego/features/user/data/models/agreement_request_model.dart';
 import 'package:eodaego/features/user/data/models/agreement_response_model.dart';
-import 'package:eodaego/features/user/data/models/delete_account_response_model.dart';
-import 'package:eodaego/features/user/data/models/my_page_response_model.dart';
+import 'package:eodaego/features/user/data/models/nickname_availability_response_model.dart';
 import 'package:eodaego/features/user/data/models/nickname_response_model.dart';
 import 'package:eodaego/features/user/data/models/nickname_update_request_model.dart';
 import 'package:eodaego/features/user/data/repositories/user_repository_impl.dart';
@@ -22,6 +21,11 @@ class _FakeUserRemoteDataSource implements UserRemoteDataSource {
   }
 
   @override
+  Future<NicknameAvailabilityResponseModel> checkNicknameAvailability(
+    String nickname,
+  ) => throw UnimplementedError();
+
+  @override
   Future<void> updateAgreements(AgreementRequestModel request) async {
     lastUpdateRequest = request;
     if (errorToThrow != null) throw errorToThrow!;
@@ -33,11 +37,7 @@ class _FakeUserRemoteDataSource implements UserRemoteDataSource {
   ) => throw UnimplementedError();
 
   @override
-  Future<MyPageResponseModel> getMyPage() => throw UnimplementedError();
-
-  @override
-  Future<DeleteAccountResponseModel> deleteAccount() =>
-      throw UnimplementedError();
+  Future<void> deleteAccount() async {}
 }
 
 DioException _dioError(int statusCode) => DioException(
@@ -76,6 +76,24 @@ void main() {
       final repo = UserRepositoryImpl(fake);
 
       expect(() => repo.getAgreements(), throwsA(isA<AppException>()));
+    });
+
+    test('응답의 동의 일시를 엔티티로 옮긴다', () async {
+      final fake = _FakeUserRemoteDataSource()
+        ..responseToReturn = const AgreementResponseModel(
+          termsOfServiceAgreed: true,
+          privacyPolicyAgreed: true,
+          locationInfoAgreed: true,
+          marketingAgreed: true,
+          termsAgreedAt: '2026-07-12T10:00:00+09:00',
+          marketingAgreedAt: '2026-07-20T09:30:00+09:00',
+        );
+      final repository = UserRepositoryImpl(fake);
+
+      final entity = await repository.getAgreements();
+
+      expect(entity.termsAgreedAt, '2026-07-12T10:00:00+09:00');
+      expect(entity.marketingAgreedAt, '2026-07-20T09:30:00+09:00');
     });
   });
 

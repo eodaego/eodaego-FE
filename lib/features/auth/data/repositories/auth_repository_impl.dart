@@ -139,12 +139,18 @@ class AuthRepositoryImpl implements AuthRepository {
       if (e.code == 'ERROR_ABORTED_BY_USER') {
         throw const AuthCancelledException();
       }
-      throw AuthException(message: '로그인 중 오류가 발생했습니다.', originalException: e);
+      throw AuthException(
+        message: '로그인하지 못했어요. 잠시 후 다시 시도해 주세요.',
+        originalException: e,
+      );
     } catch (e) {
       // 예상치 못한 에러
       if (e is AppException) rethrow;
 
-      throw AuthException(message: '로그인 중 오류가 발생했습니다.', originalException: e);
+      throw AuthException(
+        message: '로그인하지 못했어요. 잠시 후 다시 시도해 주세요.',
+        originalException: e,
+      );
     }
   }
 

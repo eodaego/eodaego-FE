@@ -29,6 +29,12 @@ mixin _$AgreementStatusEntity {
   /// 마케팅 수신 동의 여부 (선택)
   bool get marketing => throw _privateConstructorUsedError;
 
+  /// 필수 약관 최초 동의 시각 (ISO-8601, 미동의 시 null)
+  String? get termsAgreedAt => throw _privateConstructorUsedError;
+
+  /// 마케팅 동의 시각 (ISO-8601, 미동의 시 null)
+  String? get marketingAgreedAt => throw _privateConstructorUsedError;
+
   /// Create a copy of AgreementStatusEntity
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,6 +54,8 @@ abstract class $AgreementStatusEntityCopyWith<$Res> {
     bool privacyPolicy,
     bool locationTerms,
     bool marketing,
+    String? termsAgreedAt,
+    String? marketingAgreedAt,
   });
 }
 
@@ -73,6 +81,8 @@ class _$AgreementStatusEntityCopyWithImpl<
     Object? privacyPolicy = null,
     Object? locationTerms = null,
     Object? marketing = null,
+    Object? termsAgreedAt = freezed,
+    Object? marketingAgreedAt = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -92,6 +102,14 @@ class _$AgreementStatusEntityCopyWithImpl<
                 ? _value.marketing
                 : marketing // ignore: cast_nullable_to_non_nullable
                       as bool,
+            termsAgreedAt: freezed == termsAgreedAt
+                ? _value.termsAgreedAt
+                : termsAgreedAt // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            marketingAgreedAt: freezed == marketingAgreedAt
+                ? _value.marketingAgreedAt
+                : marketingAgreedAt // ignore: cast_nullable_to_non_nullable
+                      as String?,
           )
           as $Val,
     );
@@ -112,6 +130,8 @@ abstract class _$$AgreementStatusEntityImplCopyWith<$Res>
     bool privacyPolicy,
     bool locationTerms,
     bool marketing,
+    String? termsAgreedAt,
+    String? marketingAgreedAt,
   });
 }
 
@@ -134,6 +154,8 @@ class __$$AgreementStatusEntityImplCopyWithImpl<$Res>
     Object? privacyPolicy = null,
     Object? locationTerms = null,
     Object? marketing = null,
+    Object? termsAgreedAt = freezed,
+    Object? marketingAgreedAt = freezed,
   }) {
     return _then(
       _$AgreementStatusEntityImpl(
@@ -153,6 +175,14 @@ class __$$AgreementStatusEntityImplCopyWithImpl<$Res>
             ? _value.marketing
             : marketing // ignore: cast_nullable_to_non_nullable
                   as bool,
+        termsAgreedAt: freezed == termsAgreedAt
+            ? _value.termsAgreedAt
+            : termsAgreedAt // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        marketingAgreedAt: freezed == marketingAgreedAt
+            ? _value.marketingAgreedAt
+            : marketingAgreedAt // ignore: cast_nullable_to_non_nullable
+                  as String?,
       ),
     );
   }
@@ -166,6 +196,8 @@ class _$AgreementStatusEntityImpl extends _AgreementStatusEntity {
     required this.privacyPolicy,
     required this.locationTerms,
     required this.marketing,
+    this.termsAgreedAt,
+    this.marketingAgreedAt,
   }) : super._();
 
   /// 이용약관 동의 여부 (필수)
@@ -184,9 +216,17 @@ class _$AgreementStatusEntityImpl extends _AgreementStatusEntity {
   @override
   final bool marketing;
 
+  /// 필수 약관 최초 동의 시각 (ISO-8601, 미동의 시 null)
+  @override
+  final String? termsAgreedAt;
+
+  /// 마케팅 동의 시각 (ISO-8601, 미동의 시 null)
+  @override
+  final String? marketingAgreedAt;
+
   @override
   String toString() {
-    return 'AgreementStatusEntity(termsOfService: $termsOfService, privacyPolicy: $privacyPolicy, locationTerms: $locationTerms, marketing: $marketing)';
+    return 'AgreementStatusEntity(termsOfService: $termsOfService, privacyPolicy: $privacyPolicy, locationTerms: $locationTerms, marketing: $marketing, termsAgreedAt: $termsAgreedAt, marketingAgreedAt: $marketingAgreedAt)';
   }
 
   @override
@@ -201,7 +241,11 @@ class _$AgreementStatusEntityImpl extends _AgreementStatusEntity {
             (identical(other.locationTerms, locationTerms) ||
                 other.locationTerms == locationTerms) &&
             (identical(other.marketing, marketing) ||
-                other.marketing == marketing));
+                other.marketing == marketing) &&
+            (identical(other.termsAgreedAt, termsAgreedAt) ||
+                other.termsAgreedAt == termsAgreedAt) &&
+            (identical(other.marketingAgreedAt, marketingAgreedAt) ||
+                other.marketingAgreedAt == marketingAgreedAt));
   }
 
   @override
@@ -211,6 +255,8 @@ class _$AgreementStatusEntityImpl extends _AgreementStatusEntity {
     privacyPolicy,
     locationTerms,
     marketing,
+    termsAgreedAt,
+    marketingAgreedAt,
   );
 
   /// Create a copy of AgreementStatusEntity
@@ -232,6 +278,8 @@ abstract class _AgreementStatusEntity extends AgreementStatusEntity {
     required final bool privacyPolicy,
     required final bool locationTerms,
     required final bool marketing,
+    final String? termsAgreedAt,
+    final String? marketingAgreedAt,
   }) = _$AgreementStatusEntityImpl;
   const _AgreementStatusEntity._() : super._();
 
@@ -250,6 +298,14 @@ abstract class _AgreementStatusEntity extends AgreementStatusEntity {
   /// 마케팅 수신 동의 여부 (선택)
   @override
   bool get marketing;
+
+  /// 필수 약관 최초 동의 시각 (ISO-8601, 미동의 시 null)
+  @override
+  String? get termsAgreedAt;
+
+  /// 마케팅 동의 시각 (ISO-8601, 미동의 시 null)
+  @override
+  String? get marketingAgreedAt;
 
   /// Create a copy of AgreementStatusEntity
   /// with the given fields replaced by the non-null parameter values.

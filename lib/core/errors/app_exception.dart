@@ -73,7 +73,7 @@ class AuthException extends AppException {
 /// 호출부(`AuthNotifier._signIn`)가 이 **타입**을 잡아 조용히 복귀하므로
 /// messageKey를 두지 않는다. message는 로그 전용.
 class AuthCancelledException extends AuthException {
-  const AuthCancelledException() : super(message: '로그인이 취소되었습니다');
+  const AuthCancelledException() : super(message: '로그인을 취소했어요');
 }
 
 /// 검증 관련 예외

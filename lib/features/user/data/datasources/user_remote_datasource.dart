@@ -4,8 +4,7 @@ import 'package:retrofit/retrofit.dart';
 import '../../../../core/constants/api_endpoints.dart';
 import '../models/agreement_request_model.dart';
 import '../models/agreement_response_model.dart';
-import '../models/delete_account_response_model.dart';
-import '../models/my_page_response_model.dart';
+import '../models/nickname_availability_response_model.dart';
 import '../models/nickname_response_model.dart';
 import '../models/nickname_update_request_model.dart';
 
@@ -17,7 +16,7 @@ part 'user_remote_datasource.g.dart';
 ///
 /// **엔드포인트**:
 /// - `PATCH /api/1/members/me/nickname` - 닉네임 변경 (JWT 필요)
-/// - `GET /api/1/members/me` - 내 정보 조회 (JWT 필요)
+/// - `GET /api/1/members/me/nickname/exists` - 닉네임 중복 확인 (JWT 필요)
 /// - `DELETE /api/1/members/me` - 회원 탈퇴 (JWT 필요)
 @RestApi()
 abstract class UserRemoteDataSource {
@@ -35,23 +34,29 @@ abstract class UserRemoteDataSource {
     @Body() NicknameUpdateRequestModel request,
   );
 
-  /// 내 정보 조회
+  /// 닉네임 중복 확인
   ///
-  /// 현재 로그인한 사용자의 프로필 정보를 조회합니다.
+  /// 저장 전에 쓸 수 있는 닉네임인지 확인합니다.
+  /// 본인이 현재 쓰는 닉네임은 중복 대상에서 제외됩니다.
   ///
-  /// - 200: 사용자 정보 (MyPageResponseModel)
-  @GET(ApiEndpoints.myPage)
-  Future<MyPageResponseModel> getMyPage();
+  /// - 200: `{ "available": bool }`
+  /// - 400: 형식 검증 실패 (INVALID_REQUEST)
+  /// - 401: 인증 실패
+  /// - 404: 존재하지 않는 회원 (MEMBER_NOT_FOUND)
+  @GET(ApiEndpoints.checkNickname)
+  Future<NicknameAvailabilityResponseModel> checkNicknameAvailability(
+    @Query('nickname') String nickname,
+  );
 
   /// 회원 탈퇴
   ///
   /// 로그인한 사용자의 계정을 삭제합니다.
   ///
-  /// - 200: 탈퇴 성공 (DeleteAccountResponseModel)
-  /// - 401: 인증 실패
-  /// - 409: 진행 중인 게임이 있는 경우
+  /// - 204: 탈퇴 성공 (응답 본문 없음)
+  /// - 401: 인증 실패 (UNAUTHORIZED)
+  /// - 404: 존재하지 않는 회원 (MEMBER_NOT_FOUND)
   @DELETE(ApiEndpoints.deleteAccount)
-  Future<DeleteAccountResponseModel> deleteAccount();
+  Future<void> deleteAccount();
 
   /// 약관 동의 상태 조회
   ///

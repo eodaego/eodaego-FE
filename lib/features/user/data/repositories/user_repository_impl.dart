@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/network/dio_exception_handler.dart';
 import '../../domain/entities/agreement_status_entity.dart';
-import '../../domain/entities/user_profile_entity.dart';
 import '../../domain/repositories/user_repository.dart';
 import '../datasources/user_remote_datasource.dart';
 import '../models/agreement_request_model.dart';
@@ -35,7 +34,7 @@ class UserRepositoryImpl implements UserRepository {
     } catch (e) {
       if (e is AppException) rethrow;
       throw ServerException(
-        message: '닉네임 변경 중 예기치 않은 오류가 발생했습니다.',
+        message: '닉네임을 바꾸지 못했어요. 잠시 후 다시 시도해 주세요.',
         messageKey: 'errorNicknameUpdateUnexpected',
         originalException: e,
       );
@@ -43,27 +42,22 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<UserProfileEntity> getMyProfile() async {
+  Future<bool> isNicknameAvailable(String nickname) async {
     try {
-      final response = await _dataSource.getMyPage();
+      final response = await _dataSource.checkNicknameAvailability(nickname);
 
       if (kDebugMode) {
-        debugPrint('✅ 내 정보 조회 성공: ${response.nickname}');
+        debugPrint('🔍 닉네임 중복 확인: $nickname → ${response.available}');
       }
 
-      return UserProfileEntity(
-        userId: response.userId,
-        nickname: response.nickname,
-        socialPlatform: response.socialPlatform,
-        allowGamePush: response.allowGamePush,
-        allowMarketingPush: response.allowMarketingPush,
-      );
+      return response.available;
     } on DioException catch (e) {
       throw DioExceptionHandler.handle(e);
     } catch (e) {
+      if (e is AppException) rethrow;
       throw ServerException(
-        message: '사용자 정보 조회 중 오류가 발생했습니다.',
-        messageKey: 'errorUserInfoFetch',
+        message: '닉네임을 확인하지 못했어요. 잠시 후 다시 시도해 주세요.',
+        messageKey: 'errorNicknameCheckUnexpected',
         originalException: e,
       );
     }
@@ -81,7 +75,7 @@ class UserRepositoryImpl implements UserRepository {
       throw DioExceptionHandler.handle(e);
     } catch (e) {
       throw ServerException(
-        message: '회원 탈퇴 중 예기치 않은 오류가 발생했습니다.',
+        message: '탈퇴하지 못했어요. 잠시 후 다시 시도해 주세요.',
         messageKey: 'errorDeleteAccountUnexpected',
         originalException: e,
       );
@@ -108,13 +102,15 @@ class UserRepositoryImpl implements UserRepository {
         privacyPolicy: response.privacyPolicyAgreed,
         locationTerms: response.locationInfoAgreed,
         marketing: response.marketingAgreed,
+        termsAgreedAt: response.termsAgreedAt,
+        marketingAgreedAt: response.marketingAgreedAt,
       );
     } on DioException catch (e) {
       throw DioExceptionHandler.handle(e);
     } catch (e) {
       if (e is AppException) rethrow;
       throw ServerException(
-        message: '약관 동의 상태 조회 중 예기치 않은 오류가 발생했습니다.',
+        message: '약관 동의 상태를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.',
         messageKey: 'errorAgreementFetchUnexpected',
         originalException: e,
       );
@@ -141,7 +137,7 @@ class UserRepositoryImpl implements UserRepository {
     } catch (e) {
       if (e is AppException) rethrow;
       throw ServerException(
-        message: '약관 동의 저장 중 예기치 않은 오류가 발생했습니다.',
+        message: '약관 동의를 저장하지 못했어요. 잠시 후 다시 시도해 주세요.',
         messageKey: 'errorAgreementSaveUnexpected',
         originalException: e,
       );

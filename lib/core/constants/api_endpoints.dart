@@ -17,10 +17,12 @@ class ApiEndpoints {
   static const String agreements = '$_v1/members/me/agreements';
   static const String updateNickname = '$_v1/members/me/nickname';
 
-  // GET 마이페이지 조회는 정본에 대응 API가 없다. 후속 작업에서 정리한다.
-  static const String myPage = '$_v1/members/me';
+  /// 닉네임 중복 확인 (GET, `?nickname=`).
+  ///
+  /// 공개 API가 아니다 — Bearer 토큰이 필요하며, 본인이 쓰는 닉네임은
+  /// 중복 대상에서 제외되어 `available: true`로 응답한다.
+  static const String checkNickname = '$_v1/members/me/nickname/exists';
 
-  // 회원탈퇴는 정본에 존재한다 (DELETE, 204 no body).
-  // 현재 DataSource가 응답 본문을 기대하는 불일치는 후속 작업에서 바로잡는다.
+  // 회원탈퇴 (DELETE, 204 no body).
   static const String deleteAccount = '$_v1/members/me';
 }

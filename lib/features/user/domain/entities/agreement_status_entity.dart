@@ -20,6 +20,12 @@ class AgreementStatusEntity with _$AgreementStatusEntity {
 
     /// 마케팅 수신 동의 여부 (선택)
     required bool marketing,
+
+    /// 필수 약관 최초 동의 시각 (ISO-8601, 미동의 시 null)
+    String? termsAgreedAt,
+
+    /// 마케팅 동의 시각 (ISO-8601, 미동의 시 null)
+    String? marketingAgreedAt,
   }) = _AgreementStatusEntity;
 
   const AgreementStatusEntity._();

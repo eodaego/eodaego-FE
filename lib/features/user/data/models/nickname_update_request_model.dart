@@ -16,7 +16,7 @@ part 'nickname_update_request_model.g.dart';
 @freezed
 class NicknameUpdateRequestModel with _$NicknameUpdateRequestModel {
   const factory NicknameUpdateRequestModel({
-    /// 변경할 닉네임 (2~30자, 한글/영문/숫자)
+    /// 변경할 닉네임 (2~10자, 한글/영문/숫자)
     required String nickname,
   }) = _NicknameUpdateRequestModel;
 
