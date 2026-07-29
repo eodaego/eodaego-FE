@@ -7,6 +7,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/dogam_category.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../core/providers/guest_mode_provider.dart';
 import '../../../../core/widgets/app_badge.dart';
 import '../../../../core/widgets/app_skeleton.dart';
 import '../../../../core/widgets/category_chip.dart';
@@ -43,7 +44,18 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
 
   @override
   Widget build(BuildContext context) {
-    final itemsAsync = ref.watch(catalogItemsProvider);
+    final isGuest = ref.watch(guestModeProvider);
+    // Guest has no token. Calling the list API here would 401, and the
+    // interceptor would misread that as an expired session and force-log-out
+    // a guest who was never logged in. So guests skip the request and see
+    // an empty catalog — truthful, since a guest has never collected anything.
+    // 게스트는 토큰이 없다. 여기서 목록 API를 부르면 401이 나고, 인터셉터가
+    // 이를 세션 만료로 오인해 로그인한 적 없는 게스트를 강제 로그아웃시킨다.
+    // 그래서 게스트는 조회를 하지 않고 빈 도감을 보여준다 — 게스트는 수집한
+    // 적이 없으니 사실과 같다.
+    final itemsAsync = isGuest
+        ? const AsyncValue<List<CatalogItemEntity>>.data(<CatalogItemEntity>[])
+        : ref.watch(catalogItemsProvider);
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
@@ -130,8 +142,10 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
                   error: (_, _) => _CollectionError(
                     onRetry: () => ref.invalidate(catalogItemsProvider),
                   ),
-                  data: (items) =>
-                      _CollectionGrid(items: _visible(_inCategory(items))),
+                  data: (items) => _CollectionGrid(
+                    items: _visible(_inCategory(items)),
+                    isSearching: _query.isNotEmpty,
+                  ),
                 ),
               ),
             ],
@@ -153,16 +167,24 @@ SliverGridDelegate _gridDelegate() {
 }
 
 class _CollectionGrid extends StatelessWidget {
-  const _CollectionGrid({required this.items});
+  const _CollectionGrid({required this.items, required this.isSearching});
 
   final List<CatalogItemEntity> items;
+
+  /// 검색어가 있는 상태에서 결과가 없는 것인지 — 빈 문구를 가른다.
+  final bool isSearching;
 
   @override
   Widget build(BuildContext context) {
     if (items.isEmpty) {
+      // 검색 결과가 없을 때만 검색 관련 문구를 보여준다. 카테고리 필터·빈
+      // 도감·게스트 모드처럼 검색과 무관한 빈 상태에는 긍정형 안내를 쓴다.
+      final message = isSearching
+          ? '찾는 이름이 없어요. 다른 이름으로 찾아보세요'
+          : '공원에서 만나면 여기에 모아둘 수 있어요';
       return Center(
         child: Text(
-          '찾는 이름이 없어요. 다른 이름으로 찾아보세요',
+          message,
           style: AppTextStyles.body15.copyWith(color: AppColors.muted),
         ),
       );

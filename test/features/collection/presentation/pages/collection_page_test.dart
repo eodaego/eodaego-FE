@@ -1,4 +1,5 @@
 import 'package:eodaego/core/constants/dogam_category.dart';
+import 'package:eodaego/core/providers/guest_mode_provider.dart';
 import 'package:eodaego/core/widgets/app_badge.dart';
 import 'package:eodaego/features/collection/domain/entities/catalog_item_entity.dart';
 import 'package:eodaego/features/collection/domain/repositories/catalog_repository.dart';
@@ -16,6 +17,18 @@ class _FakeCatalogRepository implements CatalogRepository {
 
   @override
   Future<List<CatalogItemEntity>> getCatalogItems() async => items;
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+/// [Finding 1] 게스트는 토큰이 없다 — getCatalogItems()가 호출되면 던져서
+/// "게스트는 목록을 요청하지 않는다"를 증명한다.
+class _ThrowingCatalogRepository implements CatalogRepository {
+  @override
+  Future<List<CatalogItemEntity>> getCatalogItems() async {
+    throw StateError('게스트는 도감 목록 API를 요청하면 안 된다');
+  }
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -122,6 +135,57 @@ void main() {
       expect(tester.takeException(), isNull);
       expect(find.text('미수집'), findsNothing);
       expect(find.text('고양이'), findsOneWidget);
+    });
+
+    testWidgets('게스트는 도감 목록을 요청하지 않고 빈 도감을 보여준다', (tester) async {
+      _useDesignViewport(tester);
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            guestModeProvider.overrideWith((ref) => true),
+            catalogRepositoryProvider.overrideWith(
+              (ref) => _ThrowingCatalogRepository(),
+            ),
+          ],
+          child: ScreenUtilInit(
+            designSize: const Size(393, 852),
+            builder: (context, _) => const MaterialApp(home: CollectionPage()),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // 위 override가 던지지 않았다는 것 자체가 "요청하지 않았다"는 증거다.
+      expect(tester.takeException(), isNull);
+      expect(_badgeText('0/0'), findsOneWidget);
+      expect(find.text('공원에서 만나면 여기에 모아둘 수 있어요'), findsOneWidget);
+    });
+
+    testWidgets('검색어 없이 결과가 없으면(카테고리 필터) 검색 문구 대신 긍정형 안내를 보여준다', (
+      tester,
+    ) async {
+      _useDesignViewport(tester);
+      await tester.pumpWidget(_wrap(_FakeCatalogRepository(_fixtureItems())));
+      await tester.pumpAndSettle();
+
+      // 픽스처에는 PLACE 항목이 없다 — 필터링하면 그리드가 빈다.
+      await tester.tap(find.text('장소'));
+      await tester.pumpAndSettle();
+
+      expect(_badgeText('0/0'), findsOneWidget);
+      expect(find.text('공원에서 만나면 여기에 모아둘 수 있어요'), findsOneWidget);
+      expect(find.text('찾는 이름이 없어요. 다른 이름으로 찾아보세요'), findsNothing);
+    });
+
+    testWidgets('검색 결과가 없으면 검색 관련 문구를 보여준다', (tester) async {
+      _useDesignViewport(tester);
+      await tester.pumpWidget(_wrap(_FakeCatalogRepository(_fixtureItems())));
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextField), '없는이름');
+      await tester.pumpAndSettle();
+
+      expect(find.text('찾는 이름이 없어요. 다른 이름으로 찾아보세요'), findsOneWidget);
     });
   });
 }

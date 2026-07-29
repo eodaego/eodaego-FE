@@ -1,6 +1,4 @@
-import 'package:eodaego/core/constants/dogam_category.dart';
 import 'package:eodaego/core/providers/guest_mode_provider.dart';
-import 'package:eodaego/features/collection/domain/entities/catalog_summary_entity.dart';
 import 'package:eodaego/features/collection/presentation/providers/catalog_provider.dart';
 import 'package:eodaego/features/user/presentation/pages/my_page.dart';
 import 'package:flutter/material.dart';
@@ -12,28 +10,15 @@ import 'package:flutter_test/flutter_test.dart';
 // isGuest가 false로 짧은 회로되는 authNotifierProvider는 게스트 경로에서
 // 아예 watch되지 않으므로 별도 override가 필요 없다.
 //
-// MyPage가 watch하는 catalogSummaryProvider용 고정값 — 실 Dio 호출(네트워크 경계)을
-// 막는다. 실패 폴백(0)과 구분되도록 0이 아닌 값을 쓴다.
-const _fakeCatalogSummary = CatalogSummaryEntity(
-  totalCount: 80,
-  collectedCount: 24,
-  collectionRate: 30,
-  collectedByCategory: {
-    DogamCategory.animal: 8,
-    DogamCategory.plant: 8,
-    DogamCategory.place: 8,
-  },
-  totalByCategory: {
-    DogamCategory.animal: 27,
-    DogamCategory.plant: 27,
-    DogamCategory.place: 26,
-  },
-);
-
+// [Finding 1] 게스트는 토큰이 없다 — catalogSummaryProvider를 실제로 watch하면
+// 이 override가 던져 테스트가 실패한다. 값을 주는 대신 던지게 해서 "게스트는
+// 요약을 요청하지 않는다"를 검증한다.
 Widget _wrapGuest() => ProviderScope(
   overrides: [
     guestModeProvider.overrideWith((ref) => true),
-    catalogSummaryProvider.overrideWith((ref) => _fakeCatalogSummary),
+    catalogSummaryProvider.overrideWith(
+      (ref) => throw StateError('게스트는 요약 API를 요청하면 안 된다'),
+    ),
   ],
   child: ScreenUtilInit(
     designSize: const Size(393, 852),
@@ -58,6 +43,17 @@ void main() {
       expect(find.text('약관 및 정책'), findsNothing);
       expect(find.text('탈퇴하기'), findsNothing);
       expect(find.text('로그인하러 가기'), findsOneWidget);
+    });
+
+    testWidgets('도감 요약을 요청하지 않고 수집 통계를 0으로 보여준다', (tester) async {
+      _useDesignViewport(tester);
+      await tester.pumpWidget(_wrapGuest());
+      await tester.pumpAndSettle();
+
+      // 위 override가 던지지 않았다는 것 자체가 "요청하지 않았다"는 증거다.
+      expect(tester.takeException(), isNull);
+      expect(find.text('0%'), findsOneWidget);
+      expect(find.text('0'), findsOneWidget);
     });
   });
 }

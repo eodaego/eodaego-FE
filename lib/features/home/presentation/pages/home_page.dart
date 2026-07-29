@@ -9,12 +9,14 @@ import '../../../../core/constants/dogam_category.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/mock/mock_park_status.dart';
+import '../../../../core/providers/guest_mode_provider.dart';
 import '../../../../core/providers/selected_course_provider.dart';
 import '../../../../core/utils/url_launcher_util.dart';
 import '../../../../core/widgets/app_badge.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_skeleton.dart';
 import '../../../../router/route_paths.dart';
+import '../../../collection/domain/entities/catalog_summary_entity.dart';
 import '../../../collection/presentation/providers/catalog_provider.dart';
 
 /// 홈 (A안) — 날씨·혼잡도 바 + 오늘의 추천 코스 프리뷰 + 도감 요약 + 공식 사이트.
@@ -183,9 +185,23 @@ class _CoursePreviewCard extends ConsumerWidget {
 class _DogamProgressCard extends ConsumerWidget {
   const _DogamProgressCard();
 
+  // Guest has no token. If this card called the summary API without auth it
+  // would hit a 401, which the interceptor misreads as "session expired" and
+  // force-logs-out a guest who was never logged in. So guests render zeros
+  // without ever calling the API.
+  // 게스트는 토큰이 없다. 인증 없이 이 카드가 요약 API를 부르면 401을 만나고,
+  // 인터셉터가 이걸 "세션 만료"로 오인해 강제 로그아웃시킨다(게스트는 로그인한
+  // 적이 없는데도). 그래서 게스트는 요청 자체를 하지 않고 0으로 그린다.
+  static const _guestSummary = CatalogSummaryEntity(
+    totalCount: 0,
+    collectedCount: 0,
+    collectionRate: 0,
+    collectedByCategory: {},
+  );
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final summaryAsync = ref.watch(catalogSummaryProvider);
+    final isGuest = ref.watch(guestModeProvider);
 
     return Material(
       color: AppColors.surface,
@@ -198,61 +214,89 @@ class _DogamProgressCard extends ConsumerWidget {
         onTap: () => context.go(RoutePaths.collection),
         child: Padding(
           padding: EdgeInsets.all(16.w),
-          child: summaryAsync.when(
-            loading: () => const _DogamProgressSkeleton(),
-            // 홈에는 다른 콘텐츠가 있다. 카드 안에서만 조용히 알린다.
-            error: (_, _) => Text(
-              '수집 현황을 불러오지 못했어요',
-              style: AppTextStyles.body15.copyWith(color: AppColors.muted),
-            ),
-            data: (summary) => Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      '나의 도감',
-                      style: AppTextStyles.display16.copyWith(
-                        color: AppColors.ink,
+          child: isGuest
+              ? _DogamProgressData(summary: _guestSummary)
+              : ref
+                    .watch(catalogSummaryProvider)
+                    .when(
+                      loading: () => const _DogamProgressSkeleton(),
+                      // 홈에는 다른 콘텐츠가 있다. 카드 안에서만 조용히 알린다.
+                      // 제목 Row는 유지해 카드 틀이 무너지지 않게 한다.
+                      error: (_, _) => Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '나의 도감',
+                            style: AppTextStyles.display16.copyWith(
+                              color: AppColors.ink,
+                            ),
+                          ),
+                          SizedBox(height: 12.h),
+                          Text(
+                            '수집 현황을 불러오지 못했어요',
+                            style: AppTextStyles.body15.copyWith(
+                              color: AppColors.muted,
+                            ),
+                          ),
+                        ],
                       ),
+                      data: (summary) => _DogamProgressData(summary: summary),
                     ),
-                    const Spacer(),
-                    AppBadge(
-                      label: '${summary.collectedCount}/${summary.totalCount}',
-                      background: AppColors.primaryTint,
-                      foreground: AppColors.primaryDark,
-                    ),
-                  ],
-                ),
-                SizedBox(height: 12.h),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(AppRadius.full),
-                  child: LinearProgressIndicator(
-                    minHeight: 10.h,
-                    // 서버가 반올림한 백분율을 그대로 쓴다
-                    value: summary.collectionRate / 100,
-                    backgroundColor: AppColors.primaryTint,
-                    color: AppColors.primary,
-                  ),
-                ),
-                SizedBox(height: 12.h),
-                Row(
-                  children: [
-                    for (final c in DogamCategory.values) ...[
-                      AppBadge.category(
-                        c,
-                        label:
-                            '${c.label} ${summary.collectedByCategory[c] ?? 0}',
-                      ),
-                      if (c != DogamCategory.values.last) SizedBox(width: 8.w),
-                    ],
-                  ],
-                ),
-              ],
-            ),
-          ),
         ),
       ),
+    );
+  }
+}
+
+/// 도감 진행률 카드 본문 — 제목 + 뱃지 + 게이지 + 카테고리별 카운트.
+class _DogamProgressData extends StatelessWidget {
+  const _DogamProgressData({required this.summary});
+
+  final CatalogSummaryEntity summary;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              '나의 도감',
+              style: AppTextStyles.display16.copyWith(color: AppColors.ink),
+            ),
+            const Spacer(),
+            AppBadge(
+              label: '${summary.collectedCount}/${summary.totalCount}',
+              background: AppColors.primaryTint,
+              foreground: AppColors.primaryDark,
+            ),
+          ],
+        ),
+        SizedBox(height: 12.h),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(AppRadius.full),
+          child: LinearProgressIndicator(
+            minHeight: 10.h,
+            // 서버가 반올림한 백분율을 그대로 쓴다
+            value: summary.collectionRate / 100,
+            backgroundColor: AppColors.primaryTint,
+            color: AppColors.primary,
+          ),
+        ),
+        SizedBox(height: 12.h),
+        Row(
+          children: [
+            for (final c in DogamCategory.values) ...[
+              AppBadge.category(
+                c,
+                label: '${c.label} ${summary.collectedByCategory[c] ?? 0}',
+              ),
+              if (c != DogamCategory.values.last) SizedBox(width: 8.w),
+            ],
+          ],
+        ),
+      ],
     );
   }
 }
