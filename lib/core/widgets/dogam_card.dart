@@ -89,6 +89,12 @@ class DogamCard extends StatelessWidget {
         fit: BoxFit.cover,
         width: double.infinity,
         height: double.infinity,
+        // Decode at thumbnail size. A 3-column tile is ~110dp wide, so a
+        // full-resolution decode costs ~13x the memory for no visible gain,
+        // and the catalog runs to hundreds of items.
+        // 썸네일 크기로 디코딩한다. 3열 타일은 110dp 남짓이라 원본 해상도로
+        // 디코딩하면 보이는 차이 없이 메모리만 13배 쓴다. 도감 항목은 수백 개다.
+        cacheWidth: _thumbnailCacheWidth,
         // 사진을 못 받아도 화면이 비지 않게 기존 아이콘으로 되돌린다
         errorBuilder: (context, error, stackTrace) => _categoryIcon(),
         // 로딩 중에는 스켈레톤을 보여준다 (spec §8)
@@ -107,3 +113,7 @@ class DogamCard extends StatelessWidget {
     return Icon(category.icon, size: 34.w, color: category.color);
   }
 }
+
+// Decode width for grid thumbnails: ~110dp tile at 3x device pixel ratio.
+// 그리드 썸네일 디코딩 폭 — 110dp 타일 기준, 3배 DPR을 감안한 값.
+const int _thumbnailCacheWidth = 340;

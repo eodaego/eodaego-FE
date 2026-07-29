@@ -42,6 +42,29 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
     return items.where((e) => (e.name ?? '').contains(_query)).toList();
   }
 
+  // Pull-to-refresh. The shell keeps this page alive across tab switches, so
+  // the providers never auto-dispose and the catalog would otherwise be
+  // fetched once per app launch with no way to pick up new server data.
+  // 당겨서 새로고침. 셸이 탭을 옮겨도 이 페이지를 살려두기 때문에 프로바이더가
+  // 스스로 사라지지 않는다. 그래서 앱 실행당 한 번만 조회하고 새 서버 데이터를
+  // 받아올 방법이 없다.
+  Future<void> _refresh() async {
+    // 게스트는 애초에 조회하지 않는다 — 여기서 read하면 막아둔 요청이 나간다.
+    if (ref.read(guestModeProvider)) return;
+
+    // 홈·마이페이지가 함께 쓰는 요약도 같이 무효화한다. 목록만 갱신하면
+    // 도감 뱃지와 홈 카드 숫자가 어긋난다.
+    ref.invalidate(catalogItemsProvider);
+    ref.invalidate(catalogSummaryProvider);
+
+    try {
+      // 새 값이 도착할 때까지 인디케이터를 유지한다.
+      await ref.read(catalogItemsProvider.future);
+    } catch (_) {
+      // 실패는 화면이 에러 상태로 이미 알린다. 여기선 인디케이터만 닫는다.
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isGuest = ref.watch(guestModeProvider);
@@ -137,14 +160,24 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
               ),
               SizedBox(height: 12.h),
               Expanded(
-                child: itemsAsync.when(
-                  loading: () => const _CollectionGridSkeleton(),
-                  error: (_, _) => _CollectionError(
-                    onRetry: () => ref.invalidate(catalogItemsProvider),
-                  ),
-                  data: (items) => _CollectionGrid(
-                    items: _visible(_inCategory(items)),
-                    isSearching: _query.isNotEmpty,
+                child: RefreshIndicator(
+                  onRefresh: _refresh,
+                  // 앱에 브랜드 colorScheme이 없어 기본값이 Material 보라로 나온다.
+                  // 진행바·활성 탭과 같은 primary를 쓰고, canvas 위에 얹히므로
+                  // 원 배경은 surface로 대비를 만든다.
+                  color: AppColors.primary,
+                  backgroundColor: AppColors.surface,
+                  // 어린이 기준으로 수치를 키우는 원칙에 맞춰 기본 2.0보다 두껍게.
+                  strokeWidth: 3,
+                  child: itemsAsync.when(
+                    loading: () => const _CollectionGridSkeleton(),
+                    error: (_, _) => _CollectionError(
+                      onRetry: () => ref.invalidate(catalogItemsProvider),
+                    ),
+                    data: (items) => _CollectionGrid(
+                      items: _visible(_inCategory(items)),
+                      isSearching: _query.isNotEmpty,
+                    ),
                   ),
                 ),
               ),
@@ -182,15 +215,29 @@ class _CollectionGrid extends StatelessWidget {
       final message = isSearching
           ? '찾는 이름이 없어요. 다른 이름으로 찾아보세요'
           : '공원에서 만나면 여기에 모아둘 수 있어요';
-      return Center(
-        child: Text(
-          message,
-          style: AppTextStyles.body15.copyWith(color: AppColors.muted),
+      // The empty state is exactly when a refresh is most wanted, so it has to
+      // stay draggable — a plain Center gives RefreshIndicator nothing to pull.
+      // 비어 있을 때가 새로고침이 가장 필요한 순간이라 당겨지는 상태를 유지한다.
+      // 그냥 Center를 두면 RefreshIndicator가 당길 대상을 못 찾는다.
+      return LayoutBuilder(
+        builder: (context, constraints) => SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Center(
+              child: Text(
+                message,
+                style: AppTextStyles.body15.copyWith(color: AppColors.muted),
+              ),
+            ),
+          ),
         ),
       );
     }
 
     return GridView.builder(
+      // 항목이 한 화면을 못 채워도 당겨서 새로고침이 되게 한다.
+      physics: const AlwaysScrollableScrollPhysics(),
       gridDelegate: _gridDelegate(),
       itemCount: items.length,
       itemBuilder: (context, index) {

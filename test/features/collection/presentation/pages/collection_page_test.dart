@@ -34,6 +34,25 @@ class _ThrowingCatalogRepository implements CatalogRepository {
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
+/// 호출할 때마다 다음 묶음을 돌려준다 — 새로고침이 실제로 다시 조회했는지를
+/// 호출 횟수가 아니라 화면에 뜬 이름으로 판별하기 위한 페이크.
+class _SequenceCatalogRepository implements CatalogRepository {
+  _SequenceCatalogRepository(this.batches);
+
+  final List<List<CatalogItemEntity>> batches;
+  int _call = 0;
+
+  @override
+  Future<List<CatalogItemEntity>> getCatalogItems() async {
+    final batch = batches[_call.clamp(0, batches.length - 1)];
+    _call++;
+    return batch;
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
 /// ANIMAL 수집 3(고양이/강아지/너구리) + PLANT 수집 1(장미) + ANIMAL 미수집 1(이름 없음).
 /// 전체 4/5, ANIMAL 필터 3/4, PLANT 필터 1/1 — 필터별로 숫자가 겹치지 않게 구성한다.
 List<CatalogItemEntity> _fixtureItems() => const [
@@ -186,6 +205,61 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('찾는 이름이 없어요. 다른 이름으로 찾아보세요'), findsOneWidget);
+    });
+
+    testWidgets('당겨서 새로고침하면 목록을 다시 조회해 새 항목을 보여준다', (tester) async {
+      _useDesignViewport(tester);
+      await tester.pumpWidget(
+        _wrap(
+          _SequenceCatalogRepository([
+            _fixtureItems(),
+            const [
+              CatalogItemEntity(
+                id: 'a9',
+                category: DogamCategory.animal,
+                collected: true,
+                name: '수달',
+              ),
+            ],
+          ]),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('수달'), findsNothing);
+      expect(_badgeText('4/5'), findsOneWidget);
+
+      await tester.fling(find.byType(GridView), const Offset(0, 300), 1000);
+      await tester.pumpAndSettle();
+
+      expect(find.text('수달'), findsOneWidget);
+      expect(find.text('고양이'), findsNothing);
+      expect(_badgeText('1/1'), findsOneWidget);
+    });
+
+    testWidgets('빈 도감에서도 당겨서 새로고침할 수 있다', (tester) async {
+      _useDesignViewport(tester);
+      await tester.pumpWidget(
+        _wrap(_SequenceCatalogRepository([const [], _fixtureItems()])),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('공원에서 만나면 여기에 모아둘 수 있어요'), findsOneWidget);
+
+      // 빈 상태가 스크롤 불가면 여기서 당겨지지 않아 목록이 그대로 남는다.
+      // 카테고리 칩 줄도 SingleChildScrollView라 새로고침 영역 안으로 한정한다.
+      await tester.fling(
+        find.descendant(
+          of: find.byType(RefreshIndicator),
+          matching: find.byType(SingleChildScrollView),
+        ),
+        const Offset(0, 300),
+        1000,
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('고양이'), findsOneWidget);
+      expect(_badgeText('4/5'), findsOneWidget);
     });
   });
 }
