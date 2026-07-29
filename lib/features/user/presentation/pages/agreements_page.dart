@@ -69,9 +69,7 @@ class _AgreementsPageState extends ConsumerState<AgreementsPage> {
     });
 
     try {
-      await ref
-          .read(userRepositoryProvider)
-          .updateAgreements(marketing: value);
+      await ref.read(userRepositoryProvider).updateAgreements(marketing: value);
       if (!mounted) return;
       setState(() => _isSavingMarketing = false);
     } catch (_) {

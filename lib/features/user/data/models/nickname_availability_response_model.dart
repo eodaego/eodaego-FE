@@ -15,7 +15,8 @@ part 'nickname_availability_response_model.g.dart';
 /// `available: true`면 쓸 수 있는 닉네임, `false`면 다른 회원이 이미 쓰는 중이다.
 /// 본인이 현재 쓰는 닉네임은 중복 대상에서 제외되어 `true`로 온다.
 @freezed
-class NicknameAvailabilityResponseModel with _$NicknameAvailabilityResponseModel {
+class NicknameAvailabilityResponseModel
+    with _$NicknameAvailabilityResponseModel {
   const factory NicknameAvailabilityResponseModel({
     /// 사용 가능 여부
     @Default(false) bool available,
