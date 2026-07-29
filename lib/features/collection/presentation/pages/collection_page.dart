@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
@@ -6,34 +7,44 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/dogam_category.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
-import '../../../../core/mock/mock_dogam.dart';
 import '../../../../core/widgets/app_badge.dart';
+import '../../../../core/widgets/app_skeleton.dart';
 import '../../../../core/widgets/category_chip.dart';
 import '../../../../core/widgets/dogam_card.dart';
 import '../../../../router/route_paths.dart';
+import '../../domain/entities/catalog_item_entity.dart';
+import '../providers/catalog_provider.dart';
 
 /// 도감 (CATALOG-01~03) — 필터·검색·3열 그리드.
-class CollectionPage extends StatefulWidget {
+///
+/// 목록은 서버에서 한 번 받고 카테고리 필터·이름 검색은 로컬에서 건다.
+class CollectionPage extends ConsumerStatefulWidget {
   const CollectionPage({super.key});
 
   @override
-  State<CollectionPage> createState() => _CollectionPageState();
+  ConsumerState<CollectionPage> createState() => _CollectionPageState();
 }
 
-class _CollectionPageState extends State<CollectionPage> {
+class _CollectionPageState extends ConsumerState<CollectionPage> {
   DogamCategory? _filter; // null = 전체
   String _query = '';
 
-  List<MockDogamItem> get _visible => mockDogamItems
-      .where(
-        (e) =>
-            (_filter == null || e.category == _filter) &&
-            (_query.isEmpty || e.name.contains(_query)),
-      )
-      .toList();
+  // Applies the category filter only. 카테고리 필터만 적용한다.
+  // 카운트 뱃지는 검색어에 영향받지 않아야 하므로 검색 전 단계를 따로 둔다.
+  List<CatalogItemEntity> _inCategory(List<CatalogItemEntity> items) {
+    if (_filter == null) return items;
+    return items.where((e) => e.category == _filter).toList();
+  }
+
+  List<CatalogItemEntity> _visible(List<CatalogItemEntity> items) {
+    if (_query.isEmpty) return items;
+    return items.where((e) => (e.name ?? '').contains(_query)).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final itemsAsync = ref.watch(catalogItemsProvider);
+
     return Scaffold(
       backgroundColor: AppColors.canvas,
       body: SafeArea(
@@ -52,10 +63,20 @@ class _CollectionPageState extends State<CollectionPage> {
                     ),
                   ),
                   SizedBox(width: 8.w),
-                  AppBadge(
-                    label: '$mockDogamCollected/$mockDogamTotal',
-                    background: AppColors.primaryTint,
-                    foreground: AppColors.primaryDark,
+                  itemsAsync.when(
+                    loading: () => AppSkeleton(width: 52.w, height: 22.h),
+                    error: (_, _) => const SizedBox.shrink(),
+                    data: (items) {
+                      final scoped = _inCategory(items);
+                      final collected = scoped
+                          .where((e) => e.collected)
+                          .length;
+                      return AppBadge(
+                        label: '$collected/${scoped.length}',
+                        background: AppColors.primaryTint,
+                        foreground: AppColors.primaryDark,
+                      );
+                    },
                   ),
                 ],
               ),
@@ -106,30 +127,107 @@ class _CollectionPageState extends State<CollectionPage> {
               ),
               SizedBox(height: 12.h),
               Expanded(
-                child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    childAspectRatio: 3 / 3.6,
-                    mainAxisSpacing: 10.h,
-                    crossAxisSpacing: 10.w,
+                child: itemsAsync.when(
+                  loading: () => const _CollectionGridSkeleton(),
+                  error: (_, _) => _CollectionError(
+                    onRetry: () => ref.invalidate(catalogItemsProvider),
                   ),
-                  itemCount: _visible.length,
-                  itemBuilder: (context, index) {
-                    final item = _visible[index];
-                    return DogamCard(
-                      key: ValueKey(item.id),
-                      category: item.category,
-                      collected: item.collected,
-                      name: item.name,
-                      onTap: () =>
-                          context.push(RoutePaths.collectionDetail(item.id)),
-                    );
-                  },
+                  data: (items) => _CollectionGrid(
+                    items: _visible(_inCategory(items)),
+                  ),
                 ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// 3열 그리드 — 로딩·데이터가 같은 배치를 쓰도록 delegate를 공유한다.
+SliverGridDelegate _gridDelegate() {
+  return SliverGridDelegateWithFixedCrossAxisCount(
+    crossAxisCount: 3,
+    childAspectRatio: 3 / 3.6,
+    mainAxisSpacing: 10.h,
+    crossAxisSpacing: 10.w,
+  );
+}
+
+class _CollectionGrid extends StatelessWidget {
+  const _CollectionGrid({required this.items});
+
+  final List<CatalogItemEntity> items;
+
+  @override
+  Widget build(BuildContext context) {
+    if (items.isEmpty) {
+      return Center(
+        child: Text(
+          '찾는 이름이 없어요. 다른 이름으로 찾아보세요',
+          style: AppTextStyles.body15.copyWith(color: AppColors.muted),
+        ),
+      );
+    }
+
+    return GridView.builder(
+      gridDelegate: _gridDelegate(),
+      itemCount: items.length,
+      itemBuilder: (context, index) {
+        final item = items[index];
+        return DogamCard(
+          key: ValueKey(item.id),
+          category: item.category,
+          collected: item.collected,
+          name: item.name,
+          imageUrl: item.imageUrl,
+          onTap: () => context.push(
+            RoutePaths.collectionDetail(item.id),
+            extra: item,
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _CollectionGridSkeleton extends StatelessWidget {
+  const _CollectionGridSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: _gridDelegate(),
+      itemCount: 12,
+      itemBuilder: (context, index) => AppSkeleton(
+        width: double.infinity,
+        height: double.infinity,
+        borderRadius: BorderRadius.circular(AppRadius.sm.r),
+      ),
+    );
+  }
+}
+
+class _CollectionError extends StatelessWidget {
+  const _CollectionError({required this.onRetry});
+
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            '도감을 불러오지 못했어요',
+            style: AppTextStyles.body17.copyWith(color: AppColors.ink),
+          ),
+          SizedBox(height: 12.h),
+          TextButton(onPressed: onRetry, child: const Text('다시 시도')),
+        ],
       ),
     );
   }
