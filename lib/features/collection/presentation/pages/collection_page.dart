@@ -68,9 +68,7 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
                     error: (_, _) => const SizedBox.shrink(),
                     data: (items) {
                       final scoped = _inCategory(items);
-                      final collected = scoped
-                          .where((e) => e.collected)
-                          .length;
+                      final collected = scoped.where((e) => e.collected).length;
                       return AppBadge(
                         label: '$collected/${scoped.length}',
                         background: AppColors.primaryTint,
@@ -132,9 +130,8 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
                   error: (_, _) => _CollectionError(
                     onRetry: () => ref.invalidate(catalogItemsProvider),
                   ),
-                  data: (items) => _CollectionGrid(
-                    items: _visible(_inCategory(items)),
-                  ),
+                  data: (items) =>
+                      _CollectionGrid(items: _visible(_inCategory(items))),
                 ),
               ),
             ],
@@ -182,10 +179,8 @@ class _CollectionGrid extends StatelessWidget {
           collected: item.collected,
           name: item.name,
           imageUrl: item.imageUrl,
-          onTap: () => context.push(
-            RoutePaths.collectionDetail(item.id),
-            extra: item,
-          ),
+          onTap: () =>
+              context.push(RoutePaths.collectionDetail(item.id), extra: item),
         );
       },
     );

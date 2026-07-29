@@ -62,11 +62,7 @@ class CollectionDetailPage extends ConsumerWidget {
 
 /// 상세 화면 뼈대 — 사진 영역과 본문 사이의 공통 배치.
 class _DetailScaffold extends StatelessWidget {
-  const _DetailScaffold({
-    required this.child,
-    this.category,
-    this.imageUrl,
-  });
+  const _DetailScaffold({required this.child, this.category, this.imageUrl});
 
   final Widget child;
   final DogamCategory? category;
@@ -156,9 +152,7 @@ class _UncollectedBody extends StatelessWidget {
         SizedBox(height: 12.h),
         Text(
           '?',
-          style: AppTextStyles.display26.copyWith(
-            color: AppColors.uncollected,
-          ),
+          style: AppTextStyles.display26.copyWith(color: AppColors.uncollected),
         ),
         SizedBox(height: 8.h),
         Text(
@@ -284,9 +278,7 @@ class _LoadedBody extends StatelessWidget {
               SizedBox(width: 6.w),
               Text(
                 '${detail.collectedAt}에 만났어요',
-                style: AppTextStyles.caption14.copyWith(
-                  color: AppColors.muted,
-                ),
+                style: AppTextStyles.caption14.copyWith(color: AppColors.muted),
               ),
             ],
           ),

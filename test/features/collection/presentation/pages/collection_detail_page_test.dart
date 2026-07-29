@@ -62,34 +62,37 @@ void _useDesignViewport(WidgetTester tester) {
 }
 
 void main() {
-  testWidgets('shows_question_marks_and_skips_detail_request_when_uncollected',
-      (tester) async {
-    _useDesignViewport(tester);
-    // detail이 null이면 상세 조회는 던진다. 아래 어서션이 통과한다는 것 자체가
-    // 상세 API를 부르지 않았다는 증거다.
-    final repository = _FakeCatalogRepository();
+  testWidgets(
+    'shows_question_marks_and_skips_detail_request_when_uncollected',
+    (tester) async {
+      _useDesignViewport(tester);
+      // detail이 null이면 상세 조회는 던진다. 아래 어서션이 통과한다는 것 자체가
+      // 상세 API를 부르지 않았다는 증거다.
+      final repository = _FakeCatalogRepository();
 
-    await tester.pumpWidget(
-      _wrap(
-        const CollectionDetailPage(
-          itemId: 'p2',
-          item: CatalogItemEntity(
-            id: 'p2',
-            category: DogamCategory.plant,
-            collected: false,
+      await tester.pumpWidget(
+        _wrap(
+          const CollectionDetailPage(
+            itemId: 'p2',
+            item: CatalogItemEntity(
+              id: 'p2',
+              category: DogamCategory.plant,
+              collected: false,
+            ),
           ),
+          repository,
         ),
-        repository,
-      ),
-    );
-    await tester.pumpAndSettle();
+      );
+      await tester.pumpAndSettle();
 
-    expect(find.text('?'), findsWidgets);
-    expect(find.text('미수집'), findsOneWidget);
-  });
+      expect(find.text('?'), findsWidgets);
+      expect(find.text('미수집'), findsOneWidget);
+    },
+  );
 
-  testWidgets('loads_detail_and_shows_collected_date_when_collected',
-      (tester) async {
+  testWidgets('loads_detail_and_shows_collected_date_when_collected', (
+    tester,
+  ) async {
     _useDesignViewport(tester);
     final repository = _FakeCatalogRepository(
       detail: const CatalogItemDetailEntity(

@@ -8,13 +8,14 @@ import '../../../../core/constants/app_urls.dart';
 import '../../../../core/constants/dogam_category.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
-import '../../../../core/mock/mock_dogam.dart';
 import '../../../../core/mock/mock_park_status.dart';
 import '../../../../core/providers/selected_course_provider.dart';
 import '../../../../core/utils/url_launcher_util.dart';
 import '../../../../core/widgets/app_badge.dart';
 import '../../../../core/widgets/app_button.dart';
+import '../../../../core/widgets/app_skeleton.dart';
 import '../../../../router/route_paths.dart';
+import '../../../collection/presentation/providers/catalog_provider.dart';
 
 /// 홈 (A안) — 날씨·혼잡도 바 + 오늘의 추천 코스 프리뷰 + 도감 요약 + 공식 사이트.
 class HomePage extends StatelessWidget {
@@ -178,16 +179,14 @@ class _CoursePreviewCard extends ConsumerWidget {
   }
 }
 
-/// 도감 진행률 카드 — 탭 시 도감 탭으로 전환. (기존 유지)
-class _DogamProgressCard extends StatelessWidget {
+/// 도감 진행률 카드 — 탭 시 도감 탭으로 전환.
+class _DogamProgressCard extends ConsumerWidget {
   const _DogamProgressCard();
 
   @override
-  Widget build(BuildContext context) {
-    final counts = {
-      for (final c in DogamCategory.values)
-        c: mockDogamItems.where((e) => e.category == c && e.collected).length,
-    };
+  Widget build(BuildContext context, WidgetRef ref) {
+    final summaryAsync = ref.watch(catalogSummaryProvider);
+
     return Material(
       color: AppColors.surface,
       shape: RoundedRectangleBorder(
@@ -199,48 +198,100 @@ class _DogamProgressCard extends StatelessWidget {
         onTap: () => context.go(RoutePaths.collection),
         child: Padding(
           padding: EdgeInsets.all(16.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    '나의 도감',
-                    style: AppTextStyles.display16.copyWith(
-                      color: AppColors.ink,
+          child: summaryAsync.when(
+            loading: () => const _DogamProgressSkeleton(),
+            // 홈에는 다른 콘텐츠가 있다. 카드 안에서만 조용히 알린다.
+            error: (_, _) => Text(
+              '수집 현황을 불러오지 못했어요',
+              style: AppTextStyles.body15.copyWith(color: AppColors.muted),
+            ),
+            data: (summary) => Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      '나의 도감',
+                      style: AppTextStyles.display16.copyWith(
+                        color: AppColors.ink,
+                      ),
                     ),
-                  ),
-                  const Spacer(),
-                  AppBadge(
-                    label: '$mockDogamCollected/$mockDogamTotal',
-                    background: AppColors.primaryTint,
-                    foreground: AppColors.primaryDark,
-                  ),
-                ],
-              ),
-              SizedBox(height: 12.h),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(AppRadius.full),
-                child: LinearProgressIndicator(
-                  minHeight: 10.h,
-                  value: mockDogamCollected / mockDogamTotal,
-                  backgroundColor: AppColors.primaryTint,
-                  color: AppColors.primary,
-                ),
-              ),
-              SizedBox(height: 12.h),
-              Row(
-                children: [
-                  for (final c in DogamCategory.values) ...[
-                    AppBadge.category(c, label: '${c.label} ${counts[c]}'),
-                    if (c != DogamCategory.values.last) SizedBox(width: 8.w),
+                    const Spacer(),
+                    AppBadge(
+                      label: '${summary.collectedCount}/${summary.totalCount}',
+                      background: AppColors.primaryTint,
+                      foreground: AppColors.primaryDark,
+                    ),
                   ],
-                ],
-              ),
-            ],
+                ),
+                SizedBox(height: 12.h),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(AppRadius.full),
+                  child: LinearProgressIndicator(
+                    minHeight: 10.h,
+                    // 서버가 반올림한 백분율을 그대로 쓴다
+                    value: summary.collectionRate / 100,
+                    backgroundColor: AppColors.primaryTint,
+                    color: AppColors.primary,
+                  ),
+                ),
+                SizedBox(height: 12.h),
+                Row(
+                  children: [
+                    for (final c in DogamCategory.values) ...[
+                      AppBadge.category(
+                        c,
+                        label:
+                            '${c.label} ${summary.collectedByCategory[c] ?? 0}',
+                      ),
+                      if (c != DogamCategory.values.last) SizedBox(width: 8.w),
+                    ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
+    );
+  }
+}
+
+/// 도감 진행률 카드 로딩 — 제목 줄은 그대로 두고 숫자·게이지만 스켈레톤.
+class _DogamProgressSkeleton extends StatelessWidget {
+  const _DogamProgressSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              '나의 도감',
+              style: AppTextStyles.display16.copyWith(color: AppColors.ink),
+            ),
+            const Spacer(),
+            AppSkeleton(width: 52.w, height: 22.h),
+          ],
+        ),
+        SizedBox(height: 12.h),
+        AppSkeleton(
+          width: double.infinity,
+          height: 10.h,
+          borderRadius: BorderRadius.circular(AppRadius.full),
+        ),
+        SizedBox(height: 12.h),
+        Row(
+          children: [
+            for (var i = 0; i < 3; i++) ...[
+              AppSkeleton(width: 64.w, height: 24.h),
+              if (i < 2) SizedBox(width: 8.w),
+            ],
+          ],
+        ),
+      ],
     );
   }
 }

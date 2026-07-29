@@ -7,7 +7,6 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/errors/app_exception.dart';
-import '../../../../core/mock/mock_dogam.dart';
 import '../../../../core/providers/guest_mode_provider.dart';
 import '../../../../core/widgets/app_back_app_bar.dart';
 import '../../../../core/widgets/app_button.dart';
@@ -15,6 +14,7 @@ import '../../../../core/widgets/app_snackbar.dart';
 import '../../../../core/widgets/dialogs/app_dialog.dart';
 import '../../../../router/route_paths.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../collection/presentation/providers/catalog_provider.dart';
 import '../providers/user_provider.dart';
 
 /// 내 정보 (MY-01/02) — 프로필·수집 통계·닉네임 변경·약관·로그아웃·탈퇴.
@@ -132,7 +132,9 @@ class _MyPageState extends ConsumerState<MyPage> {
     final nickname = isGuest
         ? '게스트'
         : ref.watch(authNotifierProvider).valueOrNull?.nickname ?? '탐험가';
-    final percent = (mockDogamCollected / mockDogamTotal * 100).round();
+    final summary = ref.watch(catalogSummaryProvider).valueOrNull;
+    // 서버가 반올림한 수집률을 그대로 쓴다. 아직 못 받았으면 0.
+    final percent = summary?.collectionRate.round() ?? 0;
     return Scaffold(
       backgroundColor: AppColors.canvas,
       appBar: const AppBackAppBar(title: '내 정보'),
@@ -160,7 +162,7 @@ class _MyPageState extends ConsumerState<MyPage> {
             SizedBox(height: 12.h),
             _StatsCard(
               percentText: '$percent%',
-              countText: '$mockDogamCollected',
+              countText: '${summary?.collectedCount ?? 0}',
               onTap: () => context.go(RoutePaths.collection),
             ),
             SizedBox(height: 32.h),

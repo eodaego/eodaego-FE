@@ -1,7 +1,10 @@
 import 'dart:ui';
 
+import 'package:eodaego/core/constants/dogam_category.dart';
 import 'package:eodaego/features/auth/domain/entities/auth_result_entity.dart';
 import 'package:eodaego/features/auth/presentation/providers/auth_provider.dart';
+import 'package:eodaego/features/collection/domain/entities/catalog_summary_entity.dart';
+import 'package:eodaego/features/collection/presentation/providers/catalog_provider.dart';
 import 'package:eodaego/features/user/domain/entities/agreement_status_entity.dart';
 import 'package:eodaego/features/user/domain/repositories/user_repository.dart';
 import 'package:eodaego/features/user/presentation/providers/user_provider.dart';
@@ -49,6 +52,26 @@ class _FakeUserRepository implements UserRepository {
       throw UnimplementedError();
 }
 
+// /home은 4탭 셸(StatefulShellRoute.indexedStack)의 첫 branch라 그 경로로 리다이렉트/
+// 도달하는 순간 HomePage(→ _DogamProgressCard)가 실제로 빌드되며 catalogSummaryProvider를
+// watch한다. 실 Dio 호출(네트워크 경계)을 막기 위해 모든 케이스의 기본 override에 둔다 —
+// /home을 거치지 않는 케이스에서는 어차피 watch되지 않으니 해가 없다.
+const _fakeCatalogSummary = CatalogSummaryEntity(
+  totalCount: 80,
+  collectedCount: 24,
+  collectionRate: 30,
+  collectedByCategory: {
+    DogamCategory.animal: 8,
+    DogamCategory.plant: 8,
+    DogamCategory.place: 8,
+  },
+  totalByCategory: {
+    DogamCategory.animal: 27,
+    DogamCategory.plant: 27,
+    DogamCategory.place: 26,
+  },
+);
+
 /// [Finding 1] 라우터 리다이렉트 회귀 테스트.
 ///
 /// `lib/router/app_router.dart`의 redirect 클로저는 GoRouter 내부(비공개)라 직접
@@ -63,6 +86,7 @@ Future<GoRouter> _buildRouterAt(
   final container = ProviderContainer(
     overrides: [
       authNotifierProvider.overrideWith(() => _TestAuthNotifier(user)),
+      catalogSummaryProvider.overrideWith((ref) => _fakeCatalogSummary),
       ...extraOverrides,
     ],
   );
