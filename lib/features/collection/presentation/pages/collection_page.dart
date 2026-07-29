@@ -118,7 +118,9 @@ class _CollectionPageState extends State<CollectionPage> {
                     final item = _visible[index];
                     return DogamCard(
                       key: ValueKey(item.id),
-                      item: item,
+                      category: item.category,
+                      collected: item.collected,
+                      name: item.name,
                       onTap: () =>
                           context.push(RoutePaths.collectionDetail(item.id)),
                     );

@@ -62,7 +62,11 @@ class QuizRewardPage extends StatelessWidget {
                   child: SizedBox(
                     width: 140.w,
                     height: 168.h,
-                    child: DogamCard(item: mockQuizItem),
+                    child: DogamCard(
+                      category: mockQuizItem.category,
+                      collected: true,
+                      name: mockQuizItem.name,
+                    ),
                   ),
                 ),
               ),
