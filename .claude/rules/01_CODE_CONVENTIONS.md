@@ -3,7 +3,7 @@
 > 일반적인 Dart/Flutter 문법 규칙은 문서로 두지 않는다.
 > 여기에는 **코드만 봐서는 알 수 없는** 이 프로젝트만의 약속만 적는다.
 > 아키텍처·네이밍·에러 처리 요약은 [00_QUICK_REFERENCE.md](00_QUICK_REFERENCE.md),
-> API 연동 절차는 [02_API_INTEGRATION_GUIDE.md](02_API_INTEGRATION_GUIDE.md) 참조.
+> API 연동 절차는 `api-integration` 스킬 참조.
 
 ---
 

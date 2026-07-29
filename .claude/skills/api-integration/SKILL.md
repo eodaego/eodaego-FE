@@ -1,3 +1,8 @@
+---
+name: api-integration
+description: 백엔드 API 연동 절차 — JWT 자동 주입(AuthInterceptor), Clean Architecture 4단계 배선(DTO → DataSource → Entity/Repository → Provider), DioExceptionHandler 에러 변환, 204 No Content 처리, autoDispose 주의사항. 새 API를 붙이거나 기존 연동을 고칠 때 사용.
+---
+
 # API 연동 가이드
 
 새로운 백엔드 API를 연동할 때 참고하는 문서입니다.
