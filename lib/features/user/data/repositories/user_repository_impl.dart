@@ -34,7 +34,7 @@ class UserRepositoryImpl implements UserRepository {
     } catch (e) {
       if (e is AppException) rethrow;
       throw ServerException(
-        message: '닉네임 변경 중 예기치 않은 오류가 발생했습니다.',
+        message: '닉네임을 바꾸지 못했어요. 잠시 후 다시 시도해 주세요.',
         messageKey: 'errorNicknameUpdateUnexpected',
         originalException: e,
       );
@@ -56,7 +56,7 @@ class UserRepositoryImpl implements UserRepository {
     } catch (e) {
       if (e is AppException) rethrow;
       throw ServerException(
-        message: '닉네임 확인 중 예기치 않은 오류가 발생했습니다.',
+        message: '닉네임을 확인하지 못했어요. 잠시 후 다시 시도해 주세요.',
         messageKey: 'errorNicknameCheckUnexpected',
         originalException: e,
       );
@@ -75,7 +75,7 @@ class UserRepositoryImpl implements UserRepository {
       throw DioExceptionHandler.handle(e);
     } catch (e) {
       throw ServerException(
-        message: '회원 탈퇴 중 예기치 않은 오류가 발생했습니다.',
+        message: '탈퇴하지 못했어요. 잠시 후 다시 시도해 주세요.',
         messageKey: 'errorDeleteAccountUnexpected',
         originalException: e,
       );
@@ -110,7 +110,7 @@ class UserRepositoryImpl implements UserRepository {
     } catch (e) {
       if (e is AppException) rethrow;
       throw ServerException(
-        message: '약관 동의 상태 조회 중 예기치 않은 오류가 발생했습니다.',
+        message: '약관 동의 상태를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.',
         messageKey: 'errorAgreementFetchUnexpected',
         originalException: e,
       );
@@ -137,7 +137,7 @@ class UserRepositoryImpl implements UserRepository {
     } catch (e) {
       if (e is AppException) rethrow;
       throw ServerException(
-        message: '약관 동의 저장 중 예기치 않은 오류가 발생했습니다.',
+        message: '약관 동의를 저장하지 못했어요. 잠시 후 다시 시도해 주세요.',
         messageKey: 'errorAgreementSaveUnexpected',
         originalException: e,
       );

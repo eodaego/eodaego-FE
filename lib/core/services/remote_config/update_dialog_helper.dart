@@ -50,8 +50,8 @@ class UpdateDialogHelper {
   static Future<void> _showRecommendUpdateDialog(BuildContext context) {
     return AppDialog.show(
       context: context,
-      title: '새 버전 안내',
-      message: '더 좋아진 새 버전이 있어요.\n지금 업데이트할까요?',
+      title: '새 버전이 나왔어요',
+      message: '더 좋아진 기능을 쓸 수 있어요.\n지금 업데이트할까요?',
       confirmText: '업데이트',
       cancelText: '나중에',
       barrierDismissible: true,
@@ -65,8 +65,8 @@ class UpdateDialogHelper {
   static Future<void> _showOptionalUpdateDialog(BuildContext context) {
     return AppDialog.show(
       context: context,
-      title: '업데이트 안내',
-      message: '새로운 버전이 나왔어요.\n지금 업데이트할까요?',
+      title: '업데이트할 때가 됐어요',
+      message: '최신 버전에서 더 편하게 쓸 수 있어요.\n지금 업데이트할까요?',
       confirmText: '업데이트',
       cancelText: '나중에',
       barrierDismissible: true,
