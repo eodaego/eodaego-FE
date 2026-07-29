@@ -1,41 +1,4 @@
-import 'package:flutter/material.dart';
-
-import '../constants/app_colors.dart';
-
-/// 도감 카테고리 — 카테고리 컬러 페어링 규칙(UI_Design_System.md)의 단일 소스.
-/// 주의: 공용 위젯(AppBadge/DogamCard/CourseCard)이 사용 — API 연동 시 이 폴더를
-/// 삭제할 때 이 enum은 삭제하지 말고 core/constants/로 이동할 것.
-enum DogamCategory {
-  animal(
-    '동물',
-    AppColors.animal,
-    AppColors.animalTint,
-    AppColors.animalDark,
-    Icons.pets,
-  ),
-  plant(
-    '식물',
-    AppColors.plant,
-    AppColors.plantTint,
-    AppColors.plantDark,
-    Icons.local_florist,
-  ),
-  place(
-    '장소',
-    AppColors.place,
-    AppColors.placeTint,
-    AppColors.placeDark,
-    Icons.place,
-  );
-
-  const DogamCategory(this.label, this.color, this.tint, this.dark, this.icon);
-
-  final String label;
-  final Color color;
-  final Color tint;
-  final Color dark;
-  final IconData icon;
-}
+import '../constants/dogam_category.dart';
 
 /// 목 도감 항목. API 연동 시 core/mock 폴더째 삭제 예정.
 class MockDogamItem {

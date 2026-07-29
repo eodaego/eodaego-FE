@@ -1,4 +1,4 @@
-import 'mock_dogam.dart';
+import '../constants/dogam_category.dart';
 
 /// 코스에 포함된 장소. API 연동 시 core/mock 폴더째 삭제 예정.
 class MockPlace {

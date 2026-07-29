@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../constants/spacing_and_radius.dart';
 import '../constants/text_styles.dart';
-import '../mock/mock_dogam.dart';
+import '../constants/dogam_category.dart';
 
 /// 공용 뱃지 — tint 배경 + dark 텍스트 페어링(카테고리) 또는 임의 조합.
 class AppBadge extends StatelessWidget {
