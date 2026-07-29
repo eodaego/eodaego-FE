@@ -46,14 +46,48 @@ class _MyPageState extends ConsumerState<MyPage> {
   Future<void> _confirmDeleteAccount(BuildContext context) async {
     if (_isDeleting) return;
 
-    final ok = await AppDialog.confirm(
+    // 하드 삭제라 확인 다이얼로그만으로는 약하다 — '탈퇴하기'(또는 delete)를
+    // 직접 입력해야 버튼이 통과된다. 틀리면 AppDialog의 shake로만 알린다.
+    // 컨트롤러 대신 onChanged로 받는다: 다이얼로그 닫힘 애니메이션 중에
+    // dispose된 컨트롤러를 TextField가 건드리는 문제를 원천 차단한다.
+    var typed = '';
+    var confirmed = false;
+    await AppDialog.show(
       context: context,
       title: '정말 탈퇴할까요?',
-      message: '모은 도감과 기록이 모두 사라지고\n되돌릴 수 없어요.',
+      message: '모은 도감과 기록이 모두 사라지고\n되돌릴 수 없어요.\n계속하려면 아래에 \'탈퇴하기\'를 입력해 주세요.',
+      customContent: TextField(
+        autofocus: true,
+        onChanged: (value) => typed = value,
+        textAlign: TextAlign.center,
+        style: AppTextStyles.body15.copyWith(color: AppColors.ink),
+        decoration: InputDecoration(
+          hintText: '탈퇴하기',
+          hintStyle: AppTextStyles.body15.copyWith(
+            color: AppColors.uncollected,
+          ),
+          filled: true,
+          fillColor: AppColors.surfaceDim,
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: AppSpacing.base.w,
+            vertical: AppSpacing.md.h,
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppRadius.md.r),
+            borderSide: BorderSide.none,
+          ),
+        ),
+      ),
+      cancelText: '닫기',
       confirmText: '탈퇴하기',
       isDestructive: true,
+      validator: () {
+        final input = typed.trim();
+        return input == '탈퇴하기' || input.toLowerCase() == 'delete';
+      },
+      onConfirm: () => confirmed = true,
     );
-    if (ok != true) return;
+    if (!confirmed) return;
 
     setState(() => _isDeleting = true);
 
@@ -108,71 +142,28 @@ class _MyPageState extends ConsumerState<MyPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             SizedBox(height: 24.h),
-            // 게스트는 바꿀 닉네임(계정) 자체가 없으므로 아이콘을 아예 숨긴다.
-            if (isGuest)
-              Center(
-                child: Text(
-                  nickname,
-                  style: AppTextStyles.display26.copyWith(color: AppColors.ink),
-                ),
-              )
-            else
-              // 닉네임은 화면 정중앙에 두고 아이콘만 그 오른쪽에 붙인다.
-              // 좌우에 같은 폭의 슬롯을 둬야 아이콘이 닉네임을 왼쪽으로 밀지 않는다.
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(width: 48.w),
-                  Flexible(
-                    child: Text(
-                      nickname,
-                      style: AppTextStyles.display26.copyWith(
-                        color: AppColors.ink,
-                      ),
-                      textAlign: TextAlign.center,
-                      // 닉네임은 10자까지 허용된다 — 넘치면 줄바꿈 대신 줄임표.
-                      overflow: TextOverflow.ellipsis,
+            _ProfileHeader(
+              nickname: nickname,
+              // 게스트는 바꿀 닉네임(계정) 자체가 없으므로 링크를 숨긴다.
+              onEditTap: isGuest
+                  ? null
+                  : () => context.push(
+                      '${RoutePaths.mypageNickname}'
+                      '?nickname=${Uri.encodeComponent(nickname)}',
                     ),
-                  ),
-                  SizedBox(
-                    width: 48.w,
-                    child: IconButton(
-                      onPressed: () => context.push(
-                        '${RoutePaths.mypageNickname}'
-                        '?nickname=${Uri.encodeComponent(nickname)}',
-                      ),
-                      icon: Icon(
-                        Icons.edit_rounded,
-                        size: 20.w,
-                        color: AppColors.primary,
-                      ),
-                      // 아이콘은 작지만 터치 영역은 48을 지킨다.
-                      constraints: BoxConstraints(
-                        minWidth: 48.w,
-                        minHeight: 48.h,
-                      ),
-                      padding: EdgeInsets.zero,
-                      tooltip: '닉네임 바꾸기',
-                    ),
-                  ),
-                ],
-              ),
-            SizedBox(height: 24.h),
-            Row(
-              children: [
-                Expanded(
-                  child: _StatCard(value: '$percent%', label: '수집률'),
-                ),
-                SizedBox(width: 12.w),
-                Expanded(
-                  child: _StatCard(
-                    value: '$mockDogamCollected',
-                    label: '모은 도감',
-                  ),
-                ),
-              ],
             ),
-            SizedBox(height: 24.h),
+            SizedBox(height: 32.h),
+            Text(
+              '내 도감',
+              style: AppTextStyles.display16.copyWith(color: AppColors.ink),
+            ),
+            SizedBox(height: 12.h),
+            _StatsCard(
+              percentText: '$percent%',
+              countText: '$mockDogamCollected',
+              onTap: () => context.go(RoutePaths.collection),
+            ),
+            SizedBox(height: 32.h),
             if (isGuest)
               AppButton(
                 text: '로그인하러 가기',
@@ -186,51 +177,23 @@ class _MyPageState extends ConsumerState<MyPage> {
                 },
               )
             else ...[
-              InkWell(
+              _MenuRow(
+                title: '약관 및 정책',
                 onTap: () => context.push(RoutePaths.mypageAgreements),
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: 56.h),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          '약관 및 정책',
-                          style: AppTextStyles.body15.copyWith(
-                            color: AppColors.ink,
-                          ),
-                        ),
-                      ),
-                      Icon(
-                        Icons.chevron_right_rounded,
-                        color: AppColors.muted,
-                        size: 24.w,
-                      ),
-                    ],
-                  ),
-                ),
               ),
-              Divider(color: AppColors.line, height: AppSpacing.lg.h),
-              SizedBox(height: AppSpacing.sm.h),
-              AppButton(
-                text: '로그아웃',
-                backgroundColor: AppColors.surface,
-                foregroundColor: AppColors.ink,
-                showBorder: true,
-                width: double.infinity,
-                onPressed: _isDeleting ? null : () => _confirmSignOut(context),
+              const Divider(color: AppColors.line, height: 1),
+              _MenuRow(
+                title: '로그아웃',
+                onTap: _isDeleting ? null : () => _confirmSignOut(context),
               ),
-              SizedBox(height: 12.h),
-              AppButton(
-                text: '탈퇴하기',
-                backgroundColor: AppColors.surface,
-                foregroundColor: AppColors.danger,
-                showBorder: true,
+              const Divider(color: AppColors.line, height: 1),
+              // 탈퇴는 Hard Delete — 경고 subtitle은 항상 동반한다.
+              _MenuRow(
+                title: '탈퇴하기',
+                titleColor: AppColors.danger,
                 subtitle: '모든 기록을 완전히 지워요',
-                subtitleColor: AppColors.muted,
-                width: double.infinity,
-                height: 72.h,
                 isLoading: _isDeleting,
-                onPressed: _isDeleting
+                onTap: _isDeleting
                     ? null
                     : () => _confirmDeleteAccount(context),
               ),
@@ -243,34 +206,204 @@ class _MyPageState extends ConsumerState<MyPage> {
   }
 }
 
-/// 수집 통계 카드.
-class _StatCard extends StatelessWidget {
-  const _StatCard({required this.value, required this.label});
+/// 프로필 헤더 — 닉네임 + 닉네임 바꾸기 링크.
+class _ProfileHeader extends StatelessWidget {
+  const _ProfileHeader({required this.nickname, this.onEditTap});
+
+  final String nickname;
+  final VoidCallback? onEditTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            nickname,
+            style: AppTextStyles.display26.copyWith(color: AppColors.ink),
+            // 닉네임은 10자까지 허용된다 — 넘치면 줄바꿈 대신 줄임표.
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        if (onEditTap != null)
+          InkWell(
+            onTap: onEditTap,
+            borderRadius: BorderRadius.circular(AppRadius.xs.r),
+            child: ConstrainedBox(
+              // 텍스트 링크지만 터치 영역은 48을 지킨다.
+              constraints: BoxConstraints(minHeight: 48.h),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '닉네임 바꾸기',
+                    style: AppTextStyles.caption14.copyWith(
+                      color: AppColors.muted,
+                    ),
+                  ),
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    size: 18.w,
+                    color: AppColors.muted,
+                  ),
+                ],
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+/// 수집 통계 카드 — 한 장을 세로 구분선으로 2분할, 탭하면 도감으로.
+class _StatsCard extends StatelessWidget {
+  const _StatsCard({
+    required this.percentText,
+    required this.countText,
+    required this.onTap,
+  });
+
+  final String percentText;
+  final String countText;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColors.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppRadius.lg.r),
+        side: const BorderSide(color: AppColors.line),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppRadius.lg.r),
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 18.h),
+          child: IntrinsicHeight(
+            child: Row(
+              children: [
+                Expanded(
+                  child: _StatColumn(value: percentText, label: '수집률'),
+                ),
+                const VerticalDivider(
+                  color: AppColors.line,
+                  width: 1,
+                  thickness: 1,
+                ),
+                Expanded(
+                  child: _StatColumn(value: countText, label: '모은 도감'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _StatColumn extends StatelessWidget {
+  const _StatColumn({required this.value, required this.label});
 
   final String value;
   final String label;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppRadius.lg.r),
-        border: Border.all(color: AppColors.line),
-      ),
-      child: Column(
-        children: [
-          Text(
-            value,
-            style: AppTextStyles.display26.copyWith(color: AppColors.primary),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              label,
+              style: AppTextStyles.caption14.copyWith(color: AppColors.muted),
+            ),
+            Icon(
+              Icons.chevron_right_rounded,
+              size: 14.w,
+              color: AppColors.muted,
+            ),
+          ],
+        ),
+        SizedBox(height: 6.h),
+        Text(
+          value,
+          style: AppTextStyles.display26.copyWith(color: AppColors.primary),
+        ),
+      ],
+    );
+  }
+}
+
+/// 메뉴 리스트 행 — 제목 + 셰브론, 탈퇴 행은 danger색 + 경고 subtitle.
+class _MenuRow extends StatelessWidget {
+  const _MenuRow({
+    required this.title,
+    this.subtitle,
+    this.titleColor,
+    this.isLoading = false,
+    this.onTap,
+  });
+
+  final String title;
+  final String? subtitle;
+  final Color? titleColor;
+  final bool isLoading;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(minHeight: 56.h),
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: AppSpacing.sm.h),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: AppTextStyles.body15.copyWith(
+                        color: titleColor ?? AppColors.ink,
+                      ),
+                    ),
+                    if (subtitle != null)
+                      Text(
+                        subtitle!,
+                        style: AppTextStyles.caption14.copyWith(
+                          color: AppColors.muted,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              if (isLoading)
+                SizedBox(
+                  width: 20.w,
+                  height: 20.w,
+                  child: const CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.muted,
+                  ),
+                )
+              else
+                Icon(
+                  Icons.chevron_right_rounded,
+                  color: AppColors.muted,
+                  size: 24.w,
+                ),
+            ],
           ),
-          SizedBox(height: 6.h),
-          Text(
-            label,
-            style: AppTextStyles.caption14.copyWith(color: AppColors.muted),
-          ),
-        ],
+        ),
       ),
     );
   }

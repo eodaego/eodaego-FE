@@ -157,6 +157,8 @@ void main() {
       await tester.tap(find.text('탈퇴하기'));
       await tester.pumpAndSettle();
 
+      // 이중 안전장치 — '탈퇴하기'를 입력해야 확인 버튼이 통과된다.
+      await tester.enterText(find.byType(TextField), '탈퇴하기');
       // 다이얼로그의 확인 버튼
       await tester.tap(find.text('탈퇴하기').last);
       // 성공 시 _isDeleting을 되돌리지 않고 라우터 redirect에 맡기므로(실제
@@ -184,6 +186,23 @@ void main() {
       expect(repo.deleteCallCount, 0);
     });
 
+    testWidgets('확인 문구를 틀리게 입력하면 삭제하지 않고 다이얼로그에 머문다', (tester) async {
+      _useDesignViewport(tester);
+      final repo = _FakeUserRepository();
+      await tester.pumpWidget(_wrap(repo));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('탈퇴하기'));
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextField), '탈퇴');
+      await tester.tap(find.text('탈퇴하기').last);
+      await tester.pumpAndSettle();
+
+      expect(repo.deleteCallCount, 0);
+      expect(find.text('정말 탈퇴할까요?'), findsOneWidget);
+    });
+
     testWidgets('탈퇴에 실패하면 화면에 머문다', (tester) async {
       _useDesignViewport(tester);
       final repo = _FakeUserRepository(
@@ -194,6 +213,7 @@ void main() {
 
       await tester.tap(find.text('탈퇴하기'));
       await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField), '탈퇴하기');
       await tester.tap(find.text('탈퇴하기').last);
       await tester.pumpAndSettle();
 
@@ -239,6 +259,8 @@ void main() {
 
       await tester.tap(find.text('탈퇴하기'));
       await tester.pumpAndSettle();
+      // 대체 키워드 'delete'(대소문자 무관)도 통과하는지 여기서 겸사 확인한다.
+      await tester.enterText(find.byType(TextField), 'DELETE');
       await tester.tap(find.text('탈퇴하기').last);
       await tester.pump();
       await tester.pump();
@@ -291,6 +313,7 @@ void main() {
 
       await tester.tap(find.text('탈퇴하기'));
       await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField), '탈퇴하기');
       await tester.tap(find.text('탈퇴하기').last);
       await tester.pump();
       await tester.pump();
@@ -303,32 +326,14 @@ void main() {
   });
 
   group('MyPage 닉네임 편집', () {
-    // my_page_guest_mode_test는 게스트에게 이 아이콘이 없다는 것만 확인한다.
-    // 아이콘이 아무에게도 안 그려져도 그 테스트는 통과하므로, 대조군이 필요하다.
-    testWidgets('로그인한 사용자에게는 닉네임 옆에 편집 아이콘이 보인다', (tester) async {
+    // my_page_guest_mode_test는 게스트에게 이 링크가 없다는 것만 확인한다.
+    // 링크가 아무에게도 안 그려져도 그 테스트는 통과하므로, 대조군이 필요하다.
+    testWidgets('로그인한 사용자에게는 닉네임 바꾸기 링크가 보인다', (tester) async {
       _useDesignViewport(tester);
       await tester.pumpWidget(_wrap(_FakeUserRepository()));
       await tester.pumpAndSettle();
 
-      expect(find.byIcon(Icons.edit_rounded), findsOneWidget);
-    });
-
-    testWidgets('닉네임은 편집 아이콘이 있어도 화면 정중앙에 놓인다', (tester) async {
-      _useDesignViewport(tester);
-      await tester.pumpWidget(_wrap(_FakeUserRepository()));
-      await tester.pumpAndSettle();
-
-      // 아이콘을 닉네임과 한 덩어리로 가운데 정렬하면 닉네임이 아이콘 폭의
-      // 절반만큼 왼쪽으로 밀린다. 좌우 슬롯이 대칭이어야 중심이 유지된다.
-      final nicknameCenter = tester.getCenter(find.text('탐험가123')).dx;
-      final screenCenter = tester.getCenter(find.byType(MyPage)).dx;
-
-      expect(nicknameCenter, moreOrLessEquals(screenCenter, epsilon: 1.0));
-      // 아이콘은 닉네임 오른쪽에 있어야 한다.
-      expect(
-        tester.getCenter(find.byIcon(Icons.edit_rounded)).dx,
-        greaterThan(nicknameCenter),
-      );
+      expect(find.text('닉네임 바꾸기'), findsOneWidget);
     });
   });
 }
