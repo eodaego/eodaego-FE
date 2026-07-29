@@ -131,8 +131,10 @@ class _NicknameSetupPageState extends ConsumerState<NicknameSetupPage> {
         borderSide: BorderSide(color: color, width: width),
       );
 
-  /// 입력창 오른쪽 상태 표시. 확인 중엔 스피너, 판정이 나면 아이콘.
-  Widget? get _statusIcon {
+  /// 입력창 오른쪽. 확인 중엔 스피너, 글자가 있으면 전체 지우기(X) 버튼.
+  /// 판정 결과는 테두리 색과 아래 상태 줄이 이미 말해준다 — 예전의 빨간 X
+  /// 아이콘은 지우기 버튼처럼 보이는데 눌러도 반응이 없어 오히려 헷갈렸다.
+  Widget? get _suffixIcon {
     if (_availability == _Availability.checking) {
       return Padding(
         padding: EdgeInsets.only(right: AppSpacing.base.w),
@@ -150,16 +152,16 @@ class _NicknameSetupPageState extends ConsumerState<NicknameSetupPage> {
       );
     }
 
-    final IconData? icon = _errorText != null
-        ? Icons.close_rounded
-        : _availability == _Availability.available
-        ? Icons.check_rounded
-        : null;
-    if (icon == null) return null;
+    if (_controller.text.isEmpty) return null;
 
-    return Padding(
-      padding: EdgeInsets.only(right: AppSpacing.base.w),
-      child: Icon(icon, size: 22.w, color: _statusColor),
+    return IconButton(
+      onPressed: _isSubmitting ? null : _controller.clear,
+      tooltip: '모두 지우기',
+      icon: Icon(
+        Icons.cancel_rounded,
+        size: 22.w,
+        color: AppColors.uncollected,
+      ),
     );
   }
 
@@ -265,7 +267,6 @@ class _NicknameSetupPageState extends ConsumerState<NicknameSetupPage> {
     // autoDispose provider가 비동기 작업 중 dispose되지 않도록 구독을 유지한다.
     ref.watch(authNotifierProvider);
 
-
     return Scaffold(
       backgroundColor: AppColors.canvas,
       appBar: widget.isSettings ? const AppBackAppBar(title: '닉네임 변경') : null,
@@ -316,9 +317,7 @@ class _NicknameSetupPageState extends ConsumerState<NicknameSetupPage> {
                   border: _fieldBorder(AppColors.line),
                   enabledBorder: _fieldBorder(_fieldBorderColor),
                   focusedBorder: _fieldBorder(_fieldBorderColor, width: 2),
-                  // 상태는 아이콘 하나로만 말한다. 누를 것이 없으니
-                  // 아이가 '확인'이라는 절차를 배울 필요도 없다.
-                  suffixIcon: _statusIcon,
+                  suffixIcon: _suffixIcon,
                   suffixIconConstraints: BoxConstraints(
                     minWidth: 44.w,
                     minHeight: 44.h,

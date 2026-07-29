@@ -179,6 +179,22 @@ void main() {
       expect(find.byType(AppBackAppBar), findsNothing);
     });
 
+    testWidgets('X 버튼을 누르면 입력이 모두 지워진다', (tester) async {
+      _useDesignViewport(tester);
+      await tester.pumpWidget(_wrap(_FakeUserRepository(), isSettings: true));
+      await _open(tester);
+
+      await tester.tap(find.byIcon(Icons.cancel_rounded));
+      await tester.pump();
+
+      expect(
+        tester.widget<TextField>(find.byType(TextField)).controller!.text,
+        isEmpty,
+      );
+      // 비면 지울 것도 없으니 버튼도 사라진다.
+      expect(find.byIcon(Icons.cancel_rounded), findsNothing);
+    });
+
     testWidgets('닉네임을 바꾸지 않고 완료하면 서버를 부르지 않고 돌아간다', (tester) async {
       _useDesignViewport(tester);
       final repo = _FakeUserRepository();
