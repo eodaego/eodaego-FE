@@ -27,6 +27,8 @@ class WeatherMockDataSource implements WeatherRemoteDataSource {
 
     final anchorIso =
         (forecast.first as Map<String, dynamic>)['datetime'] as String?;
+    // 여기서는 .year/.month/.day만 읽으므로 오프셋 없는 문자열이 기기
+    // 로컬 시각으로 해석돼도 상관없다 — 시각(hour)은 이 값에서 쓰지 않는다.
     final anchor = DateTime.tryParse(anchorIso ?? '');
     if (anchor == null) return json;
 

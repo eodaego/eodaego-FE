@@ -84,6 +84,9 @@ class CatalogMockDataSource implements CatalogRemoteDataSource {
   /// 앵커는 상세들 중 가장 늦은 `collectedAt`의 날짜다. 값을 하나도 못 읽으면
   /// 앵커를 구할 수 없으므로 시프트 없이 원본을 그대로 돌려준다(방어).
   Map<String, dynamic> _shiftCollectedAtToToday(Map<String, dynamic> details) {
+    // 여기서는 .year/.month/.day만 읽고, 아래 reduce(isAfter) 비교도 전부
+    // 같은 방식(DateTime.tryParse)으로 파싱한 값끼리라 오프셋 없는 문자열이
+    // 기기 로컬 시각으로 해석돼도 상관없다.
     final collectedAtDates = details.values
         .map((v) => (v as Map<String, dynamic>)['collectedAt'] as String?)
         .whereType<String>()

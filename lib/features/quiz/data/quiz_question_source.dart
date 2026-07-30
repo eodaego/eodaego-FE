@@ -27,13 +27,19 @@ class QuizQuestionSource {
         debugPrint('[Quiz] ⚠️ 알 수 없는 카테고리: ${raw['category']} — 문항 제외');
         continue;
       }
+      final choices = (raw['choices'] as List).cast<String>();
+      final answerIndex = raw['answerIndex'] as int;
+      if (answerIndex < 0 || answerIndex >= choices.length) {
+        debugPrint('[Quiz] ⚠️ answerIndex 범위 초과: ${raw['name']} — 문항 제외');
+        continue;
+      }
       questions.add(
         QuizQuestionEntity(
           name: raw['name'] as String,
           category: category,
           question: raw['question'] as String,
-          choices: (raw['choices'] as List).cast<String>(),
-          answerIndex: raw['answerIndex'] as int,
+          choices: choices,
+          answerIndex: answerIndex,
         ),
       );
     }

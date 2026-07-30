@@ -1,6 +1,7 @@
 import 'package:clock/clock.dart';
 import 'package:eodaego/core/utils/kst_clock.dart';
 import 'package:eodaego/features/weather/data/datasources/weather_mock_datasource.dart';
+import 'package:eodaego/features/weather/data/repositories/weather_repository_impl.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -86,6 +87,27 @@ void main() {
       expect(forecast.first.temperature, 27);
       expect(forecast.first.precipitationProbability, 20);
       expect(forecast.first.skyCondition, '구름많음');
+    });
+  });
+
+  group('upcomingFrom after shift', () {
+    test('forecast_survives_upcomingFrom_filter_late_in_the_day', () async {
+      // 하루의 막바지(23시대)에 열어도 예보가 남아야 한다. 픽스처가 딱 하루치만
+      // 담고 있었다면 이 순간 upcomingFrom이 전부 걸러내 빈 목록이 되고,
+      // 시연 당일 밤에만 조용히 터진다. WeatherRepositoryImpl까지 거쳐
+      // 실제 매핑 경로로 WeatherEntity를 만든 뒤 검증한다.
+      // KST 2026-09-15 23:30
+      final lateInDay = DateTime.utc(2026, 9, 15, 14, 30);
+
+      final result = await withClock(Clock.fixed(lateInDay), () async {
+        final repository = WeatherRepositoryImpl(WeatherMockDataSource());
+        final weather = await repository.getCurrentWeather();
+        final now = nowKst();
+        return (upcoming: weather.upcomingFrom(now), now: now);
+      });
+
+      expect(result.upcoming, isNotEmpty);
+      expect(result.upcoming.first.dateTime.isBefore(result.now), isFalse);
     });
   });
 }

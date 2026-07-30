@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -22,7 +23,10 @@ part 'weather_provider.g.dart';
 /// 수정할 필요가 없다.
 @riverpod
 WeatherRemoteDataSource weatherRemoteDataSource(Ref ref) {
-  if (EnvConfig.useMockData) return WeatherMockDataSource();
+  if (EnvConfig.useMockData) {
+    debugPrint('[Mock] ✅ 날씨 목 데이터 사용');
+    return WeatherMockDataSource();
+  }
   return WeatherRemoteDataSource(ref.watch(dioProvider));
 }
 
