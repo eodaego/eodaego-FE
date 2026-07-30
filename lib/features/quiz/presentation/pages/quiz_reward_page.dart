@@ -63,7 +63,6 @@ class _RewardBody extends ConsumerWidget {
 
     return Stack(
       children: [
-        const Positioned.fill(child: ConfettiLayer()),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg.w),
           child: Column(
@@ -104,11 +103,14 @@ class _RewardBody extends ConsumerWidget {
               AppButton(
                 text: '도감 보러 가기',
                 width: double.infinity,
+                textStyle: AppTextStyles.display17,
                 onPressed: () => context.go(RoutePaths.collection),
               ),
             ],
           ),
         ),
+        // 컨텐츠 위로 떨어지는 전면 오버레이라 Stack의 마지막 자식이어야 한다.
+        const Positioned.fill(child: ConfettiLayer()),
       ],
     );
   }
