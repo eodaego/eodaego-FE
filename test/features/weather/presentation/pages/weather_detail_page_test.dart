@@ -25,19 +25,29 @@ class _FakeWeatherRepository implements WeatherRepository {
 // read, not the same instant used to build this fixture. withClock doesn't
 // help here: verified experimentally that Flutter's test binding schedules
 // the widget build outside the Zone it creates, so the widget still observed
-// the real clock. Falling back to a wide margin instead — "today" slots sit
-// minutes (not seconds) after now, comfortably past any pump/settle time.
+// the real clock. Falling back to a margin instead, and the margin is a
+// tradeoff between two races: too small and a slow pump/settle can push the
+// widget's read past the offset (Race A — the slot silently drops out of
+// "upcoming"); too large and it risks now+offset rolling into the next
+// calendar day when the test happens to run near midnight KST, which
+// duplicates a day header (Race B). A pump/settle never takes minutes, so
+// 20s/30s closes Race A with enormous headroom while keeping Race B's window
+// two orders of magnitude smaller than a minutes-wide margin would.
 // Tomorrow/day-after stay noon-anchored so they never collide with a
-// midnight boundary.
+// midnight boundary at all.
 // nowKst() 기준으로 오늘(두 슬롯 — 헤더가 행마다 찍히는 게 아니라 중복 제거되는지
 // 증명한다)·내일·모레 슬롯을 만든다. 테스트 실행 날짜와 무관하게 성립하도록 한다.
 //
 // 위젯은 빌드 시점에 nowKst()를 따로 한 번 더 읽으므로 실제 시계를 두 번 읽는
 // 셈이다. withClock은 도움이 안 된다 — Flutter 테스트 바인딩이 위젯 빌드를 그
 // Zone 밖에서 스케줄링해 위젯이 여전히 실제 시각을 본다는 걸 실험으로 확인했다.
-// 대신 여유를 크게 둔다: "오늘" 슬롯을 초가 아니라 분 단위로 지금보다 뒤에 둬
-// pump/settle 시간을 넉넉히 넘어서게 한다. 내일·모레는 여전히 정오에 고정해
-// 자정 경계와 충돌하지 않는다.
+// 대신 여유(margin)를 둘 수밖에 없는데, 이 여유는 두 레이스의 트레이드오프다 —
+// 너무 작으면 느린 pump/settle이 위젯의 읽기를 오프셋 너머로 밀어 슬롯이
+// "이후 예보"에서 조용히 빠진다(레이스 A). 너무 크면 자정 근처 실행에서
+// now+오프셋이 다음 날짜로 넘어가 날짜 헤더가 중복된다(레이스 B). pump/settle이
+// 분 단위로 걸리는 일은 없으므로 20초·30초면 레이스 A는 여유롭게 막으면서
+// 레이스 B의 위험 구간은 분 단위 여유보다 두 자릿수 작게 유지한다. 내일·모레는
+// 여전히 정오에 고정해 자정 경계와 아예 충돌하지 않는다.
 ({
   WeatherEntity weather,
   HourlyForecastEntity todayFirst,
@@ -48,14 +58,14 @@ class _FakeWeatherRepository implements WeatherRepository {
 _buildWeather() {
   final now = nowKst();
   final todayFirst = HourlyForecastEntity(
-    dateTime: now.add(const Duration(minutes: 3)),
+    dateTime: now.add(const Duration(seconds: 20)),
     temperature: 20,
     precipitationProbability: 0,
     skyLabel: '맑음',
     precipitationLabel: '없음',
   );
   final todaySecond = HourlyForecastEntity(
-    dateTime: now.add(const Duration(minutes: 4)),
+    dateTime: now.add(const Duration(seconds: 30)),
     temperature: 24,
     precipitationProbability: 33,
     skyLabel: '맑음',
