@@ -52,5 +52,31 @@ void main() {
       expect(weatherIcon(), Icons.help_outline);
       expect(weatherIcon(sky: null, precipitation: null), Icons.help_outline);
     });
+
+    test('maps_every_falling_precipitation_type_to_its_own_icon', () {
+      // 모든 강수 종류가 고유한 아이콘으로 매핑되는지 확인
+      // (sky를 넘겨서 강수 우선도 함께 검증)
+      expect(
+        weatherIcon(
+          sky: WeatherSky.clear,
+          precipitation: WeatherPrecipitation.sleet,
+        ),
+        Icons.cloudy_snowing,
+      );
+      expect(
+        weatherIcon(
+          sky: WeatherSky.clear,
+          precipitation: WeatherPrecipitation.snow,
+        ),
+        Icons.ac_unit,
+      );
+      expect(
+        weatherIcon(
+          sky: WeatherSky.clear,
+          precipitation: WeatherPrecipitation.shower,
+        ),
+        Icons.grain,
+      );
+    });
   });
 }
