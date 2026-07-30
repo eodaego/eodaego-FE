@@ -125,10 +125,19 @@ class _ConfettiPainter extends CustomPainter {
           -piece.sizePx + (size.height + piece.sizePx * 2) * fallProgress;
       final angle = progress * piece.rotationTurns * 2 * math.pi;
 
+      // Fades a piece out over the last stretch of its own fall so nothing
+      // comes to rest fully opaque at the bottom — right where the CTA
+      // button sits. 조각마다 낙하 막바지에 스스로 옅어지게 해, 화면
+      // 하단(CTA 버튼 자리)에 또렷하게 멈춰 있는 조각이 남지 않게 한다.
+      const fadeStart = 0.85;
+      final fade = fallProgress <= fadeStart
+          ? 1.0
+          : 1.0 - (fallProgress - fadeStart) / (1.0 - fadeStart);
+
       canvas.save();
       canvas.translate(dx, dy);
       canvas.rotate(angle);
-      paint.color = piece.color;
+      paint.color = piece.color.withValues(alpha: fade);
       canvas.drawRect(
         Rect.fromCenter(
           center: Offset.zero,
