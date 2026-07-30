@@ -1,5 +1,5 @@
 import '../../../../core/mock/mock_asset_loader.dart';
-import '../../domain/entities/weather_entity.dart';
+import '../../../../core/utils/kst_clock.dart';
 import '../models/weather_model.dart';
 import 'weather_remote_datasource.dart';
 

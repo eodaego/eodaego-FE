@@ -1,6 +1,6 @@
 import 'package:clock/clock.dart';
+import 'package:eodaego/core/utils/kst_clock.dart';
 import 'package:eodaego/features/weather/data/datasources/weather_mock_datasource.dart';
-import 'package:eodaego/features/weather/domain/entities/weather_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

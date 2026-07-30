@@ -1,5 +1,5 @@
 import '../../../../core/mock/mock_asset_loader.dart';
-import '../../../weather/domain/entities/weather_entity.dart' show nowKst;
+import '../../../../core/utils/kst_clock.dart';
 import '../models/catalog_item_detail_model.dart';
 import '../models/catalog_list_response_model.dart';
 import '../models/catalog_summary_model.dart';
