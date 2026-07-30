@@ -7,9 +7,13 @@ part of 'weather_provider.dart';
 // **************************************************************************
 
 String _$weatherRemoteDataSourceHash() =>
-    r'f282a2dd5cdab900f9f486095e503509afe614ea';
+    r'aa034b878de33e2ea71d72547b83c84b6ef68238';
 
 /// WeatherRemoteDataSource Provider (Retrofit)
+///
+/// `EnvConfig.useMockData`가 켜지면 [WeatherMockDataSource]로 바뀐다.
+/// 아래 [weatherRepositoryProvider]는 어느 쪽이든 같은 인터페이스만 보므로
+/// 수정할 필요가 없다.
 ///
 /// Copied from [weatherRemoteDataSource].
 @ProviderFor(weatherRemoteDataSource)
