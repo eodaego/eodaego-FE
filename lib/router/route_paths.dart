@@ -36,6 +36,7 @@ class RoutePaths {
   static const String mypageNickname = '/mypage/nickname';
   static const String mypageAgreements = '/mypage/agreements';
   static const String courseRecommend = '/course/recommend';
+  static const String weather = '/weather';
 
   static const String mapName = 'map';
   static const String collectionName = 'collection';
@@ -48,6 +49,7 @@ class RoutePaths {
   static const String mypageNicknameName = 'mypageNickname';
   static const String mypageAgreementsName = 'mypageAgreements';
   static const String courseRecommendName = 'courseRecommend';
+  static const String weatherName = 'weather';
 
   /// 도감 상세 경로 생성 (예: /collection/a1)
   static String collectionDetail(String id) => '$collection/$id';

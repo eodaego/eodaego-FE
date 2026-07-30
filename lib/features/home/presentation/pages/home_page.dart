@@ -8,16 +8,17 @@ import '../../../../core/constants/app_urls.dart';
 import '../../../../core/constants/dogam_category.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
-import '../../../../core/mock/mock_park_status.dart';
 import '../../../../core/providers/guest_mode_provider.dart';
 import '../../../../core/providers/selected_course_provider.dart';
 import '../../../../core/utils/url_launcher_util.dart';
 import '../../../../core/widgets/app_badge.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_skeleton.dart';
+import '../../../../core/widgets/weather_icons.dart';
 import '../../../../router/route_paths.dart';
 import '../../../collection/domain/entities/catalog_summary_entity.dart';
 import '../../../collection/presentation/providers/catalog_provider.dart';
+import '../../../weather/presentation/providers/weather_provider.dart';
 
 /// 홈 (A안) — 날씨·혼잡도 바 + 오늘의 추천 코스 프리뷰 + 도감 요약 + 공식 사이트.
 class HomePage extends StatelessWidget {
@@ -55,7 +56,7 @@ class HomePage extends StatelessWidget {
                 ],
               ),
               SizedBox(height: 14.h),
-              const _ParkStatusBar(),
+              const _WeatherBar(),
               SizedBox(height: 14.h),
               const _CoursePreviewCard(),
               SizedBox(height: 14.h),
@@ -75,39 +76,91 @@ class HomePage extends StatelessWidget {
   }
 }
 
-/// 오늘 공원 상태 — 날씨 + 혼잡도 한 줄 바.
-class _ParkStatusBar extends StatelessWidget {
-  const _ParkStatusBar();
+/// 오늘 공원 날씨 — 탭하면 상세로 간다.
+///
+/// 혼잡도는 서버 API가 없어 넣지 않는다. 실데이터 옆에 목업을 두면 바 전체의
+/// 신뢰가 깎이고, 뱃지를 눌러도 날씨가 뜨는 어긋남이 생긴다.
+class _WeatherBar extends ConsumerWidget {
+  const _WeatherBar();
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Guest has no token; calling would 401 and the interceptor would misread
+    // it as an expired session and force-log-out. Debug-only path.
+    // 게스트는 토큰이 없다. 호출하면 401이 나고 인터셉터가 세션 만료로 오인해
+    // 강제 로그아웃시킨다(도감 요약이 겪은 그 버그). 디버그 전용 경로다.
+    if (ref.watch(guestModeProvider)) return const SizedBox.shrink();
+
+    return Material(
+      color: AppColors.surface,
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppRadius.md.r),
-        border: Border.all(color: AppColors.line),
+        side: const BorderSide(color: AppColors.line),
       ),
-      child: Row(
-        children: [
-          Icon(mockParkStatus.weatherIcon, size: 22.w, color: AppColors.muted),
-          SizedBox(width: 8.w),
-          Text(
-            '${mockParkStatus.weatherLabel} ${mockParkStatus.temperatureC}°',
-            style: AppTextStyles.label16Semibold.copyWith(color: AppColors.ink),
-          ),
-          const Spacer(),
-          Text(
-            '지금 공원',
-            style: AppTextStyles.caption14.copyWith(color: AppColors.muted),
-          ),
-          SizedBox(width: 8.w),
-          AppBadge(
-            label: mockParkStatus.congestion.label,
-            background: mockParkStatus.congestion.badgeBackground,
-            foreground: mockParkStatus.congestion.badgeForeground,
-          ),
-        ],
+      child: InkWell(
+        borderRadius: BorderRadius.circular(AppRadius.md.r),
+        onTap: () => context.push(RoutePaths.weather),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+          child: ref
+              .watch(currentWeatherProvider)
+              .when(
+                loading: () => Row(
+                  children: [
+                    AppSkeleton(width: 22.w, height: 22.w),
+                    SizedBox(width: 8.w),
+                    AppSkeleton(width: 96.w, height: 20.h),
+                  ],
+                ),
+                // 홈에는 다른 콘텐츠가 있다. 바 안에서만 조용히 알린다.
+                error: (_, _) => Row(
+                  children: [
+                    Icon(
+                      Icons.cloud_off_outlined,
+                      size: 22.w,
+                      color: AppColors.muted,
+                    ),
+                    SizedBox(width: 8.w),
+                    Text(
+                      '날씨를 불러오지 못했어요',
+                      style: AppTextStyles.body15.copyWith(
+                        color: AppColors.muted,
+                      ),
+                    ),
+                  ],
+                ),
+                data: (weather) => Row(
+                  children: [
+                    Icon(
+                      weatherIcon(
+                        sky: weather.sky,
+                        precipitation: weather.precipitation,
+                      ),
+                      size: 22.w,
+                      color: AppColors.muted,
+                    ),
+                    SizedBox(width: 8.w),
+                    Expanded(
+                      child: Text(
+                        // 아이 동반 나들이 앱이라 소수점은 읽는 부담만 된다.
+                        // 원본 값은 상세 화면에 있다.
+                        '${weather.conditionLabel} ${weather.temperature.round()}°',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.label16Semibold.copyWith(
+                          color: AppColors.ink,
+                        ),
+                      ),
+                    ),
+                    Icon(
+                      Icons.chevron_right,
+                      size: 20.w,
+                      color: AppColors.muted,
+                    ),
+                  ],
+                ),
+              ),
+        ),
       ),
     );
   }
