@@ -4,10 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/providers/guest_mode_provider.dart';
-import '../../../../core/widgets/dashed_rrect_painter.dart';
 import '../../../../core/widgets/dialogs/login_gate_dialog.dart';
 import '../../../../router/route_paths.dart';
 import '../../../quiz/presentation/providers/quiz_provider.dart';
@@ -34,9 +32,8 @@ class ScanPage extends ConsumerWidget {
                     fit: StackFit.expand,
                     children: [
                       CustomPaint(
-                        painter: DashedRRectPainter(
+                        painter: _CornerBracketsPainter(
                           color: AppColors.primary,
-                          radius: AppRadius.lg.r,
                         ),
                       ),
                       Center(
@@ -126,4 +123,42 @@ class _Shutter extends StatelessWidget {
       ),
     );
   }
+}
+
+/// 촬영 프레임 — 네 모서리 브래킷(시안). 사각형 전체를 두르지 않는다.
+class _CornerBracketsPainter extends CustomPainter {
+  const _CornerBracketsPainter({required this.color});
+
+  final Color color;
+
+  static const double _armLength = 28;
+  static const double _strokeWidth = 4;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = _strokeWidth
+      ..strokeCap = StrokeCap.round;
+
+    final corners = [
+      Offset.zero,
+      Offset(size.width, 0),
+      Offset(size.width, size.height),
+      Offset(0, size.height),
+    ];
+    const dx = [1, -1, -1, 1];
+    const dy = [1, 1, -1, -1];
+
+    for (var i = 0; i < corners.length; i++) {
+      final c = corners[i];
+      canvas.drawLine(c, Offset(c.dx + dx[i] * _armLength, c.dy), paint);
+      canvas.drawLine(c, Offset(c.dx, c.dy + dy[i] * _armLength), paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _CornerBracketsPainter oldDelegate) =>
+      color != oldDelegate.color;
 }
