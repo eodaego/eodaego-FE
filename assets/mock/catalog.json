@@ -1,0 +1,222 @@
+{
+  "totalCount": 24,
+  "collectedCount": 9,
+  "items": [
+    {
+      "id": "0c1c444a-dcd7-4710-b023-0472987911e0",
+      "code": "A001",
+      "category": "ANIMAL",
+      "name": "수달",
+      "imageUrl": null,
+      "status": "AVAILABLE",
+      "collected": true
+    },
+    {
+      "id": "98dc7942-3a8c-477a-bcdc-d683a46c142a",
+      "code": "A002",
+      "category": "ANIMAL",
+      "name": "너구리",
+      "imageUrl": null,
+      "status": "AVAILABLE",
+      "collected": true
+    },
+    {
+      "id": "b341ff7c-d85c-4928-a3cf-52105f2aa10b",
+      "code": "A003",
+      "category": "ANIMAL",
+      "name": "공작",
+      "imageUrl": null,
+      "status": "AVAILABLE",
+      "collected": true
+    },
+    {
+      "id": "385760dd-eb2e-408b-b949-5ebb836dfa1b",
+      "code": "A004",
+      "category": "ANIMAL",
+      "name": null,
+      "imageUrl": null,
+      "status": "AVAILABLE",
+      "collected": false
+    },
+    {
+      "id": "e0a172ed-a64b-49fe-9151-dbdd8bbfa85d",
+      "code": "A005",
+      "category": "ANIMAL",
+      "name": null,
+      "imageUrl": null,
+      "status": "AVAILABLE",
+      "collected": false
+    },
+    {
+      "id": "37e69460-b2b5-4a53-8a87-7f67f1a5e341",
+      "code": "A006",
+      "category": "ANIMAL",
+      "name": null,
+      "imageUrl": null,
+      "status": "AVAILABLE",
+      "collected": false
+    },
+    {
+      "id": "bc5eb3e5-61e5-4ef4-90bb-36e9062c5d4a",
+      "code": "A007",
+      "category": "ANIMAL",
+      "name": null,
+      "imageUrl": null,
+      "status": "AVAILABLE",
+      "collected": false
+    },
+    {
+      "id": "69f4e947-a3d1-44e4-a457-19fd77d70092",
+      "code": "A008",
+      "category": "ANIMAL",
+      "name": null,
+      "imageUrl": null,
+      "status": "AVAILABLE",
+      "collected": false
+    },
+    {
+      "id": "1311ccbe-bb7e-4706-8db0-7c8897728fa1",
+      "code": "P001",
+      "category": "PLANT",
+      "name": "소나무",
+      "imageUrl": null,
+      "status": "AVAILABLE",
+      "collected": true
+    },
+    {
+      "id": "41f03952-eebb-4928-be1a-a5f19b35118f",
+      "code": "P002",
+      "category": "PLANT",
+      "name": "벚나무",
+      "imageUrl": null,
+      "status": "AVAILABLE",
+      "collected": true
+    },
+    {
+      "id": "14e28f53-9636-42ed-a2ff-7785d5868934",
+      "code": "P003",
+      "category": "PLANT",
+      "name": "수국",
+      "imageUrl": null,
+      "status": "AVAILABLE",
+      "collected": true
+    },
+    {
+      "id": "09ad3459-52e9-4fa5-8e3c-4bc4b729113a",
+      "code": "P004",
+      "category": "PLANT",
+      "name": null,
+      "imageUrl": null,
+      "status": "AVAILABLE",
+      "collected": false
+    },
+    {
+      "id": "08859aee-a765-40c9-b01c-a53e72a761a9",
+      "code": "P005",
+      "category": "PLANT",
+      "name": null,
+      "imageUrl": null,
+      "status": "AVAILABLE",
+      "collected": false
+    },
+    {
+      "id": "3533f9e7-491c-45a7-9e93-97b9d641be70",
+      "code": "P006",
+      "category": "PLANT",
+      "name": null,
+      "imageUrl": null,
+      "status": "AVAILABLE",
+      "collected": false
+    },
+    {
+      "id": "0030331e-5177-479c-b7e9-14a5cabe2261",
+      "code": "P007",
+      "category": "PLANT",
+      "name": null,
+      "imageUrl": null,
+      "status": "AVAILABLE",
+      "collected": false
+    },
+    {
+      "id": "89ccb03b-430e-407f-9cd1-63bac60b4372",
+      "code": "P008",
+      "category": "PLANT",
+      "name": null,
+      "imageUrl": null,
+      "status": "AVAILABLE",
+      "collected": false
+    },
+    {
+      "id": "f077dafb-2f4c-47bd-ac96-5530b9485023",
+      "code": "L001",
+      "category": "PLACE",
+      "name": "음악분수",
+      "imageUrl": null,
+      "status": "AVAILABLE",
+      "collected": true
+    },
+    {
+      "id": "d8fb9300-b668-405f-adbf-42dd33b9bb75",
+      "code": "L002",
+      "category": "PLACE",
+      "name": "팔각당",
+      "imageUrl": null,
+      "status": "AVAILABLE",
+      "collected": true
+    },
+    {
+      "id": "ab515662-7113-4360-aa50-2c448336531f",
+      "code": "L003",
+      "category": "PLACE",
+      "name": "동물원",
+      "imageUrl": null,
+      "status": "AVAILABLE",
+      "collected": true
+    },
+    {
+      "id": "d4d20450-bcda-456d-aa13-5c3df478ad4f",
+      "code": "L004",
+      "category": "PLACE",
+      "name": null,
+      "imageUrl": null,
+      "status": "AVAILABLE",
+      "collected": false
+    },
+    {
+      "id": "7b09e2a3-9a61-4d9b-bea7-ed50203c850c",
+      "code": "L005",
+      "category": "PLACE",
+      "name": null,
+      "imageUrl": null,
+      "status": "AVAILABLE",
+      "collected": false
+    },
+    {
+      "id": "931f98b6-9d79-4576-9458-117d789c8a9d",
+      "code": "L006",
+      "category": "PLACE",
+      "name": null,
+      "imageUrl": null,
+      "status": "AVAILABLE",
+      "collected": false
+    },
+    {
+      "id": "8a5bfb6d-94d4-455b-96cf-e2be58900b87",
+      "code": "L007",
+      "category": "PLACE",
+      "name": null,
+      "imageUrl": null,
+      "status": "AVAILABLE",
+      "collected": false
+    },
+    {
+      "id": "084732a6-fc70-4661-8faa-ca54ab1cfa67",
+      "code": "L008",
+      "category": "PLACE",
+      "name": null,
+      "imageUrl": null,
+      "status": "AVAILABLE",
+      "collected": false
+    }
+  ]
+}
