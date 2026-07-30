@@ -23,6 +23,9 @@ mixin _$CatalogItemEntity {
   String? get name => throw _privateConstructorUsedError;
   String? get imageUrl => throw _privateConstructorUsedError;
 
+  /// 에셋 코드 — 일러스트 파일명(`A001.png`)으로 쓰인다. 없으면 카테고리 아이콘으로 대체
+  String? get code => throw _privateConstructorUsedError;
+
   /// Create a copy of CatalogItemEntity
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -43,6 +46,7 @@ abstract class $CatalogItemEntityCopyWith<$Res> {
     bool collected,
     String? name,
     String? imageUrl,
+    String? code,
   });
 }
 
@@ -66,6 +70,7 @@ class _$CatalogItemEntityCopyWithImpl<$Res, $Val extends CatalogItemEntity>
     Object? collected = null,
     Object? name = freezed,
     Object? imageUrl = freezed,
+    Object? code = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -89,6 +94,10 @@ class _$CatalogItemEntityCopyWithImpl<$Res, $Val extends CatalogItemEntity>
                 ? _value.imageUrl
                 : imageUrl // ignore: cast_nullable_to_non_nullable
                       as String?,
+            code: freezed == code
+                ? _value.code
+                : code // ignore: cast_nullable_to_non_nullable
+                      as String?,
           )
           as $Val,
     );
@@ -110,6 +119,7 @@ abstract class _$$CatalogItemEntityImplCopyWith<$Res>
     bool collected,
     String? name,
     String? imageUrl,
+    String? code,
   });
 }
 
@@ -132,6 +142,7 @@ class __$$CatalogItemEntityImplCopyWithImpl<$Res>
     Object? collected = null,
     Object? name = freezed,
     Object? imageUrl = freezed,
+    Object? code = freezed,
   }) {
     return _then(
       _$CatalogItemEntityImpl(
@@ -155,6 +166,10 @@ class __$$CatalogItemEntityImplCopyWithImpl<$Res>
             ? _value.imageUrl
             : imageUrl // ignore: cast_nullable_to_non_nullable
                   as String?,
+        code: freezed == code
+            ? _value.code
+            : code // ignore: cast_nullable_to_non_nullable
+                  as String?,
       ),
     );
   }
@@ -169,6 +184,7 @@ class _$CatalogItemEntityImpl implements _CatalogItemEntity {
     required this.collected,
     this.name,
     this.imageUrl,
+    this.code,
   });
 
   @override
@@ -182,9 +198,13 @@ class _$CatalogItemEntityImpl implements _CatalogItemEntity {
   @override
   final String? imageUrl;
 
+  /// 에셋 코드 — 일러스트 파일명(`A001.png`)으로 쓰인다. 없으면 카테고리 아이콘으로 대체
+  @override
+  final String? code;
+
   @override
   String toString() {
-    return 'CatalogItemEntity(id: $id, category: $category, collected: $collected, name: $name, imageUrl: $imageUrl)';
+    return 'CatalogItemEntity(id: $id, category: $category, collected: $collected, name: $name, imageUrl: $imageUrl, code: $code)';
   }
 
   @override
@@ -199,12 +219,13 @@ class _$CatalogItemEntityImpl implements _CatalogItemEntity {
                 other.collected == collected) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.imageUrl, imageUrl) ||
-                other.imageUrl == imageUrl));
+                other.imageUrl == imageUrl) &&
+            (identical(other.code, code) || other.code == code));
   }
 
   @override
   int get hashCode =>
-      Object.hash(runtimeType, id, category, collected, name, imageUrl);
+      Object.hash(runtimeType, id, category, collected, name, imageUrl, code);
 
   /// Create a copy of CatalogItemEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -225,6 +246,7 @@ abstract class _CatalogItemEntity implements CatalogItemEntity {
     required final bool collected,
     final String? name,
     final String? imageUrl,
+    final String? code,
   }) = _$CatalogItemEntityImpl;
 
   @override
@@ -237,6 +259,10 @@ abstract class _CatalogItemEntity implements CatalogItemEntity {
   String? get name;
   @override
   String? get imageUrl;
+
+  /// 에셋 코드 — 일러스트 파일명(`A001.png`)으로 쓰인다. 없으면 카테고리 아이콘으로 대체
+  @override
+  String? get code;
 
   /// Create a copy of CatalogItemEntity
   /// with the given fields replaced by the non-null parameter values.

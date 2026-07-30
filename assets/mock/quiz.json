@@ -2,6 +2,7 @@
   "questions": [
     {
       "name": "수달",
+      "code": "A001",
       "category": "ANIMAL",
       "question": "이 친구 이름이 뭘까요?",
       "choices": ["너구리", "수달", "비버"],
@@ -9,6 +10,7 @@
     },
     {
       "name": "너구리",
+      "code": "A002",
       "category": "ANIMAL",
       "question": "이 친구는 누구일까요?",
       "choices": ["너구리", "오소리", "족제비"],
@@ -16,6 +18,7 @@
     },
     {
       "name": "공작",
+      "code": "A003",
       "category": "ANIMAL",
       "question": "화려한 깃털을 가진 이 친구는 누구일까요?",
       "choices": ["백조", "공작", "앵무새"],
@@ -23,6 +26,7 @@
     },
     {
       "name": "소나무",
+      "code": "P001",
       "category": "PLANT",
       "question": "사계절 내내 푸른 이 나무는 뭘까요?",
       "choices": ["잣나무", "전나무", "소나무"],
@@ -30,6 +34,7 @@
     },
     {
       "name": "벚나무",
+      "code": "P002",
       "category": "PLANT",
       "question": "봄에 분홍빛 꽃을 피우는 이 나무는 뭘까요?",
       "choices": ["벚나무", "매화나무", "복숭아나무"],
@@ -37,6 +42,7 @@
     },
     {
       "name": "수국",
+      "code": "P003",
       "category": "PLANT",
       "question": "탐스러운 꽃송이가 매력적인 이 꽃은 뭘까요?",
       "choices": ["작약", "수국", "라일락"],

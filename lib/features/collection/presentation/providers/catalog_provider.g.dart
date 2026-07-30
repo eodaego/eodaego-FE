@@ -7,7 +7,7 @@ part of 'catalog_provider.dart';
 // **************************************************************************
 
 String _$catalogRemoteDataSourceHash() =>
-    r'a55169ed5f8054a424279f3aa542d7edffdfaa32';
+    r'59652a734c1f11fa39956c9e5c0c1aea540b2f86';
 
 /// CatalogRemoteDataSource Provider (Retrofit)
 ///

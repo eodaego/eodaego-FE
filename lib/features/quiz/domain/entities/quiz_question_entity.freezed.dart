@@ -23,6 +23,9 @@ mixin _$QuizQuestionEntity {
   List<String> get choices => throw _privateConstructorUsedError;
   int get answerIndex => throw _privateConstructorUsedError;
 
+  /// 에셋 코드 — 일러스트 파일명(`A001.png`)으로 쓰인다. 없으면 카테고리 아이콘으로 대체
+  String? get code => throw _privateConstructorUsedError;
+
   /// Create a copy of QuizQuestionEntity
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -43,6 +46,7 @@ abstract class $QuizQuestionEntityCopyWith<$Res> {
     String question,
     List<String> choices,
     int answerIndex,
+    String? code,
   });
 }
 
@@ -66,6 +70,7 @@ class _$QuizQuestionEntityCopyWithImpl<$Res, $Val extends QuizQuestionEntity>
     Object? question = null,
     Object? choices = null,
     Object? answerIndex = null,
+    Object? code = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -89,6 +94,10 @@ class _$QuizQuestionEntityCopyWithImpl<$Res, $Val extends QuizQuestionEntity>
                 ? _value.answerIndex
                 : answerIndex // ignore: cast_nullable_to_non_nullable
                       as int,
+            code: freezed == code
+                ? _value.code
+                : code // ignore: cast_nullable_to_non_nullable
+                      as String?,
           )
           as $Val,
     );
@@ -110,6 +119,7 @@ abstract class _$$QuizQuestionEntityImplCopyWith<$Res>
     String question,
     List<String> choices,
     int answerIndex,
+    String? code,
   });
 }
 
@@ -132,6 +142,7 @@ class __$$QuizQuestionEntityImplCopyWithImpl<$Res>
     Object? question = null,
     Object? choices = null,
     Object? answerIndex = null,
+    Object? code = freezed,
   }) {
     return _then(
       _$QuizQuestionEntityImpl(
@@ -155,6 +166,10 @@ class __$$QuizQuestionEntityImplCopyWithImpl<$Res>
             ? _value.answerIndex
             : answerIndex // ignore: cast_nullable_to_non_nullable
                   as int,
+        code: freezed == code
+            ? _value.code
+            : code // ignore: cast_nullable_to_non_nullable
+                  as String?,
       ),
     );
   }
@@ -169,6 +184,7 @@ class _$QuizQuestionEntityImpl implements _QuizQuestionEntity {
     required this.question,
     required final List<String> choices,
     required this.answerIndex,
+    this.code,
   }) : _choices = choices;
 
   @override
@@ -188,9 +204,13 @@ class _$QuizQuestionEntityImpl implements _QuizQuestionEntity {
   @override
   final int answerIndex;
 
+  /// 에셋 코드 — 일러스트 파일명(`A001.png`)으로 쓰인다. 없으면 카테고리 아이콘으로 대체
+  @override
+  final String? code;
+
   @override
   String toString() {
-    return 'QuizQuestionEntity(name: $name, category: $category, question: $question, choices: $choices, answerIndex: $answerIndex)';
+    return 'QuizQuestionEntity(name: $name, category: $category, question: $question, choices: $choices, answerIndex: $answerIndex, code: $code)';
   }
 
   @override
@@ -205,7 +225,8 @@ class _$QuizQuestionEntityImpl implements _QuizQuestionEntity {
                 other.question == question) &&
             const DeepCollectionEquality().equals(other._choices, _choices) &&
             (identical(other.answerIndex, answerIndex) ||
-                other.answerIndex == answerIndex));
+                other.answerIndex == answerIndex) &&
+            (identical(other.code, code) || other.code == code));
   }
 
   @override
@@ -216,6 +237,7 @@ class _$QuizQuestionEntityImpl implements _QuizQuestionEntity {
     question,
     const DeepCollectionEquality().hash(_choices),
     answerIndex,
+    code,
   );
 
   /// Create a copy of QuizQuestionEntity
@@ -237,6 +259,7 @@ abstract class _QuizQuestionEntity implements QuizQuestionEntity {
     required final String question,
     required final List<String> choices,
     required final int answerIndex,
+    final String? code,
   }) = _$QuizQuestionEntityImpl;
 
   @override
@@ -249,6 +272,10 @@ abstract class _QuizQuestionEntity implements QuizQuestionEntity {
   List<String> get choices;
   @override
   int get answerIndex;
+
+  /// 에셋 코드 — 일러스트 파일명(`A001.png`)으로 쓰인다. 없으면 카테고리 아이콘으로 대체
+  @override
+  String? get code;
 
   /// Create a copy of QuizQuestionEntity
   /// with the given fields replaced by the non-null parameter values.

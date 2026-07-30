@@ -16,5 +16,8 @@ class QuizQuestionEntity with _$QuizQuestionEntity {
     required String question,
     required List<String> choices,
     required int answerIndex,
+
+    /// 에셋 코드 — 일러스트 파일명(`A001.png`)으로 쓰인다. 없으면 카테고리 아이콘으로 대체
+    String? code,
   }) = _QuizQuestionEntity;
 }

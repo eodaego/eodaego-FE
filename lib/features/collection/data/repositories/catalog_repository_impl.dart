@@ -44,6 +44,7 @@ class CatalogRepositoryImpl implements CatalogRepository {
             collected: dto.collected,
             name: dto.name,
             imageUrl: dto.imageUrl,
+            code: dto.code,
           ),
         );
       }
@@ -99,6 +100,7 @@ class CatalogRepositoryImpl implements CatalogRepository {
         childDescription: dto.childDescription,
         imageUrl: dto.imageUrl,
         collectedAt: _formatCollectedAt(dto.collectedAt),
+        code: dto.code,
       );
     } on DioException catch (e) {
       throw DioExceptionHandler.handle(e);

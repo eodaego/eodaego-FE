@@ -7,7 +7,7 @@ part of 'weather_provider.dart';
 // **************************************************************************
 
 String _$weatherRemoteDataSourceHash() =>
-    r'aa034b878de33e2ea71d72547b83c84b6ef68238';
+    r'85eb80d4a039006433c6be15ee133455f3ea3ff5';
 
 /// WeatherRemoteDataSource Provider (Retrofit)
 ///

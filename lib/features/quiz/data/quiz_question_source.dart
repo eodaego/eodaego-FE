@@ -40,6 +40,7 @@ class QuizQuestionSource {
           question: raw['question'] as String,
           choices: choices,
           answerIndex: answerIndex,
+          code: raw['code'] as String?,
         ),
       );
     }

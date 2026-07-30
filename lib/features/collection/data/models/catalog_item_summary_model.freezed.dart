@@ -29,6 +29,9 @@ mixin _$CatalogItemSummaryModel {
   /// 카테고리 원문 (`ANIMAL`/`PLANT`/`PLACE`)
   String get category => throw _privateConstructorUsedError;
 
+  /// 에셋 코드 — 일러스트 파일명(`A001.png`)으로 쓰인다. 서버가 생략하면 null
+  String? get code => throw _privateConstructorUsedError;
+
   /// 이름 — 미수집이면 null
   String? get name => throw _privateConstructorUsedError;
 
@@ -58,6 +61,7 @@ abstract class $CatalogItemSummaryModelCopyWith<$Res> {
   $Res call({
     String id,
     String category,
+    String? code,
     String? name,
     String? imageUrl,
     bool collected,
@@ -84,6 +88,7 @@ class _$CatalogItemSummaryModelCopyWithImpl<
   $Res call({
     Object? id = null,
     Object? category = null,
+    Object? code = freezed,
     Object? name = freezed,
     Object? imageUrl = freezed,
     Object? collected = null,
@@ -98,6 +103,10 @@ class _$CatalogItemSummaryModelCopyWithImpl<
                 ? _value.category
                 : category // ignore: cast_nullable_to_non_nullable
                       as String,
+            code: freezed == code
+                ? _value.code
+                : code // ignore: cast_nullable_to_non_nullable
+                      as String?,
             name: freezed == name
                 ? _value.name
                 : name // ignore: cast_nullable_to_non_nullable
@@ -128,6 +137,7 @@ abstract class _$$CatalogItemSummaryModelImplCopyWith<$Res>
   $Res call({
     String id,
     String category,
+    String? code,
     String? name,
     String? imageUrl,
     bool collected,
@@ -154,6 +164,7 @@ class __$$CatalogItemSummaryModelImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? category = null,
+    Object? code = freezed,
     Object? name = freezed,
     Object? imageUrl = freezed,
     Object? collected = null,
@@ -168,6 +179,10 @@ class __$$CatalogItemSummaryModelImplCopyWithImpl<$Res>
             ? _value.category
             : category // ignore: cast_nullable_to_non_nullable
                   as String,
+        code: freezed == code
+            ? _value.code
+            : code // ignore: cast_nullable_to_non_nullable
+                  as String?,
         name: freezed == name
             ? _value.name
             : name // ignore: cast_nullable_to_non_nullable
@@ -191,6 +206,7 @@ class _$CatalogItemSummaryModelImpl implements _CatalogItemSummaryModel {
   const _$CatalogItemSummaryModelImpl({
     required this.id,
     required this.category,
+    this.code,
     this.name,
     this.imageUrl,
     this.collected = false,
@@ -207,6 +223,10 @@ class _$CatalogItemSummaryModelImpl implements _CatalogItemSummaryModel {
   @override
   final String category;
 
+  /// 에셋 코드 — 일러스트 파일명(`A001.png`)으로 쓰인다. 서버가 생략하면 null
+  @override
+  final String? code;
+
   /// 이름 — 미수집이면 null
   @override
   final String? name;
@@ -222,7 +242,7 @@ class _$CatalogItemSummaryModelImpl implements _CatalogItemSummaryModel {
 
   @override
   String toString() {
-    return 'CatalogItemSummaryModel(id: $id, category: $category, name: $name, imageUrl: $imageUrl, collected: $collected)';
+    return 'CatalogItemSummaryModel(id: $id, category: $category, code: $code, name: $name, imageUrl: $imageUrl, collected: $collected)';
   }
 
   @override
@@ -233,6 +253,7 @@ class _$CatalogItemSummaryModelImpl implements _CatalogItemSummaryModel {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.category, category) ||
                 other.category == category) &&
+            (identical(other.code, code) || other.code == code) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.imageUrl, imageUrl) ||
                 other.imageUrl == imageUrl) &&
@@ -243,7 +264,7 @@ class _$CatalogItemSummaryModelImpl implements _CatalogItemSummaryModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, id, category, name, imageUrl, collected);
+      Object.hash(runtimeType, id, category, code, name, imageUrl, collected);
 
   /// Create a copy of CatalogItemSummaryModel
   /// with the given fields replaced by the non-null parameter values.
@@ -266,6 +287,7 @@ abstract class _CatalogItemSummaryModel implements CatalogItemSummaryModel {
   const factory _CatalogItemSummaryModel({
     required final String id,
     required final String category,
+    final String? code,
     final String? name,
     final String? imageUrl,
     final bool collected,
@@ -281,6 +303,10 @@ abstract class _CatalogItemSummaryModel implements CatalogItemSummaryModel {
   /// 카테고리 원문 (`ANIMAL`/`PLANT`/`PLACE`)
   @override
   String get category;
+
+  /// 에셋 코드 — 일러스트 파일명(`A001.png`)으로 쓰인다. 서버가 생략하면 null
+  @override
+  String? get code;
 
   /// 이름 — 미수집이면 null
   @override

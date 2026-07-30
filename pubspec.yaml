@@ -93,6 +93,9 @@ flutter:
     - assets/icons/
     - assets/legals/
     - assets/mock/
+    - assets/images/catalog/
+    - assets/images/mascot/
+    - assets/images/course/
   fonts:
     - family: Pretendard
       fonts:
