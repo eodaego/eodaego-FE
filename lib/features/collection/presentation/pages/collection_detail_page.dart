@@ -45,13 +45,15 @@ class CollectionDetailPage extends ConsumerWidget {
       loading: () => _DetailScaffold(
         // 카테고리를 이미 아니까 색을 즉시 칠한다. 회색에서 컬러로 튀지 않는다.
         category: listItem?.category,
-        // 목록이 이미 들고 있는 코드를 그대로 써서 로딩 중 깜빡임을 막는다.
+        // 목록이 이미 들고 있는 코드·사진을 그대로 써서 로딩 중 깜빡임을 막는다.
+        imageUrl: listItem?.imageUrl,
         code: listItem?.code,
         collected: listItem?.collected ?? true,
         child: const _LoadingBody(),
       ),
       error: (_, _) => _DetailScaffold(
         category: listItem?.category,
+        imageUrl: listItem?.imageUrl,
         code: listItem?.code,
         collected: listItem?.collected ?? true,
         child: _ErrorBody(
@@ -60,6 +62,7 @@ class CollectionDetailPage extends ConsumerWidget {
       ),
       data: (detail) => _DetailScaffold(
         category: detail.category,
+        imageUrl: detail.imageUrl,
         code: detail.code,
         collected: true,
         child: _LoadedBody(detail: detail),
@@ -74,6 +77,7 @@ class _DetailScaffold extends StatelessWidget {
     required this.child,
     required this.collected,
     this.category,
+    this.imageUrl,
     this.code,
   });
 
@@ -82,6 +86,7 @@ class _DetailScaffold extends StatelessWidget {
   /// 히어로가 `?`(미수집)와 사진/아이콘(수집)을 가르는 기준.
   final bool collected;
   final DogamCategory? category;
+  final String? imageUrl;
   final String? code;
 
   @override
@@ -94,7 +99,12 @@ class _DetailScaffold extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _Hero(category: category, code: code, collected: collected),
+            _Hero(
+              category: category,
+              imageUrl: imageUrl,
+              code: code,
+              collected: collected,
+            ),
             SizedBox(height: 16.h),
             child,
             SizedBox(height: 32.h),
@@ -108,10 +118,16 @@ class _DetailScaffold extends StatelessWidget {
 /// 사진 영역 — 카테고리 tint 배경 위에 미수집은 `?`, 수집은 `CatalogImage`
 /// (코드로 찾은 사진, 없거나 실패하면 카테고리 아이콘)를 올린다.
 class _Hero extends StatelessWidget {
-  const _Hero({required this.collected, this.category, this.code});
+  const _Hero({
+    required this.collected,
+    this.category,
+    this.imageUrl,
+    this.code,
+  });
 
   final bool collected;
   final DogamCategory? category;
+  final String? imageUrl;
   final String? code;
 
   @override
@@ -135,7 +151,12 @@ class _Hero extends StatelessWidget {
               )
             : (c == null
                   ? const SizedBox.shrink()
-                  : CatalogImage(code: code, category: c, size: 120.w)),
+                  : CatalogImage(
+                      imageUrl: imageUrl,
+                      code: code,
+                      category: c,
+                      size: 120.w,
+                    )),
       ),
     );
   }

@@ -325,6 +325,7 @@ class _CatalogListItem extends StatelessWidget {
       );
     }
     return CatalogImage(
+      imageUrl: item.imageUrl,
       code: item.code,
       category: item.category,
       size: 56.w,
