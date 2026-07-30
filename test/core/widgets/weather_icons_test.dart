@@ -1,5 +1,5 @@
+import 'package:eodaego/core/widgets/weather_icons.dart';
 import 'package:eodaego/features/weather/domain/entities/weather_condition.dart';
-import 'package:eodaego/features/weather/presentation/widgets/weather_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

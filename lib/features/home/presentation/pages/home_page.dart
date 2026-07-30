@@ -14,11 +14,11 @@ import '../../../../core/utils/url_launcher_util.dart';
 import '../../../../core/widgets/app_badge.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_skeleton.dart';
+import '../../../../core/widgets/weather_icons.dart';
 import '../../../../router/route_paths.dart';
 import '../../../collection/domain/entities/catalog_summary_entity.dart';
 import '../../../collection/presentation/providers/catalog_provider.dart';
 import '../../../weather/presentation/providers/weather_provider.dart';
-import '../../../weather/presentation/widgets/weather_icons.dart';
 
 /// 홈 (A안) — 날씨·혼잡도 바 + 오늘의 추천 코스 프리뷰 + 도감 요약 + 공식 사이트.
 class HomePage extends StatelessWidget {

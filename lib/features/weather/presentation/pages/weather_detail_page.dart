@@ -8,9 +8,9 @@ import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/app_back_app_bar.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_skeleton.dart';
+import '../../../../core/widgets/weather_icons.dart';
 import '../../domain/entities/weather_entity.dart';
 import '../providers/weather_provider.dart';
-import '../widgets/weather_icons.dart';
 
 /// 날씨 상세 — 현재 상태 + 지금 이후 시간대별 예보.
 ///

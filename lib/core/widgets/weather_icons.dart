@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../domain/entities/weather_condition.dart';
+import '../../features/weather/domain/entities/weather_condition.dart';
 
 /// 날씨 상태에 맞는 아이콘을 고른다.
 ///
