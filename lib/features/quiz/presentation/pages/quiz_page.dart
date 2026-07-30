@@ -9,6 +9,7 @@ import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/app_back_app_bar.dart';
 import '../../../../core/widgets/app_badge.dart';
 import '../../../../core/widgets/app_skeleton.dart';
+import '../../../../core/widgets/catalog_image.dart';
 import '../../../../router/route_paths.dart';
 import '../../domain/entities/quiz_question_entity.dart';
 import '../providers/quiz_provider.dart';
@@ -44,7 +45,7 @@ class _QuizPageState extends ConsumerState<QuizPage> {
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
-      appBar: const AppBackAppBar(title: '딩동댕 퀴즈'),
+      appBar: const AppBackAppBar(title: '퀴즈'),
       body: questionsAsync.when(
         loading: () => const _LoadingBody(),
         error: (_, _) => const _ErrorBody(),
@@ -64,6 +65,11 @@ class _QuizPageState extends ConsumerState<QuizPage> {
   }
 }
 
+/// 카테고리 뱃지 → 질문 → 그림 → 3지선다(시안 A안).
+///
+/// 그림은 컨테이너 없이 크림 배경 위에 화면 폭의 약 70%로 놓는다. 카테고리
+/// 뱃지는 그림 위가 아니라 질문 위에 둔다 — 그림을 가리지 않으면서
+/// 색+아이콘+라벨 3중 표기를 만족한다.
 class _QuizBody extends StatelessWidget {
   const _QuizBody({
     required this.question,
@@ -79,44 +85,29 @@ class _QuizBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final imageSize = MediaQuery.sizeOf(context).width * 0.7;
+
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg.w),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            height: 220.h,
-            decoration: BoxDecoration(
-              color: question.category.tint,
-              borderRadius: BorderRadius.circular(AppRadius.lg.r),
-            ),
-            child: Stack(
-              children: [
-                Center(
-                  child: Icon(
-                    question.category.icon,
-                    size: 72.w,
-                    color: question.category.color,
-                  ),
-                ),
-                Positioned(
-                  top: 12.h,
-                  left: 12.w,
-                  child: AppBadge(
-                    label: '${question.category.label} 발견!',
-                    background: AppColors.surface,
-                    foreground: AppColors.ink,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: 20.h),
+          SizedBox(height: 8.h),
+          AppBadge.category(question.category),
+          SizedBox(height: 16.h),
           Text(
             question.question,
             style: AppTextStyles.display22.copyWith(color: AppColors.ink),
           ),
           SizedBox(height: 20.h),
+          Center(
+            child: CatalogImage(
+              code: question.code,
+              category: question.category,
+              size: imageSize,
+            ),
+          ),
+          SizedBox(height: 24.h),
           for (var i = 0; i < question.choices.length; i++) _choice(i),
           if (locked.isNotEmpty && !answered)
             Center(
@@ -140,29 +131,50 @@ class _QuizBody extends StatelessWidget {
     final textColor = isLocked
         ? AppColors.uncollected
         : (correctSelected ? AppColors.primaryDark : AppColors.ink);
+    final ringColor = isLocked
+        ? AppColors.uncollected
+        : (correctSelected ? AppColors.primary : AppColors.line);
     return Padding(
       padding: EdgeInsets.only(bottom: 12.h),
-      child: Material(
-        color: background,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppRadius.md.r),
-          side: isLocked
-              ? BorderSide.none
-              : BorderSide(
-                  color: correctSelected ? AppColors.primary : AppColors.line,
-                ),
-        ),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(AppRadius.md.r),
-          onTap: isLocked || answered ? null : () => onSelect(index),
-          child: SizedBox(
-            height: 60.h,
-            child: Center(
-              child: Text(
-                question.choices[index],
-                style: AppTextStyles.label16Semibold.copyWith(
-                  color: textColor,
-                  decoration: isLocked ? TextDecoration.lineThrough : null,
+      child: SizedBox(
+        width: double.infinity,
+        child: Material(
+          color: background,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadius.md.r),
+            side: isLocked
+                ? BorderSide.none
+                : BorderSide(
+                    color: correctSelected ? AppColors.primary : AppColors.line,
+                  ),
+          ),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(AppRadius.md.r),
+            onTap: isLocked || answered ? null : () => onSelect(index),
+            child: SizedBox(
+              height: 60.h,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: AppSpacing.base.w),
+                child: Row(
+                  children: [
+                    _NumberCircle(
+                      number: index + 1,
+                      ringColor: ringColor,
+                      textColor: textColor,
+                    ),
+                    SizedBox(width: AppSpacing.sm.w),
+                    Expanded(
+                      child: Text(
+                        question.choices[index],
+                        style: AppTextStyles.label16Semibold.copyWith(
+                          color: textColor,
+                          decoration: isLocked
+                              ? TextDecoration.lineThrough
+                              : null,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -173,24 +185,64 @@ class _QuizBody extends StatelessWidget {
   }
 }
 
-/// 문항 로딩 중 스켈레톤 — 카드·질문·보기 3개 자리를 흉내낸다.
+/// 선지 번호 원(①②③) — 미선택은 line 테두리, 오답 잠금 시 uncollected로 바뀐다.
+class _NumberCircle extends StatelessWidget {
+  const _NumberCircle({
+    required this.number,
+    required this.ringColor,
+    required this.textColor,
+  });
+
+  final int number;
+  final Color ringColor;
+  final Color textColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 28.w,
+      height: 28.w,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(color: ringColor),
+      ),
+      child: Text(
+        '$number',
+        style: AppTextStyles.tag13Bold.copyWith(color: textColor),
+      ),
+    );
+  }
+}
+
+/// 문항 로딩 중 스켈레톤 — 뱃지·질문·그림·보기 3개 자리를 흉내낸다.
 class _LoadingBody extends StatelessWidget {
   const _LoadingBody();
 
   @override
   Widget build(BuildContext context) {
+    final imageSize = MediaQuery.sizeOf(context).width * 0.7;
+
     return ListView(
       padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg.w),
       children: [
         SizedBox(height: 8.h),
         AppSkeleton(
-          width: double.infinity,
-          height: 220.h,
-          borderRadius: BorderRadius.circular(AppRadius.lg.r),
+          width: 72.w,
+          height: 24.h,
+          borderRadius: BorderRadius.circular(AppRadius.xs.r),
         ),
-        SizedBox(height: 20.h),
+        SizedBox(height: 16.h),
         AppSkeleton(width: double.infinity, height: 28.h),
         SizedBox(height: 20.h),
+        Center(
+          child: AppSkeleton(
+            width: imageSize,
+            height: imageSize,
+            borderRadius: BorderRadius.circular(AppRadius.lg.r),
+          ),
+        ),
+        SizedBox(height: 24.h),
         for (var i = 0; i < 3; i++) ...[
           AppSkeleton(
             width: double.infinity,
