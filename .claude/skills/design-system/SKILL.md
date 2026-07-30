@@ -8,7 +8,7 @@ description: 어대GO 디자인 시스템 — 색상 토큰(동물 주황/식물
 ```yaml
 version: 1.0
 name: eodaego-design-system
-description: 서울어린이대공원 탐방·도감 수집 앱 "어대GO"의 디자인 시스템. 어린이(+보호자) 타깃이라 큰 폰트, 큰 터치 영역, 둥근 형태, 색으로 읽는 정보 구조가 원칙이다. 웜 아이보리 캔버스(#FAF7F0) 위에 숲 초록(#3DA35D)을 메인으로, 도감 3분류가 고정 카테고리 컬러(동물=주황, 식물=초록, 장소=파랑)를 가지며 이 색 언어가 도감·지도 마커·촬영 모드·코스 스텝 전반을 관통한다. 보상 노랑(#FFC93C)은 도감 획득/축하 순간에만 등장하는 단일 하이라이트다. 타이포는 2폰트 체계 — 제목·버튼·도감 이름은 Cafe24 Ssurround(둥근 디스플레이), 본문·설명은 Pretendard Variable. radius는 "외부 = 내부 × 2, 패딩 = 내부 radius" 규칙 위에서 8/12/24/32 4단 스케일만 사용한다.
+description: 서울어린이대공원 탐방·도감 수집 앱 "어대GO"의 디자인 시스템. 어린이(+보호자) 타깃이라 큰 폰트, 큰 터치 영역, 둥근 형태, 색으로 읽는 정보 구조가 원칙이다. 웜 아이보리 캔버스(#FAF7F0) 위에 숲 초록(#3DA35D)을 메인으로, 도감 3분류가 고정 카테고리 컬러(동물=주황, 식물=초록, 장소=파랑)를 가지며 이 색 언어가 도감·지도 마커·촬영 모드·코스 스텝 전반을 관통한다. 보상 노랑(#FFC93C)은 전면 배경이 아닌 액센트로만 쓰는 하이라이트다(축하 화면 컨페티·진행률 게이지 채움, 홈 도감 진행률 게이지 채움·코스 카드 CTA). 타이포는 2폰트 체계 — 제목·버튼·도감 이름은 Cafe24 Ssurround(둥근 디스플레이), 본문·설명은 Pretendard Variable. radius는 "외부 = 내부 × 2, 패딩 = 내부 radius" 규칙 위에서 8/12/24/32 4단 스케일만 사용한다.
 
 colors:
   # ── Brand / Category ──
@@ -24,7 +24,7 @@ colors:
   place: "#4A9FE8" # 장소 카테고리
   place-dark: "#0A3A63" # 파랑 틴트 위 텍스트
   place-tint: "#E8F3FC"
-  reward: "#FFC93C" # 보상 노랑 액센트. 축하 화면 컨페티·수집 진행률 게이지 채움, 홈 CTA(코스 추천 받기)
+  reward: "#FFC93C" # 보상 노랑 액센트. 축하 화면 컨페티·수집 진행률 게이지 채움, 홈 도감 진행률 게이지 채움, 홈 코스 카드 CTA(코스 보기)
   reward-dark: "#5F4400" # 노랑 위 텍스트
 
   # ── Canvas / Surface ──
@@ -128,7 +128,7 @@ rounded:
   xs: 8 # 뱃지, 지도 게이트 라벨, 작은 칩
   sm: 12 # 도감 그리드 카드, 카드(24) 내부의 버튼·썸네일
   md: 16 # AppButton 기본, 입력창, 퀴즈 선택지
-  lg: 24 # 카드(코스/도감상세/홈 카드), 다이얼로그, 촬영 가이드 프레임
+  lg: 24 # 카드(코스/도감상세/홈 카드), 다이얼로그
   xl: 32 # 바텀시트 상단, 풀스크린 모달
   full: 999 # 카메라 FAB, 셔터, 마커, 아바타, 모드 토글, 필터 칩(pill)
   # 규칙: 외부 radius = 내부 radius × 2, 패딩 = 내부 radius
@@ -172,7 +172,7 @@ components:
     note: "화면당 1개 원칙"
   button-reward:
     preset: "backgroundColor: reward / foregroundColor: reward-dark / textStyle: display-17"
-    note: "코스 추천 받기, 축하 화면 CTA 등 핵심 순간 전용"
+    note: "홈 코스 카드 CTA(코스 보기) 전용"
   button-social-google:
     preset: "backgroundColor: surface / foregroundColor: ink / showBorder: true / icon: 구글 로고(leading)"
   button-social-apple:
@@ -279,7 +279,7 @@ components:
 
 **1) 색이 곧 정보 구조다.** 도감의 3분류가 고정 카테고리 컬러를 가진다 — 동물 `{colors.animal}`(주황), 식물 `{colors.plant}`(초록), 장소 `{colors.place}`(파랑). 이 색은 도감 카드 테두리, 지도 마커, 촬영 모드 토글과 셔터 링, 코스 스텝 번호, 카테고리 칩까지 앱 전체에서 동일하게 적용된다. 글을 읽지 못하는 아이도 색만 보고 카테고리를 인식할 수 있어야 하므로, 카테고리 컬러를 다른 용도로 유용하거나 화면마다 다르게 쓰는 것을 금지한다.
 
-**2) 보상 노랑은 액센트로만 쓴다.** `{colors.reward}`(#FFC93C)는 앱에서 가장 뜨거운 색으로, 등장 자체가 "특별한 순간"의 신호다. 전면 배경으로는 쓰지 않는다 — 허용 위치는 세 곳, 축하 화면의 컨페티, 축하 화면의 수집 진행률 게이지 채움, 홈 히어로 카드의 "코스 추천 받기" CTA. 그 외 어디에도 노랑을 쓰지 않는다.
+**2) 보상 노랑은 액센트로만 쓴다.** `{colors.reward}`(#FFC93C)는 앱에서 가장 뜨거운 색으로, 등장 자체가 "특별한 순간"의 신호다. 전면 배경으로는 쓰지 않는다 — 허용 위치는 네 곳, 축하 화면의 컨페티, 축하 화면의 수집 진행률 게이지 채움, 홈 도감 진행률 카드의 게이지 채움, 홈 코스 카드의 "코스 보기" CTA. 그 외 어디에도 노랑을 쓰지 않는다.
 
 **3) 어린이 기준으로 모든 수치를 키운다.** 본문 최소 15sp(핵심 설명은 17sp), 캡션 최소 14sp, 터치 타깃 최소 48, 주요 버튼 52 이상. 배경은 순백이 아닌 웜 아이보리 `{colors.canvas}`로 종이 그림책 질감을 내고, 텍스트는 순검정이 아닌 `{colors.ink}`(#2B2B28)를 쓴다.
 
@@ -466,7 +466,7 @@ class AppTextStyles {
 | `{rounded.xs}`   | 8   | 뱃지, 작은 칩                                     | — (최하위)         |
 | `{rounded.sm}`   | 12  | 도감 그리드 카드, **카드(24) 내부의 버튼·썸네일** | 각진 뱃지          |
 | `{rounded.md}`   | 16  | **AppButton 기본**, 입력창, 퀴즈 선택지           | 뱃지(8)            |
-| `{rounded.lg}`   | 24  | 카드, 다이얼로그, 촬영 가이드 프레임              | 내부 요소(12)      |
+| `{rounded.lg}`   | 24  | 카드, 다이얼로그                                  | 내부 요소(12)      |
 | `{rounded.xl}`   | 32  | 바텀시트 상단, 풀스크린 모달                      | 버튼(16), 카드(16) |
 | `{rounded.full}` | 999 | FAB, 셔터, 마커, 아바타, 모드 토글, pill 칩       | — (예외 계층)      |
 
@@ -489,7 +489,7 @@ class AppRadius {
 ## Layout
 
 - **화면 좌우 패딩**: `{spacing.lg}` 20 고정.
-- **카드 사이 간격**: 14 (홈 카드 스택), 도감 그리드 gap 10.
+- **카드 사이 간격**: 14 (홈 카드 스택), 도감 목록 항목 간격 10.
 - **도감 목록**: 세로 리스트, 원형 썸네일(56) + 이름 + 카테고리 라벨 + 우측 상태.
 - **코스 카드**: 가로 스와이프(PageView), 카드 min-width 300, snap 정렬.
 - **위저드**: 한 화면 한 질문. 질문(display-24) → 서브텍스트(caption-14) → 옵션 카드 세로 스택. 선택지는 항상 3개 이하.
@@ -544,7 +544,7 @@ class AppButton extends StatelessWidget {
 | 프리셋              | 오버라이드                                                  | 쓰는 곳                          |
 | ------------------- | ----------------------------------------------------------- | -------------------------------- |
 | `AppButton.primary` | textStyle: display_17                                       | 일반 CTA. 화면당 1개 원칙        |
-| `AppButton.reward`  | bg: reward / fg: reward-dark / textStyle: display_17        | 코스 추천 받기, 축하 화면 전용   |
+| `AppButton.reward`  | bg: reward / fg: reward-dark / textStyle: display_17        | 홈 코스 카드 CTA(코스 보기)      |
 | `AppButton.google`  | bg: surface / fg: ink / showBorder: true / icon: 구글 로고  | 로그인                           |
 | `AppButton.apple`   | bg: ink / fg: white / icon: 애플 로고                       | 로그인                           |
 | `AppButton.danger`  | bg: surface / fg: danger / showBorder: true / subtitle 필수 | 탈퇴하기 (Hard Delete 경고 동반) |
@@ -593,7 +593,7 @@ radius 24, 2px 테두리. 기본은 line색, 선택 시 **해당 카테고리색
 
 ### 카메라
 
-배경 `camera-bg`. 상단 모드 토글(pill) — 활성 시 카테고리색 fill, 촬영 프레임은 260×260 dashed radius 24, **셔터 링 색 = 현재 모드 카테고리색**. 장소 모드는 힌트에 "위치로 확인해요"를 노출(실제 판정은 GPS, PLACE-01).
+배경 `camera-bg`. 상단 모드 토글(pill) — 활성 시 카테고리색 fill, 촬영 프레임은 260×260 네 모서리 브래킷(모서리만, 사각형 전체를 두르지 않는다), **셔터 링 색 = 현재 모드 카테고리색**. 장소 모드는 힌트에 "위치로 확인해요"를 노출(실제 판정은 GPS, PLACE-01).
 
 ## Motion
 
