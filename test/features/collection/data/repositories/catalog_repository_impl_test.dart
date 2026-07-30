@@ -131,6 +131,30 @@ void main() {
       expect(detail.collectedAt, '2026.07.05');
     });
 
+    test(
+      'formats_offsetless_collected_at_as_kst_regardless_of_device_timezone',
+      () async {
+        // 실 서버는 오프셋 없이 값을 준다(docs/api-docs.json 예시:
+        // "2026-07-01T14:30:00"). DateTime.tryParse로 바로 읽으면 기기
+        // 로컬 타임존으로 해석돼, 자정 근처 값은 기기 타임존에 따라
+        // 하루가 밀릴 수 있다(예: America/New_York에서 07.02로 보임).
+        final repository = CatalogRepositoryImpl(
+          _FakeCatalogDataSource(
+            detail: const CatalogItemDetailModel(
+              id: 'a1',
+              name: '수달',
+              category: 'ANIMAL',
+              collectedAt: '2026-07-01T14:30:00',
+            ),
+          ),
+        );
+
+        final detail = await repository.getCatalogItem('a1');
+
+        expect(detail.collectedAt, '2026.07.01');
+      },
+    );
+
     test('leaves_collected_at_null_when_server_omits_it', () async {
       final repository = CatalogRepositoryImpl(
         _FakeCatalogDataSource(
