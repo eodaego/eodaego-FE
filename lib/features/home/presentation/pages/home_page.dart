@@ -140,7 +140,7 @@ class _WeatherBar extends ConsumerWidget {
                       color: AppColors.muted,
                     ),
                     SizedBox(width: 8.w),
-                    Flexible(
+                    Expanded(
                       child: Text(
                         // 아이 동반 나들이 앱이라 소수점은 읽는 부담만 된다.
                         // 원본 값은 상세 화면에 있다.
@@ -152,7 +152,6 @@ class _WeatherBar extends ConsumerWidget {
                         ),
                       ),
                     ),
-                    const Spacer(),
                     Icon(
                       Icons.chevron_right,
                       size: 20.w,
