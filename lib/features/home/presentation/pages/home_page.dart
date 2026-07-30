@@ -140,12 +140,16 @@ class _WeatherBar extends ConsumerWidget {
                       color: AppColors.muted,
                     ),
                     SizedBox(width: 8.w),
-                    Text(
-                      // 아이 동반 나들이 앱이라 소수점은 읽는 부담만 된다.
-                      // 원본 값은 상세 화면에 있다.
-                      '${weather.conditionLabel} ${weather.temperature.round()}°',
-                      style: AppTextStyles.label16Semibold.copyWith(
-                        color: AppColors.ink,
+                    Flexible(
+                      child: Text(
+                        // 아이 동반 나들이 앱이라 소수점은 읽는 부담만 된다.
+                        // 원본 값은 상세 화면에 있다.
+                        '${weather.conditionLabel} ${weather.temperature.round()}°',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.label16Semibold.copyWith(
+                          color: AppColors.ink,
+                        ),
                       ),
                     ),
                     const Spacer(),
