@@ -10,13 +10,13 @@ import '../../../../core/constants/text_styles.dart';
 import '../../../../core/providers/guest_mode_provider.dart';
 import '../../../../core/widgets/app_badge.dart';
 import '../../../../core/widgets/app_skeleton.dart';
+import '../../../../core/widgets/catalog_image.dart';
 import '../../../../core/widgets/category_chip.dart';
-import '../../../../core/widgets/dogam_card.dart';
 import '../../../../router/route_paths.dart';
 import '../../domain/entities/catalog_item_entity.dart';
 import '../providers/catalog_provider.dart';
 
-/// 도감 (CATALOG-01~03) — 필터·검색·3열 그리드.
+/// 도감 (CATALOG-01~03) — 필터·검색·세로 리스트.
 ///
 /// 목록은 서버에서 한 번 받고 카테고리 필터·이름 검색은 로컬에서 건다.
 class CollectionPage extends ConsumerStatefulWidget {
@@ -170,11 +170,11 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
                   // 어린이 기준으로 수치를 키우는 원칙에 맞춰 기본 2.0보다 두껍게.
                   strokeWidth: 3,
                   child: itemsAsync.when(
-                    loading: () => const _CollectionGridSkeleton(),
+                    loading: () => const _CollectionListSkeleton(),
                     error: (_, _) => _CollectionError(
                       onRetry: () => ref.invalidate(catalogItemsProvider),
                     ),
-                    data: (items) => _CollectionGrid(
+                    data: (items) => _CollectionList(
                       items: _visible(_inCategory(items)),
                       isSearching: _query.isNotEmpty,
                     ),
@@ -189,18 +189,8 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
   }
 }
 
-/// 3열 그리드 — 로딩·데이터가 같은 배치를 쓰도록 delegate를 공유한다.
-SliverGridDelegate _gridDelegate() {
-  return SliverGridDelegateWithFixedCrossAxisCount(
-    crossAxisCount: 3,
-    childAspectRatio: 3 / 3.6,
-    mainAxisSpacing: 10.h,
-    crossAxisSpacing: 10.w,
-  );
-}
-
-class _CollectionGrid extends StatelessWidget {
-  const _CollectionGrid({required this.items, required this.isSearching});
+class _CollectionList extends StatelessWidget {
+  const _CollectionList({required this.items, required this.isSearching});
 
   final List<CatalogItemEntity> items;
 
@@ -235,19 +225,16 @@ class _CollectionGrid extends StatelessWidget {
       );
     }
 
-    return GridView.builder(
+    return ListView.separated(
       // 항목이 한 화면을 못 채워도 당겨서 새로고침이 되게 한다.
       physics: const AlwaysScrollableScrollPhysics(),
-      gridDelegate: _gridDelegate(),
       itemCount: items.length,
+      separatorBuilder: (context, index) => SizedBox(height: 10.h),
       itemBuilder: (context, index) {
         final item = items[index];
-        return DogamCard(
+        return _CatalogListItem(
           key: ValueKey(item.id),
-          category: item.category,
-          collected: item.collected,
-          name: item.name,
-          imageUrl: item.imageUrl,
+          item: item,
           onTap: () =>
               context.push(RoutePaths.collectionDetail(item.id), extra: item),
         );
@@ -256,19 +243,145 @@ class _CollectionGrid extends StatelessWidget {
   }
 }
 
-class _CollectionGridSkeleton extends StatelessWidget {
-  const _CollectionGridSkeleton();
+/// 도감 목록 행 — 원형 썸네일(56) + 이름 + 카테고리 라벨 + 우측 상태.
+///
+/// 수집: 이름 표시 + 우측 체크(카테고리색). 미수집: 이름 자리에 `미수집`,
+/// 썸네일·우측 모두 `?` — 무채색으로 그려 수집 완료와 대비를 만든다.
+class _CatalogListItem extends StatelessWidget {
+  const _CatalogListItem({super.key, required this.item, this.onTap});
+
+  final CatalogItemEntity item;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: _gridDelegate(),
-      itemCount: 12,
-      itemBuilder: (context, index) => AppSkeleton(
-        width: double.infinity,
-        height: double.infinity,
+    final collected = item.collected;
+    return Material(
+      color: collected ? AppColors.surface : AppColors.surfaceDim,
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppRadius.sm.r),
+        side: collected
+            ? const BorderSide(color: AppColors.line)
+            : BorderSide.none,
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(AppRadius.sm.r),
+        onTap: onTap,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+          child: Row(
+            children: [
+              _thumbnail(),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      collected ? (item.name ?? '') : '미수집',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyles.label16Semibold.copyWith(
+                        color: collected
+                            ? AppColors.ink
+                            : AppColors.uncollected,
+                      ),
+                    ),
+                    SizedBox(height: 4.h),
+                    Text(
+                      item.category.label,
+                      style: AppTextStyles.caption14.copyWith(
+                        color: collected
+                            ? item.category.dark
+                            : AppColors.uncollected,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(width: 8.w),
+              _stateMarker(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _thumbnail() {
+    if (!item.collected) {
+      return Container(
+        width: 56.w,
+        height: 56.w,
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          color: AppColors.surface,
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          '?',
+          style: AppTextStyles.display19.copyWith(color: AppColors.uncollected),
+        ),
+      );
+    }
+    return CatalogImage(
+      code: item.code,
+      category: item.category,
+      size: 56.w,
+      circle: true,
+    );
+  }
+
+  Widget _stateMarker() {
+    if (!item.collected) {
+      return Text(
+        '?',
+        style: AppTextStyles.display19.copyWith(color: AppColors.uncollected),
+      );
+    }
+    return Icon(
+      Icons.check_circle_rounded,
+      color: item.category.color,
+      size: 28.w,
+    );
+  }
+}
+
+class _CollectionListSkeleton extends StatelessWidget {
+  const _CollectionListSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: 8,
+      separatorBuilder: (context, index) => SizedBox(height: 10.h),
+      itemBuilder: (context, index) => Container(
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(AppRadius.sm.r),
+        ),
+        child: Row(
+          children: [
+            AppSkeleton(
+              width: 56.w,
+              height: 56.w,
+              borderRadius: BorderRadius.circular(28.r),
+            ),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AppSkeleton(width: 100.w, height: 18.h),
+                  SizedBox(height: 6.h),
+                  AppSkeleton(width: 60.w, height: 14.h),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
