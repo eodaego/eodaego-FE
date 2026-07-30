@@ -17,7 +17,8 @@ class EnvConfig {
   }
 
   /// 목 데이터 사용 여부. 미설정 시 false(실 데이터) — CI/프로덕션 안전 기본값.
-  /// API 연동 시 Repository provider에서 목/실 구현체 분기에 사용한다.
+  /// true일 때: 날씨·도감이 assets/mock/*.json에서 읽고, 게스트 브라우징 제한이 해제된다.
+  /// false일 때: 실 API를 호출한다. 퀴즈·코스·즐겨찾기는 플래그와 무관하다.
   static bool get useMockData {
     return dotenv.env['USE_MOCK_DATA']?.toLowerCase() == 'true';
   }
