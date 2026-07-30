@@ -17,21 +17,36 @@ class _FakeWeatherRepository implements WeatherRepository {
   Future<WeatherEntity> getCurrentWeather() async => weather;
 }
 
-// Builds a weather entity whose forecast spans today, tomorrow, and the day
-// after — anchored to nowKst() so the test holds regardless of what day it
-// runs on. Tomorrow/day-after slots sit at noon so they can never collide
-// with "now" near a midnight boundary; only the "today" slot needs to be
-// strictly after "now", so it uses a 1-second offset.
-// nowKst() 기준으로 오늘·내일·모레 슬롯을 만든다. 테스트 실행 날짜와 무관하게
-// 성립하도록 한다. 내일·모레 슬롯은 정오로 둬 자정 근처 실행과 절대 충돌하지
-// 않는다. "오늘" 슬롯만 지금보다 뒤여야 하므로 1초 뒤로 둔다.
-({WeatherEntity weather, HourlyForecastEntity today, HourlyForecastEntity tomorrow, HourlyForecastEntity dayAfter})
+// Builds a weather entity whose forecast spans today (two slots — proves the
+// header dedup, not just "one header per row"), tomorrow, and the day after.
+// Anchored to nowKst() so the test holds regardless of what day it runs on.
+// Tomorrow/day-after slots sit at noon so they can never collide with "now"
+// near a midnight boundary; the two "today" slots only need to be strictly
+// after "now", so they use 1- and 2-second offsets.
+// nowKst() 기준으로 오늘(두 슬롯 — 헤더가 행마다 찍히는 게 아니라 중복 제거되는지
+// 증명한다)·내일·모레 슬롯을 만든다. 테스트 실행 날짜와 무관하게 성립하도록 한다.
+// 내일·모레 슬롯은 정오로 둬 자정 근처 실행과 절대 충돌하지 않는다. "오늘" 두
+// 슬롯만 지금보다 뒤여야 하므로 1초·2초 뒤로 둔다.
+({
+  WeatherEntity weather,
+  HourlyForecastEntity todayFirst,
+  HourlyForecastEntity todaySecond,
+  HourlyForecastEntity tomorrow,
+  HourlyForecastEntity dayAfter,
+})
 _buildWeather() {
   final now = nowKst();
-  final today = HourlyForecastEntity(
+  final todayFirst = HourlyForecastEntity(
     dateTime: now.add(const Duration(seconds: 1)),
     temperature: 20,
     precipitationProbability: 0,
+    skyLabel: '맑음',
+    precipitationLabel: '없음',
+  );
+  final todaySecond = HourlyForecastEntity(
+    dateTime: now.add(const Duration(seconds: 2)),
+    temperature: 24,
+    precipitationProbability: 33,
     skyLabel: '맑음',
     precipitationLabel: '없음',
   );
@@ -55,9 +70,15 @@ _buildWeather() {
     windSpeed: 2.1,
     skyLabel: '맑음',
     precipitationLabel: '없음',
-    hourlyForecast: [today, tomorrow, dayAfter],
+    hourlyForecast: [todayFirst, todaySecond, tomorrow, dayAfter],
   );
-  return (weather: weather, today: today, tomorrow: tomorrow, dayAfter: dayAfter);
+  return (
+    weather: weather,
+    todayFirst: todayFirst,
+    todaySecond: todaySecond,
+    tomorrow: tomorrow,
+    dayAfter: dayAfter,
+  );
 }
 
 Widget _wrap(Widget child, WeatherRepository repository) {
@@ -98,9 +119,14 @@ void main() {
           '${dayAfterDate.month}월 ${dayAfterDate.day}일 '
           '(${weekdays[dayAfterDate.weekday - 1]})';
 
+      // 오늘 슬롯이 두 개라도 헤더는 한 번만 찍힌다 (dedup 가드 검증) — 지운다면
+      // 행마다 헤더가 반복돼도 이 어서션이 깨진다.
       expect(find.text('오늘'), findsOneWidget);
       expect(find.text('내일'), findsOneWidget);
       expect(find.text(dayAfterLabel), findsOneWidget);
+      // 오늘의 두 예보 행이 모두 렌더된다 (헤더 중복 제거가 행을 삼키지 않는다).
+      expect(find.text('20°'), findsOneWidget);
+      expect(find.text('24°'), findsOneWidget);
     },
   );
 

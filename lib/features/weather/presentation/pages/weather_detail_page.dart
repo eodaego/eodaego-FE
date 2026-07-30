@@ -95,23 +95,27 @@ class _CurrentCard extends StatelessWidget {
                 color: AppColors.primaryDark,
               ),
               SizedBox(width: 14.w),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    weather.conditionLabel,
-                    style: AppTextStyles.display19.copyWith(
-                      color: AppColors.ink,
+              Flexible(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      weather.conditionLabel,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyles.display19.copyWith(
+                        color: AppColors.ink,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 2.h),
-                  Text(
-                    '${weather.temperature}°',
-                    style: AppTextStyles.display26.copyWith(
-                      color: AppColors.ink,
+                    SizedBox(height: 2.h),
+                    Text(
+                      '${weather.temperature}°',
+                      style: AppTextStyles.display26.copyWith(
+                        color: AppColors.ink,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
