@@ -92,6 +92,7 @@ flutter:
     - assets/app_logo_1024.png
     - assets/icons/
     - assets/legals/
+    - assets/mock/
   fonts:
     - family: Pretendard
       fonts:
