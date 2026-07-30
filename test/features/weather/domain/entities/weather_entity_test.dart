@@ -1,3 +1,4 @@
+import 'package:clock/clock.dart';
 import 'package:eodaego/features/weather/domain/entities/weather_condition.dart';
 import 'package:eodaego/features/weather/domain/entities/weather_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -48,6 +49,12 @@ void main() {
       expect(parseKstDateTime(''), isNull);
       expect(parseKstDateTime('내일 오후'), isNull);
     });
+
+    test('returns_null_for_date_only_input_instead_of_device_local_guess', () {
+      // 오프셋이 없으니 기기 타임존으로 조용히 해석하지 않고 버린다 —
+      // 그러지 않으면 이 값이 기기 타임존에 따라 다른 순간을 가리키게 된다.
+      expect(parseKstDateTime('2026-07-30'), isNull);
+    });
   });
 
   group('nowKst', () {
@@ -63,6 +70,16 @@ void main() {
         (kst.difference(utc) - const Duration(hours: 9)).abs(),
         lessThan(const Duration(seconds: 5)),
       );
+    });
+
+    test('reads_the_injected_clock_instead_of_the_real_one', () {
+      // 여기(순수 Dart 코드, 위젯 빌드 없음)서는 Zone이 정상 전파된다 —
+      // withClock이 위젯 빌드까지 닿지 않는 문제와는 별개다.
+      final fixed = DateTime.utc(2026, 7, 30, 6);
+
+      final kst = withClock(Clock.fixed(fixed), nowKst);
+
+      expect(kst, fixed.add(const Duration(hours: 9)));
     });
   });
 
@@ -122,18 +139,21 @@ void main() {
 
   group('conditionLabel', () {
     test('prefers_precipitation_over_sky_when_something_is_falling', () {
-      // 비가 오는데 `흐림`이라고 쓰면 정보가 줄어든다
-      final forecast = HourlyForecastEntity(
-        dateTime: parseKstDateTime('2026-07-30T15:00:00')!,
+      // 비가 오는데 `흐림`이라고 쓰면 정보가 줄어든다.
+      // WeatherEntity.conditionLabel을 검증한다 — 실제로 화면에 렌더되는
+      // 쪽은 이것뿐이고, HourlyForecastEntity에는 더 이상 같은 getter가 없다.
+      final weather = WeatherEntity(
         temperature: 27,
-        precipitationProbability: 60,
+        humidity: 78,
+        windSpeed: 1.7,
         skyLabel: '흐림',
         precipitationLabel: '비',
         sky: WeatherSky.cloudy,
         precipitation: WeatherPrecipitation.rain,
+        hourlyForecast: const [],
       );
 
-      expect(forecast.conditionLabel, '비');
+      expect(weather.conditionLabel, '비');
     });
 
     test('falls_back_to_sky_label_when_nothing_is_falling', () {

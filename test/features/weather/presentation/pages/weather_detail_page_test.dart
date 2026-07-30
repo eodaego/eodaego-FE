@@ -20,13 +20,24 @@ class _FakeWeatherRepository implements WeatherRepository {
 // Builds a weather entity whose forecast spans today (two slots — proves the
 // header dedup, not just "one header per row"), tomorrow, and the day after.
 // Anchored to nowKst() so the test holds regardless of what day it runs on.
-// Tomorrow/day-after slots sit at noon so they can never collide with "now"
-// near a midnight boundary; the two "today" slots only need to be strictly
-// after "now", so they use 1- and 2-second offsets.
+//
+// The widget re-reads nowKst() itself at build time — a second real-clock
+// read, not the same instant used to build this fixture. withClock doesn't
+// help here: verified experimentally that Flutter's test binding schedules
+// the widget build outside the Zone it creates, so the widget still observed
+// the real clock. Falling back to a wide margin instead — "today" slots sit
+// minutes (not seconds) after now, comfortably past any pump/settle time.
+// Tomorrow/day-after stay noon-anchored so they never collide with a
+// midnight boundary.
 // nowKst() 기준으로 오늘(두 슬롯 — 헤더가 행마다 찍히는 게 아니라 중복 제거되는지
 // 증명한다)·내일·모레 슬롯을 만든다. 테스트 실행 날짜와 무관하게 성립하도록 한다.
-// 내일·모레 슬롯은 정오로 둬 자정 근처 실행과 절대 충돌하지 않는다. "오늘" 두
-// 슬롯만 지금보다 뒤여야 하므로 1초·2초 뒤로 둔다.
+//
+// 위젯은 빌드 시점에 nowKst()를 따로 한 번 더 읽으므로 실제 시계를 두 번 읽는
+// 셈이다. withClock은 도움이 안 된다 — Flutter 테스트 바인딩이 위젯 빌드를 그
+// Zone 밖에서 스케줄링해 위젯이 여전히 실제 시각을 본다는 걸 실험으로 확인했다.
+// 대신 여유를 크게 둔다: "오늘" 슬롯을 초가 아니라 분 단위로 지금보다 뒤에 둬
+// pump/settle 시간을 넉넉히 넘어서게 한다. 내일·모레는 여전히 정오에 고정해
+// 자정 경계와 충돌하지 않는다.
 ({
   WeatherEntity weather,
   HourlyForecastEntity todayFirst,
@@ -37,14 +48,14 @@ class _FakeWeatherRepository implements WeatherRepository {
 _buildWeather() {
   final now = nowKst();
   final todayFirst = HourlyForecastEntity(
-    dateTime: now.add(const Duration(seconds: 1)),
+    dateTime: now.add(const Duration(minutes: 3)),
     temperature: 20,
     precipitationProbability: 0,
     skyLabel: '맑음',
     precipitationLabel: '없음',
   );
   final todaySecond = HourlyForecastEntity(
-    dateTime: now.add(const Duration(seconds: 2)),
+    dateTime: now.add(const Duration(minutes: 4)),
     temperature: 24,
     precipitationProbability: 33,
     skyLabel: '맑음',

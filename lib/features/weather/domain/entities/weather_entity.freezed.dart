@@ -204,7 +204,7 @@ class __$$HourlyForecastEntityImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$HourlyForecastEntityImpl extends _HourlyForecastEntity {
+class _$HourlyForecastEntityImpl implements _HourlyForecastEntity {
   const _$HourlyForecastEntityImpl({
     required this.dateTime,
     required this.temperature,
@@ -213,7 +213,7 @@ class _$HourlyForecastEntityImpl extends _HourlyForecastEntity {
     required this.precipitationLabel,
     this.sky,
     this.precipitation,
-  }) : super._();
+  });
 
   /// 예보 시각 (KST 벽시계)
   @override
@@ -296,7 +296,7 @@ class _$HourlyForecastEntityImpl extends _HourlyForecastEntity {
       );
 }
 
-abstract class _HourlyForecastEntity extends HourlyForecastEntity {
+abstract class _HourlyForecastEntity implements HourlyForecastEntity {
   const factory _HourlyForecastEntity({
     required final DateTime dateTime,
     required final double temperature,
@@ -306,7 +306,6 @@ abstract class _HourlyForecastEntity extends HourlyForecastEntity {
     final WeatherSky? sky,
     final WeatherPrecipitation? precipitation,
   }) = _$HourlyForecastEntityImpl;
-  const _HourlyForecastEntity._() : super._();
 
   /// 예보 시각 (KST 벽시계)
   @override
