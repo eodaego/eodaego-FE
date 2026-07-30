@@ -156,6 +156,11 @@ class _ErrorBody extends StatelessWidget {
                 color: AppColors.rewardDark,
               ),
             ),
+            SizedBox(height: 8.h),
+            Text(
+              '잠시 후 다시 시도해 주세요',
+              style: AppTextStyles.body15.copyWith(color: AppColors.rewardDark),
+            ),
           ],
         ),
       ),
