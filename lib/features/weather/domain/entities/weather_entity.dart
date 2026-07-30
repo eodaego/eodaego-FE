@@ -79,4 +79,27 @@ class WeatherEntity with _$WeatherEntity {
   /// 남긴다.
   List<HourlyForecastEntity> upcomingFrom(DateTime now) =>
       hourlyForecast.where((f) => !f.dateTime.isBefore(now)).toList();
+
+  /// 오늘(KST) 예보 슬롯의 최고·최저 기온. 오늘 슬롯이 없으면 null.
+  ///
+  /// **주의**: [upcomingFrom]과 다르다. 하루 전체의 최고/최저이므로 이미 지난
+  /// 오늘 시각도 포함한다 — "지금 이후"로 자르면 저녁에 보는 최저 기온이
+  /// 새벽값을 놓쳐 거짓이 된다. [now]는 [nowKst]로 만든 KST 벽시계여야
+  /// 예보 시각과 같은 기준으로 비교된다.
+  ({double min, double max})? todayRange(DateTime now) {
+    final todayTemps = hourlyForecast
+        .where(
+          (f) =>
+              f.dateTime.year == now.year &&
+              f.dateTime.month == now.month &&
+              f.dateTime.day == now.day,
+        )
+        .map((f) => f.temperature);
+    if (todayTemps.isEmpty) return null;
+
+    return (
+      min: todayTemps.reduce((a, b) => a < b ? a : b),
+      max: todayTemps.reduce((a, b) => a > b ? a : b),
+    );
+  }
 }

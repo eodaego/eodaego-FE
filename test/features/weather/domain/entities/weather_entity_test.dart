@@ -25,7 +25,67 @@ WeatherEntity _weatherAt(List<String> hours) => WeatherEntity(
   ],
 );
 
+// Builds an entity whose forecast slots have the given KST timestamp/temperature.
+// 주어진 (KST 시각, 기온) 쌍으로 예보를 채운 엔티티를 만든다.
+WeatherEntity _weatherWithTemps(List<(String, double)> slots) => WeatherEntity(
+  temperature: 27.6,
+  humidity: 78,
+  windSpeed: 1.7,
+  skyLabel: '구름많음',
+  precipitationLabel: '없음',
+  hourlyForecast: [
+    for (final (hour, temp) in slots)
+      HourlyForecastEntity(
+        dateTime: parseKstDateTime(hour)!,
+        temperature: temp,
+        precipitationProbability: 20,
+        skyLabel: '구름많음',
+        precipitationLabel: '없음',
+      ),
+  ],
+);
+
 void main() {
+  group('todayRange', () {
+    test('uses_only_todays_slots_and_ignores_other_days', () {
+      // 오늘 최고가 30도인데 내일 슬롯의 40도가 섞이면 최고가 거짓말하게 된다
+      final weather = _weatherWithTemps([
+        ('2026-07-30T00:00:00', 20),
+        ('2026-07-30T12:00:00', 30),
+        ('2026-07-31T12:00:00', 40),
+      ]);
+
+      final range = weather.todayRange(
+        parseKstDateTime('2026-07-30T15:00:00')!,
+      );
+
+      expect(range, (min: 20.0, max: 30.0));
+    });
+
+    test('includes_hours_already_passed_today', () {
+      // 저녁 8시에 봐도 새벽 최저 기온이 잡혀야 한다 — upcomingFrom과 다른 지점
+      final weather = _weatherWithTemps([
+        ('2026-07-30T04:00:00', 19),
+        ('2026-07-30T20:00:00', 27),
+      ]);
+
+      final range = weather.todayRange(
+        parseKstDateTime('2026-07-30T20:00:00')!,
+      );
+
+      expect(range, (min: 19.0, max: 27.0));
+    });
+
+    test('returns_null_when_today_has_no_slots', () {
+      final weather = _weatherWithTemps([('2026-07-31T00:00:00', 27)]);
+
+      expect(
+        weather.todayRange(parseKstDateTime('2026-07-30T12:00:00')!),
+        isNull,
+      );
+    });
+  });
+
   group('upcomingFrom', () {
     test('drops_forecasts_that_already_passed', () {
       // 서버는 발표 기준 전체를 준다. 새벽 2시에 0시 예보가 맨 앞에 온다.
