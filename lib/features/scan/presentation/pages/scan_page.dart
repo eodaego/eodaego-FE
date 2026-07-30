@@ -10,6 +10,7 @@ import '../../../../core/providers/guest_mode_provider.dart';
 import '../../../../core/widgets/dashed_rrect_painter.dart';
 import '../../../../core/widgets/dialogs/login_gate_dialog.dart';
 import '../../../../router/route_paths.dart';
+import '../../../quiz/presentation/providers/quiz_provider.dart';
 
 /// 촬영 (SCAN-01) — 목 배경. 카메라 프리뷰 없이 UI만 (스펙 §2).
 /// 앱에서 유일한 다크 화면(cameraBg).
@@ -71,6 +72,7 @@ class ScanPage extends ConsumerWidget {
                         );
                         return;
                       }
+                      ref.read(quizRoundProvider.notifier).next();
                       context.push(RoutePaths.quiz);
                     },
                   ),
