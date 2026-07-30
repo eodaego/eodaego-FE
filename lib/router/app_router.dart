@@ -23,6 +23,7 @@ import '../features/quiz/presentation/pages/quiz_reward_page.dart';
 import '../features/scan/presentation/pages/scan_page.dart';
 import '../features/user/presentation/pages/agreements_page.dart';
 import '../features/user/presentation/pages/my_page.dart';
+import '../features/weather/presentation/pages/weather_detail_page.dart';
 import '../core/providers/guest_mode_provider.dart';
 import '../core/widgets/main_tab_shell.dart';
 import '../core/widgets/pages/force_update_page.dart';
@@ -224,6 +225,14 @@ GoRouter router(Ref ref) {
         ],
       ),
       // ── 루트 push 화면 (탭바 없음) ──
+      GoRoute(
+        path: RoutePaths.weather,
+        name: RoutePaths.weatherName,
+        pageBuilder: (context, state) => NoTransitionPage(
+          key: state.pageKey,
+          child: const WeatherDetailPage(),
+        ),
+      ),
       GoRoute(
         path: RoutePaths.scan,
         name: RoutePaths.scanName,
