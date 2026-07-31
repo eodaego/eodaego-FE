@@ -16,7 +16,7 @@ import '../../../../router/route_paths.dart';
 import '../../domain/entities/catalog_item_entity.dart';
 import '../providers/catalog_provider.dart';
 
-/// 도감 (CATALOG-01~03) — 필터·검색·세로 리스트.
+/// 도감 (CATALOG-01~03) — 필터·검색·3열 그리드.
 ///
 /// 목록은 서버에서 한 번 받고 카테고리 필터·이름 검색은 로컬에서 건다.
 class CollectionPage extends ConsumerStatefulWidget {
@@ -174,7 +174,7 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
                     error: (_, _) => _CollectionError(
                       onRetry: () => ref.invalidate(catalogItemsProvider),
                     ),
-                    data: (items) => _CollectionList(
+                    data: (items) => _CollectionGrid(
                       items: _visible(_inCategory(items)),
                       isSearching: _query.isNotEmpty,
                     ),
@@ -189,8 +189,17 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
   }
 }
 
-class _CollectionList extends StatelessWidget {
-  const _CollectionList({required this.items, required this.isSearching});
+/// 3열 그리드 공통 배치 — 목록과 스켈레톤이 같은 칸 크기를 쓰도록 한 곳에 둔다.
+SliverGridDelegate _gridDelegate() => SliverGridDelegateWithFixedCrossAxisCount(
+  crossAxisCount: 3,
+  mainAxisSpacing: 10.h,
+  crossAxisSpacing: 10.w,
+  // 썸네일(64) + 이름 + 카테고리 라벨이 들어갈 세로 여유.
+  childAspectRatio: 0.8,
+);
+
+class _CollectionGrid extends StatelessWidget {
+  const _CollectionGrid({required this.items, required this.isSearching});
 
   final List<CatalogItemEntity> items;
 
@@ -225,14 +234,14 @@ class _CollectionList extends StatelessWidget {
       );
     }
 
-    return ListView.separated(
+    return GridView.builder(
       // 항목이 한 화면을 못 채워도 당겨서 새로고침이 되게 한다.
       physics: const AlwaysScrollableScrollPhysics(),
+      gridDelegate: _gridDelegate(),
       itemCount: items.length,
-      separatorBuilder: (context, index) => SizedBox(height: 10.h),
       itemBuilder: (context, index) {
         final item = items[index];
-        return _CatalogListItem(
+        return _CatalogGridCard(
           key: ValueKey(item.id),
           item: item,
           onTap: () =>
@@ -243,12 +252,12 @@ class _CollectionList extends StatelessWidget {
   }
 }
 
-/// 도감 목록 행 — 원형 썸네일(56) + 이름 + 카테고리 라벨 + 우측 상태.
+/// 도감 그리드 카드 — 원형 썸네일(64) + 이름 + 카테고리 라벨.
 ///
-/// 수집: 이름 표시 + 우측 체크(카테고리색). 미수집: 이름 자리에 `미수집`,
-/// 썸네일·우측 모두 `?` — 무채색으로 그려 수집 완료와 대비를 만든다.
-class _CatalogListItem extends StatelessWidget {
-  const _CatalogListItem({super.key, required this.item, this.onTap});
+/// 수집: 흰 카드 + 이름 + 카테고리 dark 라벨. 미수집: surfaceDim 카드에
+/// 이름 자리는 `미수집`, 썸네일은 `?` — 무채색으로 그려 수집 완료와 대비를 만든다.
+class _CatalogGridCard extends StatelessWidget {
+  const _CatalogGridCard({super.key, required this.item, this.onTap});
 
   final CatalogItemEntity item;
   final VoidCallback? onTap;
@@ -268,39 +277,27 @@ class _CatalogListItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppRadius.sm.r),
         onTap: onTap,
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-          child: Row(
+          padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 10.h),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _thumbnail(),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      collected ? (item.name ?? '') : '미수집',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTextStyles.label16Semibold.copyWith(
-                        color: collected
-                            ? AppColors.ink
-                            : AppColors.uncollected,
-                      ),
-                    ),
-                    SizedBox(height: 4.h),
-                    Text(
-                      item.category.label,
-                      style: AppTextStyles.caption14.copyWith(
-                        color: collected
-                            ? item.category.dark
-                            : AppColors.uncollected,
-                      ),
-                    ),
-                  ],
+              SizedBox(height: 8.h),
+              Text(
+                collected ? (item.name ?? '') : '미수집',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppTextStyles.tag13Bold.copyWith(
+                  color: collected ? AppColors.ink : AppColors.uncollected,
                 ),
               ),
-              SizedBox(width: 8.w),
-              _stateMarker(),
+              SizedBox(height: 4.h),
+              Text(
+                item.category.label,
+                style: AppTextStyles.caption14.copyWith(
+                  color: collected ? item.category.dark : AppColors.uncollected,
+                ),
+              ),
             ],
           ),
         ),
@@ -311,8 +308,8 @@ class _CatalogListItem extends StatelessWidget {
   Widget _thumbnail() {
     if (!item.collected) {
       return Container(
-        width: 56.w,
-        height: 56.w,
+        width: 64.w,
+        height: 64.w,
         decoration: const BoxDecoration(
           shape: BoxShape.circle,
           color: AppColors.surface,
@@ -328,22 +325,8 @@ class _CatalogListItem extends StatelessWidget {
       imageUrl: item.imageUrl,
       code: item.code,
       category: item.category,
-      size: 56.w,
+      size: 64.w,
       circle: true,
-    );
-  }
-
-  Widget _stateMarker() {
-    if (!item.collected) {
-      return Text(
-        '?',
-        style: AppTextStyles.display19.copyWith(color: AppColors.uncollected),
-      );
-    }
-    return Icon(
-      Icons.check_circle_rounded,
-      color: item.category.color,
-      size: 28.w,
     );
   }
 }
@@ -353,34 +336,28 @@ class _CollectionListSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
+    return GridView.builder(
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: 8,
-      separatorBuilder: (context, index) => SizedBox(height: 10.h),
+      gridDelegate: _gridDelegate(),
+      itemCount: 9,
       itemBuilder: (context, index) => Container(
-        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+        padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 10.h),
         decoration: BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(AppRadius.sm.r),
         ),
-        child: Row(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             AppSkeleton(
-              width: 56.w,
-              height: 56.w,
-              borderRadius: BorderRadius.circular(28.r),
+              width: 64.w,
+              height: 64.w,
+              borderRadius: BorderRadius.circular(32.r),
             ),
-            SizedBox(width: 12.w),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AppSkeleton(width: 100.w, height: 18.h),
-                  SizedBox(height: 6.h),
-                  AppSkeleton(width: 60.w, height: 14.h),
-                ],
-              ),
-            ),
+            SizedBox(height: 8.h),
+            AppSkeleton(width: 56.w, height: 13.h),
+            SizedBox(height: 6.h),
+            AppSkeleton(width: 32.w, height: 12.h),
           ],
         ),
       ),

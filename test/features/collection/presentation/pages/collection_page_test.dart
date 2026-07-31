@@ -235,7 +235,7 @@ void main() {
       expect(find.text('수달'), findsNothing);
       expect(_badgeText('4/5'), findsOneWidget);
 
-      await tester.fling(find.byType(ListView), const Offset(0, 300), 1000);
+      await tester.fling(find.byType(GridView), const Offset(0, 300), 1000);
       await tester.pumpAndSettle();
 
       expect(find.text('수달'), findsOneWidget);
