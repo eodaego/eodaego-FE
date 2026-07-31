@@ -14,6 +14,7 @@ part 'catalog_remote_datasource.g.dart';
 /// - `GET /api/1/catalog` - 도감 목록 조회 (JWT 필요)
 /// - `GET /api/1/catalog/{catalogItemId}` - 도감 상세 조회 (JWT 필요)
 /// - `GET /api/1/catalog/summary` - 수집 현황 요약 (JWT 필요)
+/// - `POST /api/1/catalog/{catalogItemId}/collect` - 도감 항목 수집 (JWT 필요)
 @RestApi()
 abstract class CatalogRemoteDataSource {
   factory CatalogRemoteDataSource(Dio dio) = _CatalogRemoteDataSource;
@@ -43,4 +44,12 @@ abstract class CatalogRemoteDataSource {
   /// - 401: 인증 실패
   @GET(ApiEndpoints.catalogSummary)
   Future<CatalogSummaryModel> getCatalogSummary();
+
+  /// 도감 항목 수집
+  ///
+  /// - 204: 수집 성공 (본문 없음)
+  /// - 404: 존재하지 않는 항목 (CATALOG_ITEM_NOT_FOUND)
+  /// - 409: 이미 수집한 항목 (CATALOG_ITEM_ALREADY_COLLECTED)
+  @POST(ApiEndpoints.catalogCollect)
+  Future<void> collectCatalogItem(@Path('catalogItemId') String catalogItemId);
 }

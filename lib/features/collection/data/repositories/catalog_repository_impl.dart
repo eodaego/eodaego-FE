@@ -154,6 +154,19 @@ class CatalogRepositoryImpl implements CatalogRepository {
     }
   }
 
+  @override
+  Future<void> collectCatalogItem(String catalogItemId) async {
+    try {
+      await _dataSource.collectCatalogItem(catalogItemId);
+
+      if (kDebugMode) {
+        debugPrint('[Catalog] ✅ 도감 항목 수집: $catalogItemId');
+      }
+    } on DioException catch (e) {
+      throw DioExceptionHandler.handle(e);
+    }
+  }
+
   // Formats an ISO 8601 timestamp into the display format `2026.07.05`.
   // ISO 8601 시각을 표시용 `2026.07.05` 포맷으로 바꾼다.
   //

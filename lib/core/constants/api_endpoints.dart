@@ -32,6 +32,9 @@ class ApiEndpoints {
   static const String catalogSummary = '$_v1/catalog/summary';
   static const String catalogDetail = '$_v1/catalog/{catalogItemId}';
 
+  /// 도감 항목 수집 (POST, 204 no body). 이미 수집이면 409.
+  static const String catalogCollect = '$_v1/catalog/{catalogItemId}/collect';
+
   // Weather — 백엔드가 내부망 AI 서버에서 받아 중계한다.
   // 장소는 어린이대공원 하나뿐이라 파라미터가 없다.
   static const String weatherCurrent = '$_v1/weather/current';

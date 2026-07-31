@@ -17,4 +17,11 @@ abstract class CatalogRepository {
 
   /// 수집 현황 요약을 조회한다.
   Future<CatalogSummaryEntity> getCatalogSummary();
+
+  /// 도감 항목을 수집 처리한다.
+  ///
+  /// **주의**: 이미 수집한 항목이면 서버가 409
+  /// (`CATALOG_ITEM_ALREADY_COLLECTED`)로 거부한다 — 성공으로 취급할지는
+  /// 호출부가 결정한다.
+  Future<void> collectCatalogItem(String catalogItemId);
 }

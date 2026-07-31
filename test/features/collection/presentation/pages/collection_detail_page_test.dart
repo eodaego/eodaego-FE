@@ -40,6 +40,9 @@ class _FakeCatalogRepository implements CatalogRepository {
         collectionRate: 0,
         collectedByCategory: {},
       );
+
+  @override
+  Future<void> collectCatalogItem(String catalogItemId) async {}
 }
 
 Widget _wrap(Widget child, _FakeCatalogRepository repository) {

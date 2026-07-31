@@ -114,4 +114,11 @@ class CatalogMockDataSource implements CatalogRemoteDataSource {
     if (total == 0) return 0;
     return double.parse((collected / total * 100).toStringAsFixed(1));
   }
+
+  /// 수집 처리 — no-op.
+  ///
+  /// 퀴즈 문항 6개(A001~A003, P001~P003)가 목 데이터에서 전부 이미 수집
+  /// 상태라, 실서버의 "이미 수집(409) → 성공 취급" 경로와 동작이 같다.
+  @override
+  Future<void> collectCatalogItem(String catalogItemId) async {}
 }

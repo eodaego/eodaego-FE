@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:eodaego/core/constants/dogam_category.dart';
 import 'package:eodaego/core/errors/app_exception.dart';
 import 'package:eodaego/features/collection/data/datasources/catalog_remote_datasource.dart';
@@ -14,11 +15,18 @@ class _FakeCatalogDataSource implements CatalogRemoteDataSource {
     this.list = const CatalogListResponseModel(),
     this.detail,
     this.summary = const CatalogSummaryModel(),
+    this.collectError,
   });
 
   final CatalogListResponseModel list;
   final CatalogItemDetailModel? detail;
   final CatalogSummaryModel summary;
+
+  /// collect 호출 시 던질 에러 — null이면 실서버 204처럼 정상 완료한다.
+  final Object? collectError;
+
+  /// collect가 받은 catalogItemId 기록 — 관찰 가능한 경계 상태.
+  final collectedIds = <String>[];
 
   @override
   Future<CatalogListResponseModel> getCatalog() async => list;
@@ -29,6 +37,12 @@ class _FakeCatalogDataSource implements CatalogRemoteDataSource {
 
   @override
   Future<CatalogSummaryModel> getCatalogSummary() async => summary;
+
+  @override
+  Future<void> collectCatalogItem(String catalogItemId) async {
+    if (collectError != null) throw collectError!;
+    collectedIds.add(catalogItemId);
+  }
 }
 
 void main() {
@@ -229,5 +243,48 @@ void main() {
         expect(summary.collectedByCategory.length, 1);
       },
     );
+  });
+
+  group('collectCatalogItem', () {
+    test('passes_item_id_to_the_server_when_collect_succeeds', () async {
+      final dataSource = _FakeCatalogDataSource();
+      final repository = CatalogRepositoryImpl(dataSource);
+
+      await repository.collectCatalogItem('item-a001');
+
+      expect(dataSource.collectedIds, ['item-a001']);
+    });
+
+    test('converts_409_conflict_into_server_exception_with_backend_code',
+        () async {
+      final requestOptions = RequestOptions(path: '/api/1/catalog/item-a001/collect');
+      final repository = CatalogRepositoryImpl(
+        _FakeCatalogDataSource(
+          collectError: DioException(
+            requestOptions: requestOptions,
+            type: DioExceptionType.badResponse,
+            response: Response(
+              requestOptions: requestOptions,
+              statusCode: 409,
+              data: {
+                'errorCode': 'CATALOG_ITEM_ALREADY_COLLECTED',
+                'errorMessage': '이미 수집한 도감 항목이에요.',
+              },
+            ),
+          ),
+        ),
+      );
+
+      await expectLater(
+        repository.collectCatalogItem('item-a001'),
+        throwsA(
+          isA<ServerException>().having(
+            (e) => e.code,
+            'code',
+            'CATALOG_ITEM_ALREADY_COLLECTED',
+          ),
+        ),
+      );
+    });
   });
 }
