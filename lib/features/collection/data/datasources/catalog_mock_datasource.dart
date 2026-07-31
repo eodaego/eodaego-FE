@@ -118,7 +118,8 @@ class CatalogMockDataSource implements CatalogRemoteDataSource {
   /// 수집 처리 — no-op.
   ///
   /// 퀴즈 문항 6개(A001~A003, P001~P003)가 목 데이터에서 전부 이미 수집
-  /// 상태라, 실서버의 "이미 수집(409) → 성공 취급" 경로와 동작이 같다.
+  /// 상태라, 호출부 provider가 로컬 pre-check에서 스킵한다. 이 메서드는
+  /// 인터페이스 충족용이며 실제로 불릴 일이 없다.
   @override
   Future<void> collectCatalogItem(String catalogItemId) async {}
 }

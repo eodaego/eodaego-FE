@@ -20,9 +20,7 @@ class _FakeCatalogRepository implements CatalogRepository {
   @override
   Future<List<CatalogItemEntity>> getCatalogItems() async => [
     for (final item in items)
-      collectedIds.contains(item.id)
-          ? item.copyWith(collected: true)
-          : item,
+      collectedIds.contains(item.id) ? item.copyWith(collected: true) : item,
   ];
 
   @override
@@ -55,9 +53,7 @@ const _uncollectedOtter = CatalogItemEntity(
 void main() {
   ProviderContainer makeContainer(CatalogRepository repository) {
     final container = ProviderContainer(
-      overrides: [
-        catalogRepositoryProvider.overrideWith((ref) => repository),
-      ],
+      overrides: [catalogRepositoryProvider.overrideWith((ref) => repository)],
     );
     addTearDown(container.dispose);
     return container;

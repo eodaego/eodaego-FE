@@ -255,36 +255,40 @@ void main() {
       expect(dataSource.collectedIds, ['item-a001']);
     });
 
-    test('converts_409_conflict_into_server_exception_with_backend_code',
-        () async {
-      final requestOptions = RequestOptions(path: '/api/1/catalog/item-a001/collect');
-      final repository = CatalogRepositoryImpl(
-        _FakeCatalogDataSource(
-          collectError: DioException(
-            requestOptions: requestOptions,
-            type: DioExceptionType.badResponse,
-            response: Response(
+    test(
+      'converts_409_conflict_into_server_exception_with_backend_code',
+      () async {
+        final requestOptions = RequestOptions(
+          path: '/api/1/catalog/item-a001/collect',
+        );
+        final repository = CatalogRepositoryImpl(
+          _FakeCatalogDataSource(
+            collectError: DioException(
               requestOptions: requestOptions,
-              statusCode: 409,
-              data: {
-                'errorCode': 'CATALOG_ITEM_ALREADY_COLLECTED',
-                'errorMessage': '이미 수집한 도감 항목이에요.',
-              },
+              type: DioExceptionType.badResponse,
+              response: Response(
+                requestOptions: requestOptions,
+                statusCode: 409,
+                data: {
+                  'errorCode': 'CATALOG_ITEM_ALREADY_COLLECTED',
+                  'errorMessage': '이미 수집한 도감 항목이에요.',
+                },
+              ),
             ),
           ),
-        ),
-      );
+        );
 
-      await expectLater(
-        repository.collectCatalogItem('item-a001'),
-        throwsA(
-          isA<ServerException>().having(
-            (e) => e.code,
-            'code',
-            'CATALOG_ITEM_ALREADY_COLLECTED',
+        await expectLater(
+          repository.collectCatalogItem('item-a001'),
+          throwsA(
+            isA<ServerException>().having(
+              (e) => e.code,
+              'code',
+              'CATALOG_ITEM_ALREADY_COLLECTED',
+            ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
   });
 }

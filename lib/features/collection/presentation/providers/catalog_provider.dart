@@ -73,6 +73,10 @@ Future<CatalogSummaryEntity> catalogSummary(Ref ref) {
 /// **주의**: 모르는 code·이미 수집한 항목은 조용히 스킵하고, 서버 409
 /// (`CATALOG_ITEM_ALREADY_COLLECTED`)는 성공으로 취급한다. 그 외 실패는
 /// AsyncError로 남는다 — 부가 흐름이라 화면은 error 상태를 그리지 않는다.
+///
+/// **주의**: 게스트 호출 금지 — 토큰이 없어 첫 `GET /catalog`부터 401이
+/// 나고, 인증 인터셉터가 세션 만료로 오인해 강제 로그아웃시킨다(56e947b).
+/// 호출부가 게스트 가드를 책임진다.
 @riverpod
 Future<void> collectCatalogItemByCode(Ref ref, String code) async {
   // Read once — watching would re-run this via the invalidate below.
@@ -86,7 +90,11 @@ Future<void> collectCatalogItemByCode(Ref ref, String code) async {
       break;
     }
   }
-  if (item == null || item.collected) return;
+  if (item == null) {
+    debugPrint('[Catalog] ⚠️ 수집 대상 code를 찾지 못했어요: $code');
+    return;
+  }
+  if (item.collected) return;
 
   try {
     await ref.read(catalogRepositoryProvider).collectCatalogItem(item.id);

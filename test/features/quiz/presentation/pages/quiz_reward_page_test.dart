@@ -16,8 +16,7 @@ import 'package:flutter_test/flutter_test.dart';
 /// "요청 자체가 없었다"를 증명한다 (56e947b 회귀 방지).
 class _ThrowingCatalogRepository implements CatalogRepository {
   @override
-  dynamic noSuchMethod(Invocation invocation) =>
-      super.noSuchMethod(invocation);
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 
   @override
   Future<CatalogSummaryEntity> getCatalogSummary() async {
@@ -31,18 +30,24 @@ class _FakeCatalogRepository implements CatalogRepository {
   final CatalogSummaryEntity summary;
   final List<CatalogItemEntity> items;
 
+  /// getCatalogItems 호출 횟수 기록 — 게스트가 도감 조회 자체를 안 하는지 검증.
+  /// Records list-fetch calls — proves guests never even query the catalog.
+  int catalogItemsCalls = 0;
+
   /// collect가 받은 catalogItemId 기록 — 관찰 가능한 경계 상태.
   final collectedIds = <String>[];
 
   @override
-  dynamic noSuchMethod(Invocation invocation) =>
-      super.noSuchMethod(invocation);
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 
   @override
   Future<CatalogSummaryEntity> getCatalogSummary() async => summary;
 
   @override
-  Future<List<CatalogItemEntity>> getCatalogItems() async => items;
+  Future<List<CatalogItemEntity>> getCatalogItems() async {
+    catalogItemsCalls++;
+    return items;
+  }
 
   @override
   Future<void> collectCatalogItem(String catalogItemId) async {
@@ -193,6 +198,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(repository.collectedIds, isEmpty);
+      expect(repository.catalogItemsCalls, 0);
     });
   });
 }
