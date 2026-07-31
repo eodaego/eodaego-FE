@@ -66,6 +66,8 @@ void main() {
   test('collects_item_and_refreshes_catalog_and_summary', () async {
     final repository = _FakeCatalogRepository(items: [_uncollectedOtter]);
     final container = makeContainer(repository);
+    // Reproduce a watching screen — keep the autoDispose caches alive so
+    // stale values would survive without the invalidate calls.
     // 화면이 보고 있는 상황 재현 — autoDispose 캐시를 유지해서
     // "invalidate 없이는 옛 값이 남는다"를 검증 가능하게 만든다.
     container.listen(catalogItemsProvider, (_, _) {});
@@ -116,6 +118,7 @@ void main() {
     );
     final container = makeContainer(repository);
 
+    // Completion without exception itself is the assertion.
     // 예외 없이 완료되는 것 자체가 검증이다.
     await container.read(collectCatalogItemByCodeProvider('A001').future);
 
