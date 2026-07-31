@@ -1,5 +1,6 @@
 import 'package:eodaego/core/constants/dogam_category.dart';
 import 'package:eodaego/core/providers/guest_mode_provider.dart';
+import 'package:eodaego/features/collection/domain/entities/catalog_item_entity.dart';
 import 'package:eodaego/features/collection/domain/entities/catalog_summary_entity.dart';
 import 'package:eodaego/features/collection/domain/repositories/catalog_repository.dart';
 import 'package:eodaego/features/collection/presentation/providers/catalog_provider.dart';
@@ -25,9 +26,13 @@ class _ThrowingCatalogRepository implements CatalogRepository {
 }
 
 class _FakeCatalogRepository implements CatalogRepository {
-  const _FakeCatalogRepository(this.summary);
+  _FakeCatalogRepository(this.summary, {this.items = const []});
 
   final CatalogSummaryEntity summary;
+  final List<CatalogItemEntity> items;
+
+  /// collect가 받은 catalogItemId 기록 — 관찰 가능한 경계 상태.
+  final collectedIds = <String>[];
 
   @override
   dynamic noSuchMethod(Invocation invocation) =>
@@ -35,6 +40,14 @@ class _FakeCatalogRepository implements CatalogRepository {
 
   @override
   Future<CatalogSummaryEntity> getCatalogSummary() async => summary;
+
+  @override
+  Future<List<CatalogItemEntity>> getCatalogItems() async => items;
+
+  @override
+  Future<void> collectCatalogItem(String catalogItemId) async {
+    collectedIds.add(catalogItemId);
+  }
 }
 
 // 실 mock/quiz.json 대신 고정 문항 하나만 쓴다. rootBundle을 거치는 실
@@ -94,8 +107,8 @@ void main() {
       await tester.pumpWidget(
         _wrap(
           isGuest: false,
-          repository: const _FakeCatalogRepository(
-            CatalogSummaryEntity(
+          repository: _FakeCatalogRepository(
+            const CatalogSummaryEntity(
               totalCount: 24,
               collectedCount: 9,
               collectionRate: 37.5,
@@ -114,8 +127,8 @@ void main() {
       await tester.pumpWidget(
         _wrap(
           isGuest: false,
-          repository: const _FakeCatalogRepository(
-            CatalogSummaryEntity(
+          repository: _FakeCatalogRepository(
+            const CatalogSummaryEntity(
               totalCount: 1,
               collectedCount: 1,
               collectionRate: 100,
@@ -132,6 +145,54 @@ void main() {
       expect(find.text('정답이에요!'), findsOneWidget);
       expect(find.text('수달'), findsOneWidget);
       expect(find.text('도감 보러 가기'), findsOneWidget);
+    });
+
+    testWidgets('보상 화면 진입 시 미수집 항목을 수집 처리한다', (tester) async {
+      _useDesignViewport(tester);
+      final repository = _FakeCatalogRepository(
+        const CatalogSummaryEntity(
+          totalCount: 24,
+          collectedCount: 9,
+          collectionRate: 37.5,
+          collectedByCategory: {},
+        ),
+        items: const [
+          CatalogItemEntity(
+            id: 'item-a001',
+            category: DogamCategory.animal,
+            collected: false,
+            code: 'A001',
+          ),
+        ],
+      );
+      await tester.pumpWidget(_wrap(isGuest: false, repository: repository));
+      await tester.pumpAndSettle();
+
+      expect(repository.collectedIds, ['item-a001']);
+    });
+
+    testWidgets('게스트는 수집 API를 호출하지 않는다', (tester) async {
+      _useDesignViewport(tester);
+      final repository = _FakeCatalogRepository(
+        const CatalogSummaryEntity(
+          totalCount: 24,
+          collectedCount: 9,
+          collectionRate: 37.5,
+          collectedByCategory: {},
+        ),
+        items: const [
+          CatalogItemEntity(
+            id: 'item-a001',
+            category: DogamCategory.animal,
+            collected: false,
+            code: 'A001',
+          ),
+        ],
+      );
+      await tester.pumpWidget(_wrap(isGuest: true, repository: repository));
+      await tester.pumpAndSettle();
+
+      expect(repository.collectedIds, isEmpty);
     });
   });
 }

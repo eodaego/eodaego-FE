@@ -61,6 +61,15 @@ class _RewardBody extends ConsumerWidget {
     // 빌드하지 않으므로 그 안의 watch도 실행되지 않는다.
     final isGuest = ref.watch(guestModeProvider);
 
+    // Fire the collect on entry. Guests are excluded — they have no token,
+    // and a 401 here would trip the forced-logout path (same guard as below).
+    // 진입 시 수집을 발화한다. 게스트 제외 — 토큰이 없어 401이 나면
+    // 강제 로그아웃 경로를 탄다(아래 진행률 줄과 같은 가드).
+    final code = question.code;
+    if (!isGuest && code != null) {
+      ref.watch(collectCatalogItemByCodeProvider(code));
+    }
+
     return Stack(
       children: [
         Padding(
