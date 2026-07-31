@@ -5,19 +5,19 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_urls.dart';
-import '../../../../core/constants/dogam_category.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/providers/guest_mode_provider.dart';
 import '../../../../core/providers/selected_course_provider.dart';
+import '../../../../core/utils/kst_clock.dart';
 import '../../../../core/utils/url_launcher_util.dart';
-import '../../../../core/widgets/app_badge.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_skeleton.dart';
 import '../../../../core/widgets/weather_icons.dart';
 import '../../../../router/route_paths.dart';
 import '../../../collection/domain/entities/catalog_summary_entity.dart';
 import '../../../collection/presentation/providers/catalog_provider.dart';
+import '../../../weather/domain/entities/weather_entity.dart';
 import '../../../weather/presentation/providers/weather_provider.dart';
 
 /// 홈 (A안) — 날씨·혼잡도 바 + 오늘의 추천 코스 프리뷰 + 도감 요약 + 공식 사이트.
@@ -56,7 +56,7 @@ class HomePage extends StatelessWidget {
                 ],
               ),
               SizedBox(height: 14.h),
-              const _WeatherBar(),
+              const _WeatherCard(),
               SizedBox(height: 14.h),
               const _CoursePreviewCard(),
               SizedBox(height: 14.h),
@@ -76,12 +76,12 @@ class HomePage extends StatelessWidget {
   }
 }
 
-/// 오늘 공원 날씨 — 탭하면 상세로 간다.
+/// 오늘 공원 날씨 카드 — 탭하면 상세로 간다.
 ///
-/// 혼잡도는 서버 API가 없어 넣지 않는다. 실데이터 옆에 목업을 두면 바 전체의
-/// 신뢰가 깎이고, 뱃지를 눌러도 날씨가 뜨는 어긋남이 생긴다.
-class _WeatherBar extends ConsumerWidget {
-  const _WeatherBar();
+/// 혼잡도·미세먼지는 서버 API가 없어 넣지 않는다. 실데이터 옆에 목업을 두면
+/// 카드 전체의 신뢰가 깎인다.
+class _WeatherCard extends ConsumerWidget {
+  const _WeatherCard();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -94,25 +94,19 @@ class _WeatherBar extends ConsumerWidget {
     return Material(
       color: AppColors.surface,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppRadius.md.r),
+        borderRadius: BorderRadius.circular(AppRadius.lg.r),
         side: const BorderSide(color: AppColors.line),
       ),
       child: InkWell(
-        borderRadius: BorderRadius.circular(AppRadius.md.r),
+        borderRadius: BorderRadius.circular(AppRadius.lg.r),
         onTap: () => context.push(RoutePaths.weather),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+          padding: EdgeInsets.all(16.w),
           child: ref
               .watch(currentWeatherProvider)
               .when(
-                loading: () => Row(
-                  children: [
-                    AppSkeleton(width: 22.w, height: 22.w),
-                    SizedBox(width: 8.w),
-                    AppSkeleton(width: 96.w, height: 20.h),
-                  ],
-                ),
-                // 홈에는 다른 콘텐츠가 있다. 바 안에서만 조용히 알린다.
+                loading: () => const _WeatherCardSkeleton(),
+                // 홈에는 다른 콘텐츠가 있다. 카드 안에서만 조용히 알린다.
                 error: (_, _) => Row(
                   children: [
                     Icon(
@@ -129,36 +123,7 @@ class _WeatherBar extends ConsumerWidget {
                     ),
                   ],
                 ),
-                data: (weather) => Row(
-                  children: [
-                    Icon(
-                      weatherIcon(
-                        sky: weather.sky,
-                        precipitation: weather.precipitation,
-                      ),
-                      size: 22.w,
-                      color: AppColors.muted,
-                    ),
-                    SizedBox(width: 8.w),
-                    Expanded(
-                      child: Text(
-                        // 아이 동반 나들이 앱이라 소수점은 읽는 부담만 된다.
-                        // 원본 값은 상세 화면에 있다.
-                        '${weather.conditionLabel} ${weather.temperature.round()}°',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: AppTextStyles.label16Semibold.copyWith(
-                          color: AppColors.ink,
-                        ),
-                      ),
-                    ),
-                    Icon(
-                      Icons.chevron_right,
-                      size: 20.w,
-                      color: AppColors.muted,
-                    ),
-                  ],
-                ),
+                data: (weather) => _WeatherCardData(weather: weather),
               ),
         ),
       ),
@@ -166,7 +131,97 @@ class _WeatherBar extends ConsumerWidget {
   }
 }
 
-/// 오늘의 추천 코스 프리뷰 — 탭/CTA 모두 지도 탭 이동 (게이트 없음, 스펙 §4.2).
+/// 날씨 카드 본문 — 아이콘 + 조건 라벨 + 큰 기온, 아래 오늘 최고/최저·습도 한 줄.
+///
+/// 최고/최저는 [WeatherEntity.todayRange]가 null이면(오늘 슬롯이 없으면) 그
+/// 줄 자체를 그리지 않는다 — `0° / 0°`로 거짓 표시하지 않는다.
+class _WeatherCardData extends StatelessWidget {
+  const _WeatherCardData({required this.weather});
+
+  final WeatherEntity weather;
+
+  @override
+  Widget build(BuildContext context) {
+    final range = weather.todayRange(nowKst());
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(
+              weatherIcon(
+                sky: weather.sky,
+                precipitation: weather.precipitation,
+              ),
+              size: 32.w,
+              color: AppColors.primaryDark,
+            ),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    weather.conditionLabel,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.label16Semibold.copyWith(
+                      color: AppColors.muted,
+                    ),
+                  ),
+                  Text(
+                    '${weather.temperature.round()}°',
+                    style: AppTextStyles.display34.copyWith(
+                      color: AppColors.ink,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right, size: 20.w, color: AppColors.muted),
+          ],
+        ),
+        if (range != null) ...[
+          SizedBox(height: 10.h),
+          Text(
+            '최고 ${range.max.round()}° · 최저 ${range.min.round()}° · 습도 ${weather.humidity}%',
+            style: AppTextStyles.body15.copyWith(color: AppColors.muted),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+/// 날씨 카드 로딩 — 아이콘·기온 자리만 스켈레톤.
+class _WeatherCardSkeleton extends StatelessWidget {
+  const _WeatherCardSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AppSkeleton(width: 32.w, height: 32.w),
+        SizedBox(width: 12.w),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AppSkeleton(width: 64.w, height: 16.h),
+              SizedBox(height: 6.h),
+              AppSkeleton(width: 96.w, height: 34.h),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// 추천 코스 카드 — 코스 씬 이미지 + 코스명 + CTA. 탭/CTA 모두 지도 탭 이동
+/// (게이트 없음, 스펙 §4.2).
 class _CoursePreviewCard extends ConsumerWidget {
   const _CoursePreviewCard();
 
@@ -188,38 +243,27 @@ class _CoursePreviewCard extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                '오늘의 추천 코스',
-                style: AppTextStyles.display16.copyWith(
-                  color: AppColors.primaryDark,
+              // errorBuilder는 Image의 width/height를 물려받지 않는다 — 에셋이
+              // 없으면(데모 당일 가능) 진짜로 자리를 차지하지 않고 텍스트만
+              // 남는다. AspectRatio로 감싸면 이 collapse가 깨진다.
+              ClipRRect(
+                borderRadius: BorderRadius.circular(AppRadius.sm.r),
+                child: Image.asset(
+                  'assets/images/course/today.png',
+                  width: double.infinity,
+                  height: 140.h,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, _, _) => const SizedBox.shrink(),
                 ),
               ),
-              SizedBox(height: 8.h),
+              SizedBox(height: 12.h),
               Text(
                 course.title,
                 style: AppTextStyles.display19.copyWith(color: AppColors.ink),
               ),
-              SizedBox(height: 10.h),
-              Row(
-                children: [
-                  AppBadge.category(course.category, label: course.tagLabel),
-                  SizedBox(width: 6.w),
-                  AppBadge(
-                    label: course.durationLabel,
-                    background: AppColors.surfaceDim,
-                    foreground: AppColors.muted,
-                  ),
-                  SizedBox(width: 6.w),
-                  AppBadge(
-                    label: '${course.places.length}곳',
-                    background: AppColors.surfaceDim,
-                    foreground: AppColors.muted,
-                  ),
-                ],
-              ),
               SizedBox(height: 16.h),
               AppButton.reward(
-                text: '코스 보러 가기',
+                text: '코스 보기',
                 width: double.infinity,
                 height: 52.h,
                 // 카드(radius 24) 내부 버튼은 radius 12 (동심원 규칙)
@@ -301,7 +345,7 @@ class _DogamProgressCard extends ConsumerWidget {
   }
 }
 
-/// 도감 진행률 카드 본문 — 제목 + 뱃지 + 게이지 + 카테고리별 카운트.
+/// 도감 진행률 카드 본문 — 큰 백분율 + `수집/전체` + 게이지(노랑 채움) + 마스코트.
 class _DogamProgressData extends StatelessWidget {
   const _DogamProgressData({required this.summary});
 
@@ -313,41 +357,54 @@ class _DogamProgressData extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              '나의 도감',
-              style: AppTextStyles.display16.copyWith(color: AppColors.ink),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '나의 도감',
+                    style: AppTextStyles.display16.copyWith(
+                      color: AppColors.ink,
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  Text(
+                    // 서버가 반올림한 백분율을 그대로 쓴다
+                    '${summary.collectionRate.round()}%',
+                    style: AppTextStyles.display34.copyWith(
+                      color: AppColors.primaryDark,
+                    ),
+                  ),
+                  SizedBox(height: 4.h),
+                  Text(
+                    '${summary.collectedCount} / ${summary.totalCount}',
+                    style: AppTextStyles.body15.copyWith(
+                      color: AppColors.muted,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            const Spacer(),
-            AppBadge(
-              label: '${summary.collectedCount}/${summary.totalCount}',
-              background: AppColors.primaryTint,
-              foreground: AppColors.primaryDark,
+            // 마스코트 에셋이 없으면(데모 당일 가능) 자리를 차지하지 않는다.
+            Image.asset(
+              'assets/images/mascot/celebrate.png',
+              width: 64.w,
+              height: 64.w,
+              errorBuilder: (_, _, _) => const SizedBox.shrink(),
             ),
           ],
         ),
-        SizedBox(height: 12.h),
+        SizedBox(height: 14.h),
         ClipRRect(
           borderRadius: BorderRadius.circular(AppRadius.full),
           child: LinearProgressIndicator(
             minHeight: 10.h,
-            // 서버가 반올림한 백분율을 그대로 쓴다
             value: summary.collectionRate / 100,
-            backgroundColor: AppColors.primaryTint,
-            color: AppColors.primary,
+            backgroundColor: AppColors.surfaceDim,
+            color: AppColors.reward,
           ),
-        ),
-        SizedBox(height: 12.h),
-        Row(
-          children: [
-            for (final c in DogamCategory.values) ...[
-              AppBadge.category(
-                c,
-                label: '${c.label} ${summary.collectedByCategory[c] ?? 0}',
-              ),
-              if (c != DogamCategory.values.last) SizedBox(width: 8.w),
-            ],
-          ],
         ),
       ],
     );
@@ -363,30 +420,19 @@ class _DogamProgressSkeleton extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Text(
-              '나의 도감',
-              style: AppTextStyles.display16.copyWith(color: AppColors.ink),
-            ),
-            const Spacer(),
-            AppSkeleton(width: 52.w, height: 22.h),
-          ],
+        Text(
+          '나의 도감',
+          style: AppTextStyles.display16.copyWith(color: AppColors.ink),
         ),
-        SizedBox(height: 12.h),
+        SizedBox(height: 8.h),
+        AppSkeleton(width: 96.w, height: 34.h),
+        SizedBox(height: 4.h),
+        AppSkeleton(width: 64.w, height: 18.h),
+        SizedBox(height: 14.h),
         AppSkeleton(
           width: double.infinity,
           height: 10.h,
           borderRadius: BorderRadius.circular(AppRadius.full),
-        ),
-        SizedBox(height: 12.h),
-        Row(
-          children: [
-            for (var i = 0; i < 3; i++) ...[
-              AppSkeleton(width: 64.w, height: 24.h),
-              if (i < 2) SizedBox(width: 8.w),
-            ],
-          ],
         ),
       ],
     );

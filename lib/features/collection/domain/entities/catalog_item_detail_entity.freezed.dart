@@ -25,6 +25,9 @@ mixin _$CatalogItemDetailEntity {
   String? get imageUrl => throw _privateConstructorUsedError;
   String? get collectedAt => throw _privateConstructorUsedError;
 
+  /// 에셋 코드 — 일러스트 파일명(`A001.png`)으로 쓰인다. 없으면 카테고리 아이콘으로 대체
+  String? get code => throw _privateConstructorUsedError;
+
   /// Create a copy of CatalogItemDetailEntity
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -47,6 +50,7 @@ abstract class $CatalogItemDetailEntityCopyWith<$Res> {
     String childDescription,
     String? imageUrl,
     String? collectedAt,
+    String? code,
   });
 }
 
@@ -75,6 +79,7 @@ class _$CatalogItemDetailEntityCopyWithImpl<
     Object? childDescription = null,
     Object? imageUrl = freezed,
     Object? collectedAt = freezed,
+    Object? code = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -106,6 +111,10 @@ class _$CatalogItemDetailEntityCopyWithImpl<
                 ? _value.collectedAt
                 : collectedAt // ignore: cast_nullable_to_non_nullable
                       as String?,
+            code: freezed == code
+                ? _value.code
+                : code // ignore: cast_nullable_to_non_nullable
+                      as String?,
           )
           as $Val,
     );
@@ -129,6 +138,7 @@ abstract class _$$CatalogItemDetailEntityImplCopyWith<$Res>
     String childDescription,
     String? imageUrl,
     String? collectedAt,
+    String? code,
   });
 }
 
@@ -157,6 +167,7 @@ class __$$CatalogItemDetailEntityImplCopyWithImpl<$Res>
     Object? childDescription = null,
     Object? imageUrl = freezed,
     Object? collectedAt = freezed,
+    Object? code = freezed,
   }) {
     return _then(
       _$CatalogItemDetailEntityImpl(
@@ -188,6 +199,10 @@ class __$$CatalogItemDetailEntityImplCopyWithImpl<$Res>
             ? _value.collectedAt
             : collectedAt // ignore: cast_nullable_to_non_nullable
                   as String?,
+        code: freezed == code
+            ? _value.code
+            : code // ignore: cast_nullable_to_non_nullable
+                  as String?,
       ),
     );
   }
@@ -204,6 +219,7 @@ class _$CatalogItemDetailEntityImpl implements _CatalogItemDetailEntity {
     required this.childDescription,
     this.imageUrl,
     this.collectedAt,
+    this.code,
   });
 
   @override
@@ -221,9 +237,13 @@ class _$CatalogItemDetailEntityImpl implements _CatalogItemDetailEntity {
   @override
   final String? collectedAt;
 
+  /// 에셋 코드 — 일러스트 파일명(`A001.png`)으로 쓰인다. 없으면 카테고리 아이콘으로 대체
+  @override
+  final String? code;
+
   @override
   String toString() {
-    return 'CatalogItemDetailEntity(id: $id, name: $name, category: $category, feature: $feature, childDescription: $childDescription, imageUrl: $imageUrl, collectedAt: $collectedAt)';
+    return 'CatalogItemDetailEntity(id: $id, name: $name, category: $category, feature: $feature, childDescription: $childDescription, imageUrl: $imageUrl, collectedAt: $collectedAt, code: $code)';
   }
 
   @override
@@ -241,7 +261,8 @@ class _$CatalogItemDetailEntityImpl implements _CatalogItemDetailEntity {
             (identical(other.imageUrl, imageUrl) ||
                 other.imageUrl == imageUrl) &&
             (identical(other.collectedAt, collectedAt) ||
-                other.collectedAt == collectedAt));
+                other.collectedAt == collectedAt) &&
+            (identical(other.code, code) || other.code == code));
   }
 
   @override
@@ -254,6 +275,7 @@ class _$CatalogItemDetailEntityImpl implements _CatalogItemDetailEntity {
     childDescription,
     imageUrl,
     collectedAt,
+    code,
   );
 
   /// Create a copy of CatalogItemDetailEntity
@@ -277,6 +299,7 @@ abstract class _CatalogItemDetailEntity implements CatalogItemDetailEntity {
     required final String childDescription,
     final String? imageUrl,
     final String? collectedAt,
+    final String? code,
   }) = _$CatalogItemDetailEntityImpl;
 
   @override
@@ -293,6 +316,10 @@ abstract class _CatalogItemDetailEntity implements CatalogItemDetailEntity {
   String? get imageUrl;
   @override
   String? get collectedAt;
+
+  /// 에셋 코드 — 일러스트 파일명(`A001.png`)으로 쓰인다. 없으면 카테고리 아이콘으로 대체
+  @override
+  String? get code;
 
   /// Create a copy of CatalogItemDetailEntity
   /// with the given fields replaced by the non-null parameter values.

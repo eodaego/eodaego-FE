@@ -21,6 +21,9 @@ class CatalogItemDetailModel with _$CatalogItemDetailModel {
     /// 카테고리 원문 (`ANIMAL`/`PLANT`/`PLACE`)
     required String category,
 
+    /// 에셋 코드 — 일러스트 파일명(`A001.png`)으로 쓰인다. 서버가 생략하면 null
+    String? code,
+
     /// 특징 — 앱에서 한 줄 설명 자리에 쓴다
     @Default('') String feature,
 

@@ -1,7 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../../core/config/env_config.dart';
 import '../../../../core/network/dio_client.dart';
+import '../../data/datasources/catalog_mock_datasource.dart';
 import '../../data/datasources/catalog_remote_datasource.dart';
 import '../../data/repositories/catalog_repository_impl.dart';
 import '../../domain/entities/catalog_item_detail_entity.dart';
@@ -16,8 +19,16 @@ part 'catalog_provider.g.dart';
 // ============================================
 
 /// CatalogRemoteDataSource Provider (Retrofit)
+///
+/// `EnvConfig.useMockData`가 켜지면 [CatalogMockDataSource]로 바뀐다.
+/// 아래 [catalogRepositoryProvider]는 어느 쪽이든 같은 인터페이스만 보므로
+/// 수정할 필요가 없다.
 @riverpod
 CatalogRemoteDataSource catalogRemoteDataSource(Ref ref) {
+  if (EnvConfig.useMockData) {
+    debugPrint('[Mock] ✅ 도감 목 데이터 사용');
+    return CatalogMockDataSource();
+  }
   return CatalogRemoteDataSource(ref.watch(dioProvider));
 }
 

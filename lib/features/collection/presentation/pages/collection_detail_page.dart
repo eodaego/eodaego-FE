@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,6 +9,7 @@ import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/app_back_app_bar.dart';
 import '../../../../core/widgets/app_badge.dart';
 import '../../../../core/widgets/app_skeleton.dart';
+import '../../../../core/widgets/catalog_image.dart';
 import '../../domain/entities/catalog_item_detail_entity.dart';
 import '../../domain/entities/catalog_item_entity.dart';
 import '../providers/catalog_provider.dart';
@@ -45,14 +45,16 @@ class CollectionDetailPage extends ConsumerWidget {
       loading: () => _DetailScaffold(
         // 카테고리를 이미 아니까 색을 즉시 칠한다. 회색에서 컬러로 튀지 않는다.
         category: listItem?.category,
-        // 목록이 이미 들고 있는 사진을 그대로 써서 로딩 중 깜빡임을 막는다.
+        // 목록이 이미 들고 있는 코드·사진을 그대로 써서 로딩 중 깜빡임을 막는다.
         imageUrl: listItem?.imageUrl,
+        code: listItem?.code,
         collected: listItem?.collected ?? true,
         child: const _LoadingBody(),
       ),
       error: (_, _) => _DetailScaffold(
         category: listItem?.category,
         imageUrl: listItem?.imageUrl,
+        code: listItem?.code,
         collected: listItem?.collected ?? true,
         child: _ErrorBody(
           onRetry: () => ref.invalidate(catalogItemDetailProvider(itemId)),
@@ -61,6 +63,7 @@ class CollectionDetailPage extends ConsumerWidget {
       data: (detail) => _DetailScaffold(
         category: detail.category,
         imageUrl: detail.imageUrl,
+        code: detail.code,
         collected: true,
         child: _LoadedBody(detail: detail),
       ),
@@ -75,14 +78,16 @@ class _DetailScaffold extends StatelessWidget {
     required this.collected,
     this.category,
     this.imageUrl,
+    this.code,
   });
 
   final Widget child;
 
-  /// 히어로가 `?`(미수집)와 아이콘(사진 없음/실패)을 가르는 기준.
+  /// 히어로가 `?`(미수집)와 사진/아이콘(수집)을 가르는 기준.
   final bool collected;
   final DogamCategory? category;
   final String? imageUrl;
+  final String? code;
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +99,12 @@ class _DetailScaffold extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _Hero(category: category, imageUrl: imageUrl, collected: collected),
+            _Hero(
+              category: category,
+              imageUrl: imageUrl,
+              code: code,
+              collected: collected,
+            ),
             SizedBox(height: 16.h),
             child,
             SizedBox(height: 32.h),
@@ -105,43 +115,24 @@ class _DetailScaffold extends StatelessWidget {
   }
 }
 
-/// 사진 영역 — 사진이 있으면 사진, 없으면 미수집은 `?`, 수집인데 사진이
-/// 없거나(또는 실패) 카테고리만 아는 경우엔 아이콘 (spec §8).
+/// 사진 영역 — 카테고리 tint 배경 위에 미수집은 `?`, 수집은 `CatalogImage`
+/// (코드로 찾은 사진, 없거나 실패하면 카테고리 아이콘)를 올린다.
 class _Hero extends StatelessWidget {
-  const _Hero({required this.collected, this.category, this.imageUrl});
+  const _Hero({
+    required this.collected,
+    this.category,
+    this.imageUrl,
+    this.code,
+  });
 
   final bool collected;
   final DogamCategory? category;
   final String? imageUrl;
+  final String? code;
 
   @override
   Widget build(BuildContext context) {
     final radius = BorderRadius.circular(AppRadius.lg.r);
-    final url = imageUrl;
-
-    if (url != null && url.isNotEmpty) {
-      return ClipRRect(
-        borderRadius: radius,
-        child: CachedNetworkImage(
-          imageUrl: url,
-          height: 260.h,
-          width: double.infinity,
-          fit: BoxFit.cover,
-          errorWidget: (context, url, error) => _placeholder(radius),
-          // 로딩 중에는 스켈레톤을 보여준다 (spec §8)
-          placeholder: (context, url) => AppSkeleton(
-            width: double.infinity,
-            height: 260.h,
-            borderRadius: radius,
-          ),
-        ),
-      );
-    }
-
-    return _placeholder(radius);
-  }
-
-  Widget _placeholder(BorderRadius radius) {
     final c = category;
     return Container(
       height: 260.h,
@@ -160,7 +151,12 @@ class _Hero extends StatelessWidget {
               )
             : (c == null
                   ? const SizedBox.shrink()
-                  : Icon(c.icon, size: 72.w, color: c.color)),
+                  : CatalogImage(
+                      imageUrl: imageUrl,
+                      code: code,
+                      category: c,
+                      size: 120.w,
+                    )),
       ),
     );
   }

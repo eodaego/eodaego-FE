@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import '../../../../core/constants/dogam_category.dart';
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/network/dio_exception_handler.dart';
+import '../../../../core/utils/kst_clock.dart';
 import '../../domain/entities/catalog_item_detail_entity.dart';
 import '../../domain/entities/catalog_item_entity.dart';
 import '../../domain/entities/catalog_summary_entity.dart';
@@ -43,6 +44,7 @@ class CatalogRepositoryImpl implements CatalogRepository {
             collected: dto.collected,
             name: dto.name,
             imageUrl: dto.imageUrl,
+            code: dto.code,
           ),
         );
       }
@@ -98,6 +100,7 @@ class CatalogRepositoryImpl implements CatalogRepository {
         childDescription: dto.childDescription,
         imageUrl: dto.imageUrl,
         collectedAt: _formatCollectedAt(dto.collectedAt),
+        code: dto.code,
       );
     } on DioException catch (e) {
       throw DioExceptionHandler.handle(e);
@@ -155,17 +158,17 @@ class CatalogRepositoryImpl implements CatalogRepository {
   // ISO 8601 시각을 표시용 `2026.07.05` 포맷으로 바꾼다.
   //
   // **주의**: 어대GO는 서울 어린이대공원 앱이라 수집 시각은 항상 한국 시간(KST) 기준이다.
-  // `toLocal()`을 쓰면 기기(혹은 CI 러너)의 타임존에 따라 날짜가 달라진다
-  // (예: `2026-07-05T08:00:00+09:00`가 UTC-계열 환경에서는 07.04로 보인다).
-  // 그래서 기기 타임존과 무관하게 UTC+9를 고정으로 더한다.
+  // 서버는 오프셋 없이 값을 준다(예: `2026-07-01T14:30:00`). `DateTime.tryParse`로
+  // 바로 읽으면 기기(혹은 CI 러너)의 로컬 타임존으로 해석돼 타임존에 따라
+  // 날짜가 달라진다. `parseKstDateTime`이 `Z`를 붙여 UTC로 고정한 뒤 KST를
+  // 더하므로 기기 타임존과 무관하게 항상 같은 날짜가 나온다.
   String? _formatCollectedAt(String? iso) {
     if (iso == null) return null;
-    final parsed = DateTime.tryParse(iso);
-    if (parsed == null) {
+    final kst = parseKstDateTime(iso);
+    if (kst == null) {
       debugPrint('[Catalog] ⚠️ 수집 시각 파싱 실패: $iso');
       return null;
     }
-    final kst = parsed.toUtc().add(const Duration(hours: 9));
     final month = kst.month.toString().padLeft(2, '0');
     final day = kst.day.toString().padLeft(2, '0');
     return '${kst.year}.$month.$day';

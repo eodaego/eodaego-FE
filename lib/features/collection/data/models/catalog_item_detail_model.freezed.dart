@@ -32,6 +32,9 @@ mixin _$CatalogItemDetailModel {
   /// 카테고리 원문 (`ANIMAL`/`PLANT`/`PLACE`)
   String get category => throw _privateConstructorUsedError;
 
+  /// 에셋 코드 — 일러스트 파일명(`A001.png`)으로 쓰인다. 서버가 생략하면 null
+  String? get code => throw _privateConstructorUsedError;
+
   /// 특징 — 앱에서 한 줄 설명 자리에 쓴다
   String get feature => throw _privateConstructorUsedError;
 
@@ -65,6 +68,7 @@ abstract class $CatalogItemDetailModelCopyWith<$Res> {
     String id,
     String name,
     String category,
+    String? code,
     String feature,
     String childDescription,
     String? imageUrl,
@@ -93,6 +97,7 @@ class _$CatalogItemDetailModelCopyWithImpl<
     Object? id = null,
     Object? name = null,
     Object? category = null,
+    Object? code = freezed,
     Object? feature = null,
     Object? childDescription = null,
     Object? imageUrl = freezed,
@@ -112,6 +117,10 @@ class _$CatalogItemDetailModelCopyWithImpl<
                 ? _value.category
                 : category // ignore: cast_nullable_to_non_nullable
                       as String,
+            code: freezed == code
+                ? _value.code
+                : code // ignore: cast_nullable_to_non_nullable
+                      as String?,
             feature: null == feature
                 ? _value.feature
                 : feature // ignore: cast_nullable_to_non_nullable
@@ -147,6 +156,7 @@ abstract class _$$CatalogItemDetailModelImplCopyWith<$Res>
     String id,
     String name,
     String category,
+    String? code,
     String feature,
     String childDescription,
     String? imageUrl,
@@ -172,6 +182,7 @@ class __$$CatalogItemDetailModelImplCopyWithImpl<$Res>
     Object? id = null,
     Object? name = null,
     Object? category = null,
+    Object? code = freezed,
     Object? feature = null,
     Object? childDescription = null,
     Object? imageUrl = freezed,
@@ -191,6 +202,10 @@ class __$$CatalogItemDetailModelImplCopyWithImpl<$Res>
             ? _value.category
             : category // ignore: cast_nullable_to_non_nullable
                   as String,
+        code: freezed == code
+            ? _value.code
+            : code // ignore: cast_nullable_to_non_nullable
+                  as String?,
         feature: null == feature
             ? _value.feature
             : feature // ignore: cast_nullable_to_non_nullable
@@ -219,6 +234,7 @@ class _$CatalogItemDetailModelImpl implements _CatalogItemDetailModel {
     required this.id,
     required this.name,
     required this.category,
+    this.code,
     this.feature = '',
     this.childDescription = '',
     this.imageUrl,
@@ -240,6 +256,10 @@ class _$CatalogItemDetailModelImpl implements _CatalogItemDetailModel {
   @override
   final String category;
 
+  /// 에셋 코드 — 일러스트 파일명(`A001.png`)으로 쓰인다. 서버가 생략하면 null
+  @override
+  final String? code;
+
   /// 특징 — 앱에서 한 줄 설명 자리에 쓴다
   @override
   @JsonKey()
@@ -260,7 +280,7 @@ class _$CatalogItemDetailModelImpl implements _CatalogItemDetailModel {
 
   @override
   String toString() {
-    return 'CatalogItemDetailModel(id: $id, name: $name, category: $category, feature: $feature, childDescription: $childDescription, imageUrl: $imageUrl, collectedAt: $collectedAt)';
+    return 'CatalogItemDetailModel(id: $id, name: $name, category: $category, code: $code, feature: $feature, childDescription: $childDescription, imageUrl: $imageUrl, collectedAt: $collectedAt)';
   }
 
   @override
@@ -272,6 +292,7 @@ class _$CatalogItemDetailModelImpl implements _CatalogItemDetailModel {
             (identical(other.name, name) || other.name == name) &&
             (identical(other.category, category) ||
                 other.category == category) &&
+            (identical(other.code, code) || other.code == code) &&
             (identical(other.feature, feature) || other.feature == feature) &&
             (identical(other.childDescription, childDescription) ||
                 other.childDescription == childDescription) &&
@@ -288,6 +309,7 @@ class _$CatalogItemDetailModelImpl implements _CatalogItemDetailModel {
     id,
     name,
     category,
+    code,
     feature,
     childDescription,
     imageUrl,
@@ -317,6 +339,7 @@ abstract class _CatalogItemDetailModel implements CatalogItemDetailModel {
     required final String id,
     required final String name,
     required final String category,
+    final String? code,
     final String feature,
     final String childDescription,
     final String? imageUrl,
@@ -337,6 +360,10 @@ abstract class _CatalogItemDetailModel implements CatalogItemDetailModel {
   /// 카테고리 원문 (`ANIMAL`/`PLANT`/`PLACE`)
   @override
   String get category;
+
+  /// 에셋 코드 — 일러스트 파일명(`A001.png`)으로 쓰인다. 서버가 생략하면 null
+  @override
+  String? get code;
 
   /// 특징 — 앱에서 한 줄 설명 자리에 쓴다
   @override

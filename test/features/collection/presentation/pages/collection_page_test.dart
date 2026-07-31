@@ -1,6 +1,7 @@
 import 'package:eodaego/core/constants/dogam_category.dart';
 import 'package:eodaego/core/providers/guest_mode_provider.dart';
 import 'package:eodaego/core/widgets/app_badge.dart';
+import 'package:eodaego/core/widgets/category_chip.dart';
 import 'package:eodaego/features/collection/domain/entities/catalog_item_entity.dart';
 import 'package:eodaego/features/collection/domain/repositories/catalog_repository.dart';
 import 'package:eodaego/features/collection/presentation/pages/collection_page.dart';
@@ -92,7 +93,7 @@ Widget _wrap(CatalogRepository repository) => ProviderScope(
 );
 
 /// 테스트 기본 뷰(800x600)는 ScreenUtil 기준(393x852)과 달라 레이아웃이 왜곡된다.
-/// 3열 그리드가 실제 기기 비율이 아니면 오버플로우가 난다.
+/// 실제 기기 비율이 아니면 리스트 행이 오버플로우가 난다.
 void _useDesignViewport(WidgetTester tester) {
   tester.view.physicalSize = const Size(393, 852);
   tester.view.devicePixelRatio = 1.0;
@@ -101,6 +102,11 @@ void _useDesignViewport(WidgetTester tester) {
 
 Finder _badgeText(String label) =>
     find.descendant(of: find.byType(AppBadge), matching: find.text(label));
+
+/// 필터 칩을 특정한다. 리스트 행도 이제 카테고리 라벨(같은 텍스트)을 보여주므로
+/// 화면에 '식물' 등이 중복 등장할 수 있어 칩 범위로 좁혀야 `tap()`이 애매해지지 않는다.
+Finder _chipText(String label) =>
+    find.descendant(of: find.byType(CategoryChip), matching: find.text(label));
 
 void main() {
   group('CollectionPage', () {
@@ -113,7 +119,7 @@ void main() {
       expect(find.text('장미'), findsOneWidget);
       expect(find.text('고양이'), findsOneWidget);
 
-      await tester.tap(find.text('식물'));
+      await tester.tap(_chipText('식물'));
       await tester.pumpAndSettle();
 
       expect(_badgeText('1/1'), findsOneWidget);
@@ -188,7 +194,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // 픽스처에는 PLACE 항목이 없다 — 필터링하면 그리드가 빈다.
-      await tester.tap(find.text('장소'));
+      await tester.tap(_chipText('장소'));
       await tester.pumpAndSettle();
 
       expect(_badgeText('0/0'), findsOneWidget);

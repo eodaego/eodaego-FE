@@ -7,9 +7,13 @@ part of 'catalog_provider.dart';
 // **************************************************************************
 
 String _$catalogRemoteDataSourceHash() =>
-    r'c7f722bccb25c210598ed0e1919d6acebad2455f';
+    r'59652a734c1f11fa39956c9e5c0c1aea540b2f86';
 
 /// CatalogRemoteDataSource Provider (Retrofit)
+///
+/// `EnvConfig.useMockData`가 켜지면 [CatalogMockDataSource]로 바뀐다.
+/// 아래 [catalogRepositoryProvider]는 어느 쪽이든 같은 인터페이스만 보므로
+/// 수정할 필요가 없다.
 ///
 /// Copied from [catalogRemoteDataSource].
 @ProviderFor(catalogRemoteDataSource)

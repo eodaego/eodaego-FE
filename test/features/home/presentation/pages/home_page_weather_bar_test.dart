@@ -87,7 +87,11 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('구름많음 28°'), findsOneWidget);
+      // 시안 개편(#22) — 조건 라벨과 기온이 한 Text였던 것이 큰 기온(display34)과
+      // 라벨로 분리됐다. `_dataWeather.hourlyForecast`가 비어 있어 오늘 최고/최저
+      // 줄은 생략된다.
+      expect(find.text('구름많음'), findsOneWidget);
+      expect(find.text('28°'), findsOneWidget);
     });
 
     testWidgets('조회에 실패하면 예외 없이 짧은 안내를 보여준다', (tester) async {

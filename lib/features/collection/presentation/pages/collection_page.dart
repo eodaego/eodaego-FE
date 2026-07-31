@@ -10,8 +10,8 @@ import '../../../../core/constants/text_styles.dart';
 import '../../../../core/providers/guest_mode_provider.dart';
 import '../../../../core/widgets/app_badge.dart';
 import '../../../../core/widgets/app_skeleton.dart';
+import '../../../../core/widgets/catalog_image.dart';
 import '../../../../core/widgets/category_chip.dart';
-import '../../../../core/widgets/dogam_card.dart';
 import '../../../../router/route_paths.dart';
 import '../../domain/entities/catalog_item_entity.dart';
 import '../providers/catalog_provider.dart';
@@ -170,7 +170,7 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
                   // 어린이 기준으로 수치를 키우는 원칙에 맞춰 기본 2.0보다 두껍게.
                   strokeWidth: 3,
                   child: itemsAsync.when(
-                    loading: () => const _CollectionGridSkeleton(),
+                    loading: () => const _CollectionListSkeleton(),
                     error: (_, _) => _CollectionError(
                       onRetry: () => ref.invalidate(catalogItemsProvider),
                     ),
@@ -189,15 +189,14 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
   }
 }
 
-/// 3열 그리드 — 로딩·데이터가 같은 배치를 쓰도록 delegate를 공유한다.
-SliverGridDelegate _gridDelegate() {
-  return SliverGridDelegateWithFixedCrossAxisCount(
-    crossAxisCount: 3,
-    childAspectRatio: 3 / 3.6,
-    mainAxisSpacing: 10.h,
-    crossAxisSpacing: 10.w,
-  );
-}
+/// 3열 그리드 공통 배치 — 목록과 스켈레톤이 같은 칸 크기를 쓰도록 한 곳에 둔다.
+SliverGridDelegate _gridDelegate() => SliverGridDelegateWithFixedCrossAxisCount(
+  crossAxisCount: 3,
+  mainAxisSpacing: 10.h,
+  crossAxisSpacing: 10.w,
+  // 썸네일(64) + 이름 + 카테고리 라벨이 들어갈 세로 여유.
+  childAspectRatio: 0.8,
+);
 
 class _CollectionGrid extends StatelessWidget {
   const _CollectionGrid({required this.items, required this.isSearching});
@@ -242,12 +241,9 @@ class _CollectionGrid extends StatelessWidget {
       itemCount: items.length,
       itemBuilder: (context, index) {
         final item = items[index];
-        return DogamCard(
+        return _CatalogGridCard(
           key: ValueKey(item.id),
-          category: item.category,
-          collected: item.collected,
-          name: item.name,
-          imageUrl: item.imageUrl,
+          item: item,
           onTap: () =>
               context.push(RoutePaths.collectionDetail(item.id), extra: item),
         );
@@ -256,19 +252,114 @@ class _CollectionGrid extends StatelessWidget {
   }
 }
 
-class _CollectionGridSkeleton extends StatelessWidget {
-  const _CollectionGridSkeleton();
+/// 도감 그리드 카드 — 원형 썸네일(64) + 이름 + 카테고리 라벨.
+///
+/// 수집: 흰 카드 + 이름 + 카테고리 dark 라벨. 미수집: surfaceDim 카드에
+/// 이름 자리는 `미수집`, 썸네일은 `?` — 무채색으로 그려 수집 완료와 대비를 만든다.
+class _CatalogGridCard extends StatelessWidget {
+  const _CatalogGridCard({super.key, required this.item, this.onTap});
+
+  final CatalogItemEntity item;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final collected = item.collected;
+    return Material(
+      color: collected ? AppColors.surface : AppColors.surfaceDim,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppRadius.sm.r),
+        side: collected
+            ? const BorderSide(color: AppColors.line)
+            : BorderSide.none,
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(AppRadius.sm.r),
+        onTap: onTap,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 10.h),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _thumbnail(),
+              SizedBox(height: 8.h),
+              Text(
+                collected ? (item.name ?? '') : '미수집',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppTextStyles.tag13Bold.copyWith(
+                  color: collected ? AppColors.ink : AppColors.uncollected,
+                ),
+              ),
+              SizedBox(height: 4.h),
+              Text(
+                item.category.label,
+                style: AppTextStyles.caption14.copyWith(
+                  color: collected ? item.category.dark : AppColors.uncollected,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _thumbnail() {
+    if (!item.collected) {
+      return Container(
+        width: 64.w,
+        height: 64.w,
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          color: AppColors.surface,
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          '?',
+          style: AppTextStyles.display19.copyWith(color: AppColors.uncollected),
+        ),
+      );
+    }
+    return CatalogImage(
+      imageUrl: item.imageUrl,
+      code: item.code,
+      category: item.category,
+      size: 64.w,
+      circle: true,
+    );
+  }
+}
+
+class _CollectionListSkeleton extends StatelessWidget {
+  const _CollectionListSkeleton();
 
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: _gridDelegate(),
-      itemCount: 12,
-      itemBuilder: (context, index) => AppSkeleton(
-        width: double.infinity,
-        height: double.infinity,
-        borderRadius: BorderRadius.circular(AppRadius.sm.r),
+      itemCount: 9,
+      itemBuilder: (context, index) => Container(
+        padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 10.h),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(AppRadius.sm.r),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AppSkeleton(
+              width: 64.w,
+              height: 64.w,
+              borderRadius: BorderRadius.circular(32.r),
+            ),
+            SizedBox(height: 8.h),
+            AppSkeleton(width: 56.w, height: 13.h),
+            SizedBox(height: 6.h),
+            AppSkeleton(width: 32.w, height: 12.h),
+          ],
+        ),
       ),
     );
   }

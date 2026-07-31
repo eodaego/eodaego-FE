@@ -1,0 +1,101 @@
+{
+  "0c1c444a-dcd7-4710-b023-0472987911e0": {
+    "id": "0c1c444a-dcd7-4710-b023-0472987911e0",
+    "code": "A001",
+    "name": "수달",
+    "category": "ANIMAL",
+    "feature": "물가에서 헤엄치며 물고기를 잡는 포유류예요.",
+    "childDescription": "수달은 물속에서 눈을 뜨고 헤엄칠 수 있어요.",
+    "imageUrl": null,
+    "collectedAt": "2026-07-24T10:12:00",
+    "status": "AVAILABLE"
+  },
+  "98dc7942-3a8c-477a-bcdc-d683a46c142a": {
+    "id": "98dc7942-3a8c-477a-bcdc-d683a46c142a",
+    "code": "A002",
+    "name": "너구리",
+    "category": "ANIMAL",
+    "feature": "야행성이며 다양한 먹이를 가리지 않고 먹는 잡식성 포유류예요.",
+    "childDescription": "너구리는 밤에 더 활발하게 돌아다니는 친구예요!",
+    "imageUrl": null,
+    "collectedAt": "2026-07-24T15:30:00",
+    "status": "AVAILABLE"
+  },
+  "b341ff7c-d85c-4928-a3cf-52105f2aa10b": {
+    "id": "b341ff7c-d85c-4928-a3cf-52105f2aa10b",
+    "code": "A003",
+    "name": "공작",
+    "category": "ANIMAL",
+    "feature": "수컷은 화려한 꼬리깃을 펼쳐 짝을 유혹하는 조류예요.",
+    "childDescription": "공작은 꼬리를 활짝 펼치면 부채처럼 예뻐요!",
+    "imageUrl": null,
+    "collectedAt": "2026-07-25T11:00:00",
+    "status": "AVAILABLE"
+  },
+  "1311ccbe-bb7e-4706-8db0-7c8897728fa1": {
+    "id": "1311ccbe-bb7e-4706-8db0-7c8897728fa1",
+    "code": "P001",
+    "name": "소나무",
+    "category": "PLANT",
+    "feature": "사계절 내내 푸른 잎을 유지하는 상록 침엽수예요.",
+    "childDescription": "소나무는 겨울에도 잎이 지지 않는 씩씩한 나무예요!",
+    "imageUrl": null,
+    "collectedAt": "2026-07-26T09:45:00",
+    "status": "AVAILABLE"
+  },
+  "41f03952-eebb-4928-be1a-a5f19b35118f": {
+    "id": "41f03952-eebb-4928-be1a-a5f19b35118f",
+    "code": "P002",
+    "name": "벚나무",
+    "category": "PLANT",
+    "feature": "봄철 짧은 기간 동안 연분홍 꽃을 피우는 낙엽수예요.",
+    "childDescription": "벚나무는 봄이 되면 분홍빛 꽃으로 활짝 물들어요!",
+    "imageUrl": null,
+    "collectedAt": "2026-07-27T13:20:00",
+    "status": "AVAILABLE"
+  },
+  "14e28f53-9636-42ed-a2ff-7785d5868934": {
+    "id": "14e28f53-9636-42ed-a2ff-7785d5868934",
+    "code": "P003",
+    "name": "수국",
+    "category": "PLANT",
+    "feature": "토양 산도에 따라 꽃 색이 달라지는 여름 개화 관목이에요.",
+    "childDescription": "수국은 흙에 따라 파랗거나 분홍색 꽃을 피워요!",
+    "imageUrl": null,
+    "collectedAt": "2026-07-28T10:05:00",
+    "status": "AVAILABLE"
+  },
+  "f077dafb-2f4c-47bd-ac96-5530b9485023": {
+    "id": "f077dafb-2f4c-47bd-ac96-5530b9485023",
+    "code": "L001",
+    "name": "음악분수",
+    "category": "PLACE",
+    "feature": "음악에 맞춰 물줄기가 움직이는 공원 내 분수예요.",
+    "childDescription": "음악분수는 노래에 맞춰 물이 춤을 춰요!",
+    "imageUrl": null,
+    "collectedAt": "2026-07-29T14:40:00",
+    "status": "AVAILABLE"
+  },
+  "d8fb9300-b668-405f-adbf-42dd33b9bb75": {
+    "id": "d8fb9300-b668-405f-adbf-42dd33b9bb75",
+    "code": "L002",
+    "name": "팔각당",
+    "category": "PLACE",
+    "feature": "여덟 개의 각을 가진 전통 양식의 정자예요.",
+    "childDescription": "팔각당은 여덟 개의 모서리를 가진 멋진 정자예요!",
+    "imageUrl": null,
+    "collectedAt": "2026-07-29T16:15:00",
+    "status": "AVAILABLE"
+  },
+  "ab515662-7113-4360-aa50-2c448336531f": {
+    "id": "ab515662-7113-4360-aa50-2c448336531f",
+    "code": "L003",
+    "name": "동물원",
+    "category": "PLACE",
+    "feature": "다양한 동물을 만나고 관찰할 수 있는 전시 공간이에요.",
+    "childDescription": "동물원에서는 여러 동물 친구들을 가까이서 볼 수 있어요!",
+    "imageUrl": null,
+    "collectedAt": "2026-07-30T09:05:00",
+    "status": "AVAILABLE"
+  }
+}

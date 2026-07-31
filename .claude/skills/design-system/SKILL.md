@@ -8,7 +8,7 @@ description: 어대GO 디자인 시스템 — 색상 토큰(동물 주황/식물
 ```yaml
 version: 1.0
 name: eodaego-design-system
-description: 서울어린이대공원 탐방·도감 수집 앱 "어대GO"의 디자인 시스템. 어린이(+보호자) 타깃이라 큰 폰트, 큰 터치 영역, 둥근 형태, 색으로 읽는 정보 구조가 원칙이다. 웜 아이보리 캔버스(#FAF7F0) 위에 숲 초록(#3DA35D)을 메인으로, 도감 3분류가 고정 카테고리 컬러(동물=주황, 식물=초록, 장소=파랑)를 가지며 이 색 언어가 도감·지도 마커·촬영 모드·코스 스텝 전반을 관통한다. 보상 노랑(#FFC93C)은 도감 획득/축하 순간에만 등장하는 단일 하이라이트다. 타이포는 2폰트 체계 — 제목·버튼·도감 이름은 Cafe24 Ssurround(둥근 디스플레이), 본문·설명은 Pretendard Variable. radius는 "외부 = 내부 × 2, 패딩 = 내부 radius" 규칙 위에서 8/12/24/32 4단 스케일만 사용한다.
+description: 서울어린이대공원 탐방·도감 수집 앱 "어대GO"의 디자인 시스템. 어린이(+보호자) 타깃이라 큰 폰트, 큰 터치 영역, 둥근 형태, 색으로 읽는 정보 구조가 원칙이다. 웜 아이보리 캔버스(#FAF7F0) 위에 숲 초록(#3DA35D)을 메인으로, 도감 3분류가 고정 카테고리 컬러(동물=주황, 식물=초록, 장소=파랑)를 가지며 이 색 언어가 도감·지도 마커·촬영 모드·코스 스텝 전반을 관통한다. 보상 노랑(#FFC93C)은 전면 배경이 아닌 액센트로만 쓰는 하이라이트다(축하 화면 컨페티·진행률 게이지 채움, 홈 도감 진행률 게이지 채움·코스 카드 CTA). 타이포는 2폰트 체계 — 제목·버튼·도감 이름은 Cafe24 Ssurround(둥근 디스플레이), 본문·설명은 Pretendard Variable. radius는 "외부 = 내부 × 2, 패딩 = 내부 radius" 규칙 위에서 8/12/24/32 4단 스케일만 사용한다.
 
 colors:
   # ── Brand / Category ──
@@ -24,7 +24,7 @@ colors:
   place: "#4A9FE8" # 장소 카테고리
   place-dark: "#0A3A63" # 파랑 틴트 위 텍스트
   place-tint: "#E8F3FC"
-  reward: "#FFC93C" # 보상 노랑. 도감 획득 축하, 핵심 CTA(코스 추천 받기)
+  reward: "#FFC93C" # 보상 노랑 액센트. 축하 화면 컨페티·수집 진행률 게이지 채움, 홈 도감 진행률 게이지 채움, 홈 코스 카드 CTA(코스 보기)
   reward-dark: "#5F4400" # 노랑 위 텍스트
 
   # ── Canvas / Surface ──
@@ -128,7 +128,7 @@ rounded:
   xs: 8 # 뱃지, 지도 게이트 라벨, 작은 칩
   sm: 12 # 도감 그리드 카드, 카드(24) 내부의 버튼·썸네일
   md: 16 # AppButton 기본, 입력창, 퀴즈 선택지
-  lg: 24 # 카드(코스/도감상세/홈 카드), 다이얼로그, 촬영 가이드 프레임
+  lg: 24 # 카드(코스/도감상세/홈 카드), 다이얼로그
   xl: 32 # 바텀시트 상단, 풀스크린 모달
   full: 999 # 카메라 FAB, 셔터, 마커, 아바타, 모드 토글, 필터 칩(pill)
   # 규칙: 외부 radius = 내부 radius × 2, 패딩 = 내부 radius
@@ -172,7 +172,7 @@ components:
     note: "화면당 1개 원칙"
   button-reward:
     preset: "backgroundColor: reward / foregroundColor: reward-dark / textStyle: display-17"
-    note: "코스 추천 받기, 축하 화면 CTA 등 핵심 순간 전용"
+    note: "홈 코스 카드 CTA(코스 보기) 전용"
   button-social-google:
     preset: "backgroundColor: surface / foregroundColor: ink / showBorder: true / icon: 구글 로고(leading)"
   button-social-apple:
@@ -242,16 +242,17 @@ components:
     default: "rgba(255,255,255,.15) 배경 + 흰 텍스트"
     active: "카테고리색 배경"
     typography: "{typography.display-16}"
-  dogam-card:
-    aspectRatio: "3 / 3.6"
-    backgroundColor: "{colors.surface}"
-    border: "2px 카테고리색"
+  dogam-list-item:
     rounded: "{rounded.sm}"
-  dogam-card-locked:
+    backgroundColor: "{colors.surface}"
+    border: "1px {colors.line}"
+    note: "원형 썸네일 56 + 이름 + 카테고리 라벨 + 우측 상태(카테고리색 체크)"
+  dogam-list-item-locked:
+    rounded: "{rounded.sm}"
     backgroundColor: "{colors.surface-dim}"
     border: "none"
     textColor: "{colors.uncollected}"
-    note: "? 를 Cafe24Ssurround 34px로 표시. 실루엣만 노출"
+    note: "썸네일·이름 자리(미수집)·우측 상태 모두 ?"
   map-marker:
     rounded: "{rounded.full}"
     size: 34
@@ -278,7 +279,7 @@ components:
 
 **1) 색이 곧 정보 구조다.** 도감의 3분류가 고정 카테고리 컬러를 가진다 — 동물 `{colors.animal}`(주황), 식물 `{colors.plant}`(초록), 장소 `{colors.place}`(파랑). 이 색은 도감 카드 테두리, 지도 마커, 촬영 모드 토글과 셔터 링, 코스 스텝 번호, 카테고리 칩까지 앱 전체에서 동일하게 적용된다. 글을 읽지 못하는 아이도 색만 보고 카테고리를 인식할 수 있어야 하므로, 카테고리 컬러를 다른 용도로 유용하거나 화면마다 다르게 쓰는 것을 금지한다.
 
-**2) 보상 노랑은 아껴 쓴다.** `{colors.reward}`(#FFC93C)는 앱에서 가장 뜨거운 색으로, 등장 자체가 "특별한 순간"의 신호다. 허용 위치는 딱 두 곳 — 홈 히어로 카드의 "코스 추천 받기" CTA, 그리고 퀴즈 정답 시 도감 획득 축하 화면(전면 배경). 그 외 어디에도 노랑을 쓰지 않는다.
+**2) 보상 노랑은 액센트로만 쓴다.** `{colors.reward}`(#FFC93C)는 앱에서 가장 뜨거운 색으로, 등장 자체가 "특별한 순간"의 신호다. 전면 배경으로는 쓰지 않는다 — 허용 위치는 네 곳, 축하 화면의 컨페티, 축하 화면의 수집 진행률 게이지 채움, 홈 도감 진행률 카드의 게이지 채움, 홈 코스 카드의 "코스 보기" CTA. 그 외 어디에도 노랑을 쓰지 않는다.
 
 **3) 어린이 기준으로 모든 수치를 키운다.** 본문 최소 15sp(핵심 설명은 17sp), 캡션 최소 14sp, 터치 타깃 최소 48, 주요 버튼 52 이상. 배경은 순백이 아닌 웜 아이보리 `{colors.canvas}`로 종이 그림책 질감을 내고, 텍스트는 순검정이 아닌 `{colors.ink}`(#2B2B28)를 쓴다.
 
@@ -465,7 +466,7 @@ class AppTextStyles {
 | `{rounded.xs}`   | 8   | 뱃지, 작은 칩                                     | — (최하위)         |
 | `{rounded.sm}`   | 12  | 도감 그리드 카드, **카드(24) 내부의 버튼·썸네일** | 각진 뱃지          |
 | `{rounded.md}`   | 16  | **AppButton 기본**, 입력창, 퀴즈 선택지           | 뱃지(8)            |
-| `{rounded.lg}`   | 24  | 카드, 다이얼로그, 촬영 가이드 프레임              | 내부 요소(12)      |
+| `{rounded.lg}`   | 24  | 카드, 다이얼로그                                  | 내부 요소(12)      |
 | `{rounded.xl}`   | 32  | 바텀시트 상단, 풀스크린 모달                      | 버튼(16), 카드(16) |
 | `{rounded.full}` | 999 | FAB, 셔터, 마커, 아바타, 모드 토글, pill 칩       | — (예외 계층)      |
 
@@ -488,8 +489,8 @@ class AppRadius {
 ## Layout
 
 - **화면 좌우 패딩**: `{spacing.lg}` 20 고정.
-- **카드 사이 간격**: 14 (홈 카드 스택), 도감 그리드 gap 10.
-- **도감 그리드**: 3열, 카드 비율 3:3.6.
+- **카드 사이 간격**: 14 (홈 카드 스택), 도감 목록 항목 간격 10.
+- **도감 목록**: 세로 리스트, 원형 썸네일(56) + 이름 + 카테고리 라벨 + 우측 상태.
 - **코스 카드**: 가로 스와이프(PageView), 카드 min-width 300, snap 정렬.
 - **위저드**: 한 화면 한 질문. 질문(display-24) → 서브텍스트(caption-14) → 옵션 카드 세로 스택. 선택지는 항상 3개 이하.
 - **여백 철학**: 어린이 UI는 밀도를 낮춘다. 한 화면에 카드 3~4개를 넘기지 않고, 정보가 많으면 화면을 쪼갠다(위저드 3스텝이 그 예).
@@ -543,7 +544,7 @@ class AppButton extends StatelessWidget {
 | 프리셋              | 오버라이드                                                  | 쓰는 곳                          |
 | ------------------- | ----------------------------------------------------------- | -------------------------------- |
 | `AppButton.primary` | textStyle: display_17                                       | 일반 CTA. 화면당 1개 원칙        |
-| `AppButton.reward`  | bg: reward / fg: reward-dark / textStyle: display_17        | 코스 추천 받기, 축하 화면 전용   |
+| `AppButton.reward`  | bg: reward / fg: reward-dark / textStyle: display_17        | 홈 코스 카드 CTA(코스 보기)      |
 | `AppButton.google`  | bg: surface / fg: ink / showBorder: true / icon: 구글 로고  | 로그인                           |
 | `AppButton.apple`   | bg: ink / fg: white / icon: 애플 로고                       | 로그인                           |
 | `AppButton.danger`  | bg: surface / fg: danger / showBorder: true / subtitle 필수 | 탈퇴하기 (Hard Delete 경고 동반) |
@@ -562,17 +563,21 @@ radius 24, 2px 테두리. 기본은 line색, 선택 시 **해당 카테고리색
 
 ### 퀴즈 (`quiz-option`)
 
-3지선다, 세로 스택, 각 높이 60+, radius 16 (AppButton과 동일한 md). **오답 처리(QUIZ-03)**: 오답 선택지는 `surface-dim` 배경 + `uncollected` 텍스트 + 취소선으로 비활성화하고, 힌트는 "앗, 다시 골라 볼까요?" 한 줄만. 추가 해설 금지. 정답 시 250ms 뒤 축하 화면 전환.
+앱바(뒤로 + "퀴즈") → 카테고리 뱃지(질문 위, 작게 — 그림을 가리지 않으면서 색+아이콘+라벨 3중 표기를 만족) → 질문(display-22) → 그림(컨테이너 없이 크림 배경 위, 화면 폭의 약 70%) → 3지선다.
+
+선택지는 세로 스택, 각 높이 60+, radius 16 (AppButton과 동일한 md), 앞에 번호 원(①②③)을 붙인다. **오답 처리(QUIZ-03)**: 오답 선택지는 `surface-dim` 배경 + `uncollected` 텍스트 + 취소선으로 비활성화하고, 힌트는 "앗, 다시 골라 볼까요?" 한 줄만. 추가 해설 금지. 정답 시 250ms 뒤 축하 화면 전환.
 
 ### 축하 화면
 
-전면 `{colors.reward}` 배경, 중앙에 흰 카드(radius 24)로 획득한 도감 노출. 앱에서 노랑이 전면을 덮는 유일한 화면 — 이 희소성이 보상 감각을 만든다.
+`{colors.canvas}`(크림) 배경 위에 컨페티 오버레이. 위에서부터 `정답이에요!` → 마스코트 → 흰 카드 하나(radius 24, 그림 + 이름 + 카테고리 뱃지, **카드를 카드로 감싸지 않는다**) → `도감에 새 친구를 등록했어요` → 수집 진행률 게이지(채움 `{colors.reward}`) → `{colors.primary}` CTA("도감 보러 가기").
 
-### 도감 그리드 (`dogam-card` / `dogam-card-locked`)
+### 도감 목록 (`dogam-list-item` / `dogam-list-item-locked`)
 
-- 수집 완료: 흰 배경 + **2px 카테고리색 테두리** + 사진/일러스트 + 이름(tag-13).
-- 미수집: surface-dim 배경, 테두리 없음, `?`를 Ssurround 34px uncollected색으로. 이름 대신 "미수집".
-- 카드 radius 12 (3열 그리드 밀도에서 16 이상은 과함).
+세로 리스트. 한 행 = 원형 썸네일(56) + 이름 + 카테고리 라벨 + 우측 상태.
+
+- 수집 완료: surface 배경 + 1px line 테두리, 이름 표시, 우측에 카테고리색 체크.
+- 미수집: surface-dim 배경, 테두리 없음, 이름 자리에 "미수집", 썸네일·우측 상태 모두 `?`(uncollected색).
+- 행 radius 12.
 
 ### 도감 상세
 
@@ -588,7 +593,7 @@ radius 24, 2px 테두리. 기본은 line색, 선택 시 **해당 카테고리색
 
 ### 카메라
 
-배경 `camera-bg`. 상단 모드 토글(pill) — 활성 시 카테고리색 fill, 촬영 프레임은 260×260 dashed radius 24, **셔터 링 색 = 현재 모드 카테고리색**. 장소 모드는 힌트에 "위치로 확인해요"를 노출(실제 판정은 GPS, PLACE-01).
+배경 `camera-bg`. 상단 모드 토글(pill) — 활성 시 카테고리색 fill, 촬영 프레임은 260×260 네 모서리 브래킷(모서리만, 사각형 전체를 두르지 않는다), **셔터 링 색 = 현재 모드 카테고리색**. 장소 모드는 힌트에 "위치로 확인해요"를 노출(실제 판정은 GPS, PLACE-01).
 
 ## Motion
 
@@ -604,6 +609,6 @@ radius 24, 2px 테두리. 기본은 line색, 선택 시 **해당 카테고리색
 ## Known Gaps
 
 - 공식 약도 이미지의 실제 색감과 마커 색 충돌 여부는 이미지 수급 후 검증 필요(약도가 초록 계열이면 식물 마커에 흰 테두리 3px 유지가 필수).
-- 도감 실물 사진 vs 일러스트 방향 미확정 — 사진이면 카드 테두리 2px 유지, 일러스트면 tint 배경 채움 방식으로 변경 검토.
+- 도감 일러스트는 `code` 기준 `assets/images/catalog/{code}.png`를 참조하고, 파일이 없거나 로드에 실패하면 카테고리 아이콘으로 대체한다(`CatalogImage` 위젯, `errorBuilder` 폴백). 에셋 준비 상태와 무관하게 화면이 깨지지 않는다.
 - 임시 중단/운영 종료 상태의 도감 카드 시각 처리(회색 오버레이 vs 뱃지만) 미확정.
 - 다크 모드 미지원(웜 아이보리 단일 테마). 카메라 화면만 예외적 다크.

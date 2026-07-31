@@ -1,7 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../../core/config/env_config.dart';
 import '../../../../core/network/dio_client.dart';
+import '../../data/datasources/weather_mock_datasource.dart';
 import '../../data/datasources/weather_remote_datasource.dart';
 import '../../data/repositories/weather_repository_impl.dart';
 import '../../domain/entities/weather_entity.dart';
@@ -14,8 +17,16 @@ part 'weather_provider.g.dart';
 // ============================================
 
 /// WeatherRemoteDataSource Provider (Retrofit)
+///
+/// `EnvConfig.useMockData`가 켜지면 [WeatherMockDataSource]로 바뀐다.
+/// 아래 [weatherRepositoryProvider]는 어느 쪽이든 같은 인터페이스만 보므로
+/// 수정할 필요가 없다.
 @riverpod
 WeatherRemoteDataSource weatherRemoteDataSource(Ref ref) {
+  if (EnvConfig.useMockData) {
+    debugPrint('[Mock] ✅ 날씨 목 데이터 사용');
+    return WeatherMockDataSource();
+  }
   return WeatherRemoteDataSource(ref.watch(dioProvider));
 }
 
