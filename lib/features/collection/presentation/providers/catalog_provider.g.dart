@@ -249,5 +249,181 @@ final catalogSummaryProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef CatalogSummaryRef = AutoDisposeFutureProviderRef<CatalogSummaryEntity>;
+String _$collectCatalogItemByCodeHash() =>
+    r'b9f956e0f6cb9d3ffa8ac7f301e00608ecd16c1e';
+
+/// code(예: `A001`)로 도감 항목을 찾아 수집 처리하고, 요약·목록을 갱신한다.
+///
+/// 퀴즈 보상 화면이 진입 시 발화한다 — 수집 판정이 백엔드에 아직 없어
+/// code만으로 즉시 수집 처리한다. 나중에 스캔 수집도 재사용한다.
+///
+/// **주의**: 모르는 code·이미 수집한 항목은 조용히 스킵하고, 서버 409
+/// (`CATALOG_ITEM_ALREADY_COLLECTED`)는 성공으로 취급한다. 그 외 실패는
+/// AsyncError로 남는다 — 부가 흐름이라 화면은 error 상태를 그리지 않는다.
+///
+/// Copied from [collectCatalogItemByCode].
+@ProviderFor(collectCatalogItemByCode)
+const collectCatalogItemByCodeProvider = CollectCatalogItemByCodeFamily();
+
+/// code(예: `A001`)로 도감 항목을 찾아 수집 처리하고, 요약·목록을 갱신한다.
+///
+/// 퀴즈 보상 화면이 진입 시 발화한다 — 수집 판정이 백엔드에 아직 없어
+/// code만으로 즉시 수집 처리한다. 나중에 스캔 수집도 재사용한다.
+///
+/// **주의**: 모르는 code·이미 수집한 항목은 조용히 스킵하고, 서버 409
+/// (`CATALOG_ITEM_ALREADY_COLLECTED`)는 성공으로 취급한다. 그 외 실패는
+/// AsyncError로 남는다 — 부가 흐름이라 화면은 error 상태를 그리지 않는다.
+///
+/// Copied from [collectCatalogItemByCode].
+class CollectCatalogItemByCodeFamily extends Family<AsyncValue<void>> {
+  /// code(예: `A001`)로 도감 항목을 찾아 수집 처리하고, 요약·목록을 갱신한다.
+  ///
+  /// 퀴즈 보상 화면이 진입 시 발화한다 — 수집 판정이 백엔드에 아직 없어
+  /// code만으로 즉시 수집 처리한다. 나중에 스캔 수집도 재사용한다.
+  ///
+  /// **주의**: 모르는 code·이미 수집한 항목은 조용히 스킵하고, 서버 409
+  /// (`CATALOG_ITEM_ALREADY_COLLECTED`)는 성공으로 취급한다. 그 외 실패는
+  /// AsyncError로 남는다 — 부가 흐름이라 화면은 error 상태를 그리지 않는다.
+  ///
+  /// Copied from [collectCatalogItemByCode].
+  const CollectCatalogItemByCodeFamily();
+
+  /// code(예: `A001`)로 도감 항목을 찾아 수집 처리하고, 요약·목록을 갱신한다.
+  ///
+  /// 퀴즈 보상 화면이 진입 시 발화한다 — 수집 판정이 백엔드에 아직 없어
+  /// code만으로 즉시 수집 처리한다. 나중에 스캔 수집도 재사용한다.
+  ///
+  /// **주의**: 모르는 code·이미 수집한 항목은 조용히 스킵하고, 서버 409
+  /// (`CATALOG_ITEM_ALREADY_COLLECTED`)는 성공으로 취급한다. 그 외 실패는
+  /// AsyncError로 남는다 — 부가 흐름이라 화면은 error 상태를 그리지 않는다.
+  ///
+  /// Copied from [collectCatalogItemByCode].
+  CollectCatalogItemByCodeProvider call(String code) {
+    return CollectCatalogItemByCodeProvider(code);
+  }
+
+  @override
+  CollectCatalogItemByCodeProvider getProviderOverride(
+    covariant CollectCatalogItemByCodeProvider provider,
+  ) {
+    return call(provider.code);
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'collectCatalogItemByCodeProvider';
+}
+
+/// code(예: `A001`)로 도감 항목을 찾아 수집 처리하고, 요약·목록을 갱신한다.
+///
+/// 퀴즈 보상 화면이 진입 시 발화한다 — 수집 판정이 백엔드에 아직 없어
+/// code만으로 즉시 수집 처리한다. 나중에 스캔 수집도 재사용한다.
+///
+/// **주의**: 모르는 code·이미 수집한 항목은 조용히 스킵하고, 서버 409
+/// (`CATALOG_ITEM_ALREADY_COLLECTED`)는 성공으로 취급한다. 그 외 실패는
+/// AsyncError로 남는다 — 부가 흐름이라 화면은 error 상태를 그리지 않는다.
+///
+/// Copied from [collectCatalogItemByCode].
+class CollectCatalogItemByCodeProvider extends AutoDisposeFutureProvider<void> {
+  /// code(예: `A001`)로 도감 항목을 찾아 수집 처리하고, 요약·목록을 갱신한다.
+  ///
+  /// 퀴즈 보상 화면이 진입 시 발화한다 — 수집 판정이 백엔드에 아직 없어
+  /// code만으로 즉시 수집 처리한다. 나중에 스캔 수집도 재사용한다.
+  ///
+  /// **주의**: 모르는 code·이미 수집한 항목은 조용히 스킵하고, 서버 409
+  /// (`CATALOG_ITEM_ALREADY_COLLECTED`)는 성공으로 취급한다. 그 외 실패는
+  /// AsyncError로 남는다 — 부가 흐름이라 화면은 error 상태를 그리지 않는다.
+  ///
+  /// Copied from [collectCatalogItemByCode].
+  CollectCatalogItemByCodeProvider(String code)
+    : this._internal(
+        (ref) =>
+            collectCatalogItemByCode(ref as CollectCatalogItemByCodeRef, code),
+        from: collectCatalogItemByCodeProvider,
+        name: r'collectCatalogItemByCodeProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$collectCatalogItemByCodeHash,
+        dependencies: CollectCatalogItemByCodeFamily._dependencies,
+        allTransitiveDependencies:
+            CollectCatalogItemByCodeFamily._allTransitiveDependencies,
+        code: code,
+      );
+
+  CollectCatalogItemByCodeProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.code,
+  }) : super.internal();
+
+  final String code;
+
+  @override
+  Override overrideWith(
+    FutureOr<void> Function(CollectCatalogItemByCodeRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: CollectCatalogItemByCodeProvider._internal(
+        (ref) => create(ref as CollectCatalogItemByCodeRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        code: code,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<void> createElement() {
+    return _CollectCatalogItemByCodeProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is CollectCatalogItemByCodeProvider && other.code == code;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, code.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin CollectCatalogItemByCodeRef on AutoDisposeFutureProviderRef<void> {
+  /// The parameter `code` of this provider.
+  String get code;
+}
+
+class _CollectCatalogItemByCodeProviderElement
+    extends AutoDisposeFutureProviderElement<void>
+    with CollectCatalogItemByCodeRef {
+  _CollectCatalogItemByCodeProviderElement(super.provider);
+
+  @override
+  String get code => (origin as CollectCatalogItemByCodeProvider).code;
+}
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

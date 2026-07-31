@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../core/config/env_config.dart';
+import '../../../../core/errors/app_exception.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../data/datasources/catalog_mock_datasource.dart';
 import '../../data/datasources/catalog_remote_datasource.dart';
@@ -58,4 +59,44 @@ Future<CatalogItemDetailEntity> catalogItemDetail(Ref ref, String id) {
 @riverpod
 Future<CatalogSummaryEntity> catalogSummary(Ref ref) {
   return ref.watch(catalogRepositoryProvider).getCatalogSummary();
+}
+
+// ============================================
+// Presentation Providers (수집)
+// ============================================
+
+/// code(예: `A001`)로 도감 항목을 찾아 수집 처리하고, 요약·목록을 갱신한다.
+///
+/// 퀴즈 보상 화면이 진입 시 발화한다 — 수집 판정이 백엔드에 아직 없어
+/// code만으로 즉시 수집 처리한다. 나중에 스캔 수집도 재사용한다.
+///
+/// **주의**: 모르는 code·이미 수집한 항목은 조용히 스킵하고, 서버 409
+/// (`CATALOG_ITEM_ALREADY_COLLECTED`)는 성공으로 취급한다. 그 외 실패는
+/// AsyncError로 남는다 — 부가 흐름이라 화면은 error 상태를 그리지 않는다.
+@riverpod
+Future<void> collectCatalogItemByCode(Ref ref, String code) async {
+  // Read once — watching would re-run this via the invalidate below.
+  // 한 번만 읽는다 — watch하면 아래 invalidate가 이 provider를 다시 돌린다.
+  final items = await ref.read(catalogItemsProvider.future);
+
+  CatalogItemEntity? item;
+  for (final candidate in items) {
+    if (candidate.code == code) {
+      item = candidate;
+      break;
+    }
+  }
+  if (item == null || item.collected) return;
+
+  try {
+    await ref.read(catalogRepositoryProvider).collectCatalogItem(item.id);
+  } on ServerException catch (e) {
+    // Server already has it — treat as success and refresh below.
+    // 서버 기준 이미 수집 — 성공으로 취급하고 아래에서 갱신한다.
+    if (e.code != 'CATALOG_ITEM_ALREADY_COLLECTED') rethrow;
+    debugPrint('[Catalog] ⚠️ 이미 수집한 항목: $code');
+  }
+
+  ref.invalidate(catalogSummaryProvider);
+  ref.invalidate(catalogItemsProvider);
 }
