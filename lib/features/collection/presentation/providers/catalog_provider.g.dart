@@ -250,7 +250,7 @@ final catalogSummaryProvider =
 // ignore: unused_element
 typedef CatalogSummaryRef = AutoDisposeFutureProviderRef<CatalogSummaryEntity>;
 String _$collectCatalogItemByCodeHash() =>
-    r'b9f956e0f6cb9d3ffa8ac7f301e00608ecd16c1e';
+    r'84faa2fc0335dcfbc4684d34d1be40c95e8024dd';
 
 /// code(예: `A001`)로 도감 항목을 찾아 수집 처리하고, 요약·목록을 갱신한다.
 ///
@@ -260,6 +260,10 @@ String _$collectCatalogItemByCodeHash() =>
 /// **주의**: 모르는 code·이미 수집한 항목은 조용히 스킵하고, 서버 409
 /// (`CATALOG_ITEM_ALREADY_COLLECTED`)는 성공으로 취급한다. 그 외 실패는
 /// AsyncError로 남는다 — 부가 흐름이라 화면은 error 상태를 그리지 않는다.
+///
+/// **주의**: 게스트 호출 금지 — 토큰이 없어 첫 `GET /catalog`부터 401이
+/// 나고, 인증 인터셉터가 세션 만료로 오인해 강제 로그아웃시킨다(56e947b).
+/// 호출부가 게스트 가드를 책임진다.
 ///
 /// Copied from [collectCatalogItemByCode].
 @ProviderFor(collectCatalogItemByCode)
@@ -274,6 +278,10 @@ const collectCatalogItemByCodeProvider = CollectCatalogItemByCodeFamily();
 /// (`CATALOG_ITEM_ALREADY_COLLECTED`)는 성공으로 취급한다. 그 외 실패는
 /// AsyncError로 남는다 — 부가 흐름이라 화면은 error 상태를 그리지 않는다.
 ///
+/// **주의**: 게스트 호출 금지 — 토큰이 없어 첫 `GET /catalog`부터 401이
+/// 나고, 인증 인터셉터가 세션 만료로 오인해 강제 로그아웃시킨다(56e947b).
+/// 호출부가 게스트 가드를 책임진다.
+///
 /// Copied from [collectCatalogItemByCode].
 class CollectCatalogItemByCodeFamily extends Family<AsyncValue<void>> {
   /// code(예: `A001`)로 도감 항목을 찾아 수집 처리하고, 요약·목록을 갱신한다.
@@ -284,6 +292,10 @@ class CollectCatalogItemByCodeFamily extends Family<AsyncValue<void>> {
   /// **주의**: 모르는 code·이미 수집한 항목은 조용히 스킵하고, 서버 409
   /// (`CATALOG_ITEM_ALREADY_COLLECTED`)는 성공으로 취급한다. 그 외 실패는
   /// AsyncError로 남는다 — 부가 흐름이라 화면은 error 상태를 그리지 않는다.
+  ///
+  /// **주의**: 게스트 호출 금지 — 토큰이 없어 첫 `GET /catalog`부터 401이
+  /// 나고, 인증 인터셉터가 세션 만료로 오인해 강제 로그아웃시킨다(56e947b).
+  /// 호출부가 게스트 가드를 책임진다.
   ///
   /// Copied from [collectCatalogItemByCode].
   const CollectCatalogItemByCodeFamily();
@@ -296,6 +308,10 @@ class CollectCatalogItemByCodeFamily extends Family<AsyncValue<void>> {
   /// **주의**: 모르는 code·이미 수집한 항목은 조용히 스킵하고, 서버 409
   /// (`CATALOG_ITEM_ALREADY_COLLECTED`)는 성공으로 취급한다. 그 외 실패는
   /// AsyncError로 남는다 — 부가 흐름이라 화면은 error 상태를 그리지 않는다.
+  ///
+  /// **주의**: 게스트 호출 금지 — 토큰이 없어 첫 `GET /catalog`부터 401이
+  /// 나고, 인증 인터셉터가 세션 만료로 오인해 강제 로그아웃시킨다(56e947b).
+  /// 호출부가 게스트 가드를 책임진다.
   ///
   /// Copied from [collectCatalogItemByCode].
   CollectCatalogItemByCodeProvider call(String code) {
@@ -333,6 +349,10 @@ class CollectCatalogItemByCodeFamily extends Family<AsyncValue<void>> {
 /// (`CATALOG_ITEM_ALREADY_COLLECTED`)는 성공으로 취급한다. 그 외 실패는
 /// AsyncError로 남는다 — 부가 흐름이라 화면은 error 상태를 그리지 않는다.
 ///
+/// **주의**: 게스트 호출 금지 — 토큰이 없어 첫 `GET /catalog`부터 401이
+/// 나고, 인증 인터셉터가 세션 만료로 오인해 강제 로그아웃시킨다(56e947b).
+/// 호출부가 게스트 가드를 책임진다.
+///
 /// Copied from [collectCatalogItemByCode].
 class CollectCatalogItemByCodeProvider extends AutoDisposeFutureProvider<void> {
   /// code(예: `A001`)로 도감 항목을 찾아 수집 처리하고, 요약·목록을 갱신한다.
@@ -343,6 +363,10 @@ class CollectCatalogItemByCodeProvider extends AutoDisposeFutureProvider<void> {
   /// **주의**: 모르는 code·이미 수집한 항목은 조용히 스킵하고, 서버 409
   /// (`CATALOG_ITEM_ALREADY_COLLECTED`)는 성공으로 취급한다. 그 외 실패는
   /// AsyncError로 남는다 — 부가 흐름이라 화면은 error 상태를 그리지 않는다.
+  ///
+  /// **주의**: 게스트 호출 금지 — 토큰이 없어 첫 `GET /catalog`부터 401이
+  /// 나고, 인증 인터셉터가 세션 만료로 오인해 강제 로그아웃시킨다(56e947b).
+  /// 호출부가 게스트 가드를 책임진다.
   ///
   /// Copied from [collectCatalogItemByCode].
   CollectCatalogItemByCodeProvider(String code)
