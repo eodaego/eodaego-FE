@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
@@ -30,6 +31,17 @@ class MyPage extends ConsumerStatefulWidget {
 class _MyPageState extends ConsumerState<MyPage> {
   /// 탈퇴 요청 진행 중 — 중복 DELETE를 막는다.
   bool _isDeleting = false;
+
+  /// 현재 앱 버전 (예: '1.0.28'). 첫 프레임 뒤에 채워진다.
+  String? _appVersion;
+
+  @override
+  void initState() {
+    super.initState();
+    PackageInfo.fromPlatform().then((info) {
+      if (mounted) setState(() => _appVersion = info.version);
+    });
+  }
 
   Future<void> _confirmSignOut(BuildContext context) async {
     final ok = await AppDialog.confirm(
@@ -206,6 +218,14 @@ class _MyPageState extends ConsumerState<MyPage> {
                     : () => _confirmDeleteAccount(context),
               ),
             ],
+            SizedBox(height: 32.h),
+            // 로딩 중엔 빈 문자열 — Text가 줄 높이는 유지하므로 자리가 안 튄다.
+            Center(
+              child: Text(
+                _appVersion == null ? '' : '버전 $_appVersion',
+                style: AppTextStyles.caption14.copyWith(color: AppColors.muted),
+              ),
+            ),
             SizedBox(height: 32.h),
           ],
         ),
