@@ -121,56 +121,48 @@ void _useDesignViewport(WidgetTester tester) {
 }
 
 void main() {
-  testWidgets(
-    'groups_forecast_rows_under_today_tomorrow_and_dated_headers',
-    (tester) async {
-      _useDesignViewport(tester);
-      final built = _buildWeather();
+  testWidgets('groups_forecast_rows_under_today_tomorrow_and_dated_headers', (
+    tester,
+  ) async {
+    _useDesignViewport(tester);
+    final built = _buildWeather();
 
-      await tester.pumpWidget(
-        _wrap(
-          const WeatherDetailPage(),
-          _FakeWeatherRepository(built.weather),
-        ),
-      );
-      await tester.pumpAndSettle();
+    await tester.pumpWidget(
+      _wrap(const WeatherDetailPage(), _FakeWeatherRepository(built.weather)),
+    );
+    await tester.pumpAndSettle();
 
-      const weekdays = ['월', '화', '수', '목', '금', '토', '일'];
-      final dayAfterDate = built.dayAfter.dateTime;
-      final dayAfterLabel =
-          '${dayAfterDate.month}월 ${dayAfterDate.day}일 '
-          '(${weekdays[dayAfterDate.weekday - 1]})';
+    const weekdays = ['월', '화', '수', '목', '금', '토', '일'];
+    final dayAfterDate = built.dayAfter.dateTime;
+    final dayAfterLabel =
+        '${dayAfterDate.month}월 ${dayAfterDate.day}일 '
+        '(${weekdays[dayAfterDate.weekday - 1]})';
 
-      // 오늘 슬롯이 두 개라도 헤더는 한 번만 찍힌다 (dedup 가드 검증) — 지운다면
-      // 행마다 헤더가 반복돼도 이 어서션이 깨진다.
-      expect(find.text('오늘'), findsOneWidget);
-      expect(find.text('내일'), findsOneWidget);
-      expect(find.text(dayAfterLabel), findsOneWidget);
-      // 오늘의 두 예보 행이 모두 렌더된다 (헤더 중복 제거가 행을 삼키지 않는다).
-      expect(find.text('20°'), findsOneWidget);
-      expect(find.text('24°'), findsOneWidget);
-    },
-  );
+    // 오늘 슬롯이 두 개라도 헤더는 한 번만 찍힌다 (dedup 가드 검증) — 지운다면
+    // 행마다 헤더가 반복돼도 이 어서션이 깨진다.
+    expect(find.text('오늘'), findsOneWidget);
+    expect(find.text('내일'), findsOneWidget);
+    expect(find.text(dayAfterLabel), findsOneWidget);
+    // 오늘의 두 예보 행이 모두 렌더된다 (헤더 중복 제거가 행을 삼키지 않는다).
+    expect(find.text('20°'), findsOneWidget);
+    expect(find.text('24°'), findsOneWidget);
+  });
 
-  testWidgets(
-    'hides_zero_percent_precipitation_but_shows_nonzero_rows',
-    (tester) async {
-      _useDesignViewport(tester);
-      final built = _buildWeather();
+  testWidgets('hides_zero_percent_precipitation_but_shows_nonzero_rows', (
+    tester,
+  ) async {
+    _useDesignViewport(tester);
+    final built = _buildWeather();
 
-      await tester.pumpWidget(
-        _wrap(
-          const WeatherDetailPage(),
-          _FakeWeatherRepository(built.weather),
-        ),
-      );
-      await tester.pumpAndSettle();
+    await tester.pumpWidget(
+      _wrap(const WeatherDetailPage(), _FakeWeatherRepository(built.weather)),
+    );
+    await tester.pumpAndSettle();
 
-      // 0%인 오늘 슬롯은 아무 것도 찍지 않는다.
-      expect(find.text('0%'), findsNothing);
-      // 0보다 큰 슬롯은 값을 보여준다.
-      expect(find.text('45%'), findsOneWidget);
-      expect(find.text('10%'), findsOneWidget);
-    },
-  );
+    // 0%인 오늘 슬롯은 아무 것도 찍지 않는다.
+    expect(find.text('0%'), findsNothing);
+    // 0보다 큰 슬롯은 값을 보여준다.
+    expect(find.text('45%'), findsOneWidget);
+    expect(find.text('10%'), findsOneWidget);
+  });
 }

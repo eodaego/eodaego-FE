@@ -12,9 +12,11 @@ Future<Map<String, dynamic>> loadMockJson(String assetPath) async {
 ///
 /// [anchor]가 [today]가 되도록 하는 값이다. 시각은 무시하고 날짜만 본다.
 int dayShiftFrom({required DateTime anchor, required DateTime today}) =>
-    DateTime.utc(today.year, today.month, today.day)
-        .difference(DateTime.utc(anchor.year, anchor.month, anchor.day))
-        .inDays;
+    DateTime.utc(
+      today.year,
+      today.month,
+      today.day,
+    ).difference(DateTime.utc(anchor.year, anchor.month, anchor.day)).inDays;
 
 /// ISO 시각 문자열의 날짜만 [days]일 옮긴다.
 ///

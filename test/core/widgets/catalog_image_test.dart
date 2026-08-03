@@ -12,8 +12,9 @@ import 'package:flutter_test/flutter_test.dart';
 // ScreenUtilInit이 필요하다. CatalogImage 자체는 원시 `size`(dp)를 받는다.
 Widget _wrap(Widget child) => ScreenUtilInit(
   designSize: const Size(393, 852),
-  builder: (context, _) =>
-      MaterialApp(home: Scaffold(body: Center(child: child))),
+  builder: (context, _) => MaterialApp(
+    home: Scaffold(body: Center(child: child)),
+  ),
 );
 
 void main() {

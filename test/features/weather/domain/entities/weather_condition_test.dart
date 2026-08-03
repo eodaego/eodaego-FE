@@ -21,9 +21,15 @@ void main() {
     test('maps_server_strings_to_matching_precipitation', () {
       expect(WeatherPrecipitation.fromServer('없음'), WeatherPrecipitation.none);
       expect(WeatherPrecipitation.fromServer('비'), WeatherPrecipitation.rain);
-      expect(WeatherPrecipitation.fromServer('비/눈'), WeatherPrecipitation.sleet);
+      expect(
+        WeatherPrecipitation.fromServer('비/눈'),
+        WeatherPrecipitation.sleet,
+      );
       expect(WeatherPrecipitation.fromServer('눈'), WeatherPrecipitation.snow);
-      expect(WeatherPrecipitation.fromServer('소나기'), WeatherPrecipitation.shower);
+      expect(
+        WeatherPrecipitation.fromServer('소나기'),
+        WeatherPrecipitation.shower,
+      );
     });
 
     test('returns_null_when_precipitation_is_unknown', () {

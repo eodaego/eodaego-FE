@@ -17,7 +17,9 @@ void main() {
   });
 
   test('different_indices_spread_across_the_width_instead_of_stacking', () {
-    final xs = [for (var i = 0; i < 24; i++) confettiPieceAt(i, palette).startXFraction];
+    final xs = [
+      for (var i = 0; i < 24; i++) confettiPieceAt(i, palette).startXFraction,
+    ];
 
     // A Math.random()-based regression would still pass an "each call is
     // equal" check if it happened to reseed identically, but it could never

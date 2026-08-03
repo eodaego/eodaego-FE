@@ -29,11 +29,10 @@ class _ConfettiLayerState extends State<ConfettiLayer>
   @override
   void initState() {
     super.initState();
-    _controller =
-        AnimationController(
-          vsync: this,
-          duration: const Duration(seconds: 2),
-        )..forward();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..forward();
 
     final palette = [
       for (final category in DogamCategory.values) category.color,
