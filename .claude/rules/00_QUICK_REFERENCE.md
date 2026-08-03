@@ -22,6 +22,7 @@
 | `design-system` | UI 화면·위젯·스타일 작업 시 |
 | `deploy` | 배포, GitHub Actions 워크플로우 수정 시 |
 | `google-maps-setup` | 지도 빌드 오류, 신규 환경 세팅 시 |
+| `ux-writing` | 사용자에게 보이는 문구(버튼·안내·에러) 작성 시 |
 
 ---
 
@@ -101,16 +102,3 @@ Presentation → Domain ← Data
 - [ ] Either 패턴 미사용 (try-catch)
 - [ ] 코드 생성 파일(`.g.dart`, `.freezed.dart`) 커밋 포함
 - [ ] 새 API는 `DioExceptionHandler`를 거쳐 예외 변환
-
----
-
-## 📌 자주 묻는 질문
-
-**Q: 파일을 어디에 만들어야 하나요?**
-A: 2개 이상 feature가 쓰면 `lib/core/`, 하나만 쓰면 `lib/features/<기능>/`.
-
-**Q: Either 패턴을 써야 하나요?**
-A: 아니요. 프로젝트에서 제거되었습니다. try-catch를 씁니다.
-
-**Q: Repository에서 에러를 어떻게 처리하나요?**
-A: `DioExceptionHandler.handle(e)`로 변환해 throw합니다. 자세한 절차는 `api-integration` 스킬 참조.
