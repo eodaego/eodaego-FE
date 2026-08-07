@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/network/dio_exception_handler.dart';
 import '../../../../core/utils/kst_clock.dart';
+import '../../domain/entities/congestion_entity.dart';
 import '../../domain/entities/weather_condition.dart';
 import '../../domain/entities/weather_entity.dart';
 import '../../domain/repositories/weather_repository.dart';
@@ -76,6 +77,37 @@ class WeatherRepositoryImpl implements WeatherRepository {
       throw ServerException(
         message: '날씨를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.',
         messageKey: 'errorWeatherUnexpected',
+        originalException: e,
+      );
+    }
+  }
+
+  @override
+  Future<CongestionEntity> getCurrentCongestion() async {
+    try {
+      final dto = await _dataSource.getCurrentCongestion();
+      final level = CongestionLevel.fromServer(dto.level);
+
+      if (level == null && dto.level != null) {
+        debugPrint('[Congestion] ⚠️ 알 수 없는 등급: ${dto.level} — 라벨만 표시');
+      }
+
+      if (kDebugMode) {
+        debugPrint('[Congestion] ✅ ${dto.label} (${dto.level})');
+      }
+
+      return CongestionEntity(
+        level: level,
+        label: dto.label,
+        collectedAt: parseKstDateTime(dto.collectedAt),
+      );
+    } on DioException catch (e) {
+      throw DioExceptionHandler.handle(e);
+    } catch (e) {
+      if (e is AppException) rethrow;
+      throw ServerException(
+        message: '혼잡도를 불러오지 못했어요.',
+        messageKey: 'errorCongestionUnexpected',
         originalException: e,
       );
     }

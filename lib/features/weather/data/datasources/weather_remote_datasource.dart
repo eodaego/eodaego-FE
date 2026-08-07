@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../../../../core/constants/api_endpoints.dart';
+import '../models/congestion_model.dart';
 import '../models/weather_model.dart';
 
 part 'weather_remote_datasource.g.dart';
@@ -23,4 +24,12 @@ abstract class WeatherRemoteDataSource {
   /// - 503: AI 서버 연결 실패 (백엔드가 중계하는 구조라 실제로 날 수 있다)
   @GET(ApiEndpoints.weatherCurrent)
   Future<WeatherModel> getCurrentWeather();
+
+  /// 현재 공원 혼잡도 조회
+  ///
+  /// - 200: 등급 + 한글 라벨 + 수집 시각
+  /// - 401: 인증 실패
+  /// - 503: AI 서버 연결 실패 또는 수집 데이터 없음 (정상 시나리오)
+  @GET(ApiEndpoints.congestionCurrent)
+  Future<CongestionModel> getCurrentCongestion();
 }

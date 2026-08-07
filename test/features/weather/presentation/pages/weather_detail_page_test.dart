@@ -1,4 +1,5 @@
 import 'package:eodaego/core/utils/kst_clock.dart';
+import 'package:eodaego/features/weather/domain/entities/congestion_entity.dart';
 import 'package:eodaego/features/weather/domain/entities/weather_entity.dart';
 import 'package:eodaego/features/weather/domain/repositories/weather_repository.dart';
 import 'package:eodaego/features/weather/presentation/pages/weather_detail_page.dart';
@@ -16,6 +17,10 @@ class _FakeWeatherRepository implements WeatherRepository {
 
   @override
   Future<WeatherEntity> getCurrentWeather() async => weather;
+
+  @override
+  Future<CongestionEntity> getCurrentCongestion() async =>
+      const CongestionEntity(level: null, label: '', collectedAt: null);
 }
 
 // Builds a weather entity whose forecast spans today (two slots — proves the

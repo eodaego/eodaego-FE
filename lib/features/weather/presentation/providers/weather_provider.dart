@@ -7,6 +7,7 @@ import '../../../../core/network/dio_client.dart';
 import '../../data/datasources/weather_mock_datasource.dart';
 import '../../data/datasources/weather_remote_datasource.dart';
 import '../../data/repositories/weather_repository_impl.dart';
+import '../../domain/entities/congestion_entity.dart';
 import '../../domain/entities/weather_entity.dart';
 import '../../domain/repositories/weather_repository.dart';
 
@@ -47,4 +48,13 @@ WeatherRepository weatherRepository(Ref ref) {
 @riverpod
 Future<WeatherEntity> currentWeather(Ref ref) {
   return ref.watch(weatherRepositoryProvider).getCurrentWeather();
+}
+
+/// 현재 공원 혼잡도. 홈 날씨 카드 하단 한 줄이 본다.
+///
+/// **주의**: 503(AI 서버 불가)은 정상 시나리오다. 호출부는 에러 문구를 띄우지 말고
+/// 해당 줄만 생략한다.
+@riverpod
+Future<CongestionEntity> currentCongestion(Ref ref) {
+  return ref.watch(weatherRepositoryProvider).getCurrentCongestion();
 }

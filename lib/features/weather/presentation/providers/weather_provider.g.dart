@@ -75,5 +75,28 @@ final currentWeatherProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef CurrentWeatherRef = AutoDisposeFutureProviderRef<WeatherEntity>;
+String _$currentCongestionHash() => r'ed52688ab2250a6f87b7f3d5b55d96ce3e2b2dfb';
+
+/// 현재 공원 혼잡도. 홈 날씨 카드 하단 한 줄이 본다.
+///
+/// **주의**: 503(AI 서버 불가)은 정상 시나리오다. 호출부는 에러 문구를 띄우지 말고
+/// 해당 줄만 생략한다.
+///
+/// Copied from [currentCongestion].
+@ProviderFor(currentCongestion)
+final currentCongestionProvider =
+    AutoDisposeFutureProvider<CongestionEntity>.internal(
+      currentCongestion,
+      name: r'currentCongestionProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$currentCongestionHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef CurrentCongestionRef = AutoDisposeFutureProviderRef<CongestionEntity>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

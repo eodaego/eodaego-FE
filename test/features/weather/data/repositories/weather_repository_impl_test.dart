@@ -1,4 +1,5 @@
 import 'package:eodaego/features/weather/data/datasources/weather_remote_datasource.dart';
+import 'package:eodaego/features/weather/data/models/congestion_model.dart';
 import 'package:eodaego/features/weather/data/models/weather_model.dart';
 import 'package:eodaego/features/weather/data/repositories/weather_repository_impl.dart';
 import 'package:eodaego/features/weather/domain/entities/weather_condition.dart';
@@ -12,6 +13,10 @@ class _FakeWeatherDataSource implements WeatherRemoteDataSource {
 
   @override
   Future<WeatherModel> getCurrentWeather() async => response;
+
+  @override
+  Future<CongestionModel> getCurrentCongestion() async =>
+      const CongestionModel();
 }
 
 void main() {

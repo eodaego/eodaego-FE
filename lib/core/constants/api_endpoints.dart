@@ -38,4 +38,8 @@ class ApiEndpoints {
   // Weather — 백엔드가 내부망 AI 서버에서 받아 중계한다.
   // 장소는 어린이대공원 하나뿐이라 파라미터가 없다.
   static const String weatherCurrent = '$_v1/weather/current';
+
+  // Congestion — 백엔드가 내부망 AI 서버에서 받아 중계한다.
+  // 데이터가 없거나 AI 서버가 죽으면 503이며, 이는 정상 시나리오다.
+  static const String congestionCurrent = '$_v1/congestion/current';
 }

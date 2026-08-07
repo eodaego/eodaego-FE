@@ -1,5 +1,6 @@
 import '../../../../core/mock/mock_asset_loader.dart';
 import '../../../../core/utils/kst_clock.dart';
+import '../models/congestion_model.dart';
 import '../models/weather_model.dart';
 import 'weather_remote_datasource.dart';
 
@@ -10,11 +11,25 @@ import 'weather_remote_datasource.dart';
 /// (분기는 `weather_provider.dart`에서 한다).
 class WeatherMockDataSource implements WeatherRemoteDataSource {
   static const _asset = 'assets/mock/weather_current.json';
+  static const _congestionAsset = 'assets/mock/congestion_current.json';
 
   @override
   Future<WeatherModel> getCurrentWeather() async {
     final json = await loadMockJson(_asset);
     return WeatherModel.fromJson(_shiftToToday(json));
+  }
+
+  @override
+  Future<CongestionModel> getCurrentCongestion() async {
+    final json = await loadMockJson(_congestionAsset);
+    // 수집 시각을 오늘로 민다 — 날씨 픽스처와 같은 방식이다.
+    final anchor = DateTime.tryParse(json['collectedAt'] as String? ?? '');
+    if (anchor == null) return CongestionModel.fromJson(json);
+    final days = dayShiftFrom(anchor: anchor, today: nowKst());
+    return CongestionModel.fromJson({
+      ...json,
+      'collectedAt': shiftIsoDays(json['collectedAt'] as String?, days),
+    });
   }
 
   /// 픽스처의 모든 시각 필드를 오늘 기준으로 민다.
