@@ -239,7 +239,7 @@ class _EmptyForecast extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: 32.h),
       child: Center(
         child: Text(
-          '예보 정보가 아직 없어요',
+          '예보는 잠시 뒤에 볼 수 있어요',
           style: AppTextStyles.body15.copyWith(color: AppColors.muted),
         ),
       ),
@@ -298,7 +298,7 @@ class _ErrorBody extends StatelessWidget {
               style: AppTextStyles.body15.copyWith(color: AppColors.muted),
             ),
             SizedBox(height: 24.h),
-            AppButton(text: '다시 시도', onPressed: onRetry),
+            AppButton(text: '다시 불러오기', onPressed: onRetry),
           ],
         ),
       ),

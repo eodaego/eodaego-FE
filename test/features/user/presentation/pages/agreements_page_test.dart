@@ -83,7 +83,7 @@ void main() {
       expect(find.text('서비스 이용약관'), findsOneWidget);
       expect(find.text('개인정보 처리방침'), findsOneWidget);
       expect(find.text('위치기반 서비스 약관'), findsOneWidget);
-      expect(find.text('마케팅 정보 수신'), findsOneWidget);
+      expect(find.text('마케팅 정보 받기'), findsOneWidget);
       expect(find.textContaining('2026.07.12'), findsWidgets);
     });
 
@@ -167,7 +167,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('약관을 불러오지 못했어요'), findsOneWidget);
-      expect(find.text('다시 시도'), findsOneWidget);
+      expect(find.text('다시 불러오기'), findsOneWidget);
       expect(find.text('서비스 이용약관'), findsNothing);
     });
   });

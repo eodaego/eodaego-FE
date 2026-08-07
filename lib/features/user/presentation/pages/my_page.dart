@@ -198,7 +198,7 @@ class _MyPageState extends ConsumerState<MyPage> {
               )
             else ...[
               _MenuRow(
-                title: '약관 및 정책',
+                title: '약관과 정책',
                 onTap: () => context.push(RoutePaths.mypageAgreements),
               ),
               const Divider(color: AppColors.line, height: 1),

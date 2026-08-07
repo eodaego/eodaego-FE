@@ -118,7 +118,7 @@ class _AgreementsPageState extends ConsumerState<AgreementsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.canvas,
-      appBar: const AppBackAppBar(title: '약관 및 정책'),
+      appBar: const AppBackAppBar(title: '약관과 정책'),
       body: _buildBody(),
     );
   }
@@ -138,7 +138,7 @@ class _AgreementsPageState extends ConsumerState<AgreementsPage> {
               style: AppTextStyles.body15.copyWith(color: AppColors.muted),
             ),
             SizedBox(height: AppSpacing.md.h),
-            TextButton(onPressed: _load, child: const Text('다시 시도')),
+            TextButton(onPressed: _load, child: const Text('다시 불러오기')),
           ],
         ),
       );
@@ -182,7 +182,7 @@ class _AgreementsPageState extends ConsumerState<AgreementsPage> {
         ),
         Divider(color: AppColors.line, height: AppSpacing.lg.h),
         _LegalRow(
-          label: '마케팅 정보 수신',
+          label: '마케팅 정보 받기',
           agreedLabel: _agreedLabel(status.marketingAgreedAt),
           // 마케팅 원문 웹 URL(AppUrls.marketingConsent)은 아직 자리표시자라
           // 넘기지 않는다 — 확정되면 url 인자만 추가하면 된다.

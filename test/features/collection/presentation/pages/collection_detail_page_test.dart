@@ -91,7 +91,7 @@ void main() {
       // 히어로(사진 영역) + 본문(_UncollectedBody) 두 곳에서 '?'가 나온다.
       expect(find.text('?'), findsNWidgets(2));
       expect(find.byIcon(DogamCategory.plant.icon), findsNothing);
-      expect(find.text('미수집'), findsOneWidget);
+      expect(find.text('아직이에요'), findsOneWidget);
     },
   );
 

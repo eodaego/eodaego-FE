@@ -69,7 +69,7 @@ class MapPage extends ConsumerWidget {
                             top: 12.h,
                             left: 12.w,
                             child: Text(
-                              '공식 약도 이미지',
+                              '공원 약도',
                               style: AppTextStyles.caption14.copyWith(
                                 color: AppColors.muted,
                               ),
