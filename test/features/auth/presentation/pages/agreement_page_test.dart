@@ -103,7 +103,7 @@ void main() {
         '서비스 이용약관',
         '개인정보 처리방침',
         '위치기반 서비스 약관',
-        '마케팅 정보 수신',
+        '마케팅 정보 받기',
       ]) {
         await tester.tap(find.textContaining(label));
         await tester.pumpAndSettle();

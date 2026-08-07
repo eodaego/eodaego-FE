@@ -93,7 +93,7 @@ class _DetailScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.canvas,
-      appBar: const AppBackAppBar(title: '도감 상세'),
+      appBar: const AppBackAppBar(title: '도감'),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg.w),
         child: Column(
@@ -172,7 +172,7 @@ class _UncollectedBody extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const AppBadge(
-          label: '미수집',
+          label: '아직이에요',
           background: AppColors.surfaceDim,
           foreground: AppColors.uncollected,
         ),
@@ -183,7 +183,7 @@ class _UncollectedBody extends StatelessWidget {
         ),
         SizedBox(height: 8.h),
         Text(
-          '아직 만나지 못했어요. 공원에서 찾아보세요',
+          '공원에서 만나면 도감에 담을 수 있어요',
           style: AppTextStyles.body15.copyWith(color: AppColors.muted),
         ),
       ],
@@ -231,7 +231,7 @@ class _ErrorBody extends StatelessWidget {
           style: AppTextStyles.body17.copyWith(color: AppColors.ink),
         ),
         SizedBox(height: 12.h),
-        TextButton(onPressed: onRetry, child: const Text('다시 시도')),
+        TextButton(onPressed: onRetry, child: const Text('다시 불러오기')),
       ],
     );
   }
@@ -252,7 +252,7 @@ class _LoadedBody extends StatelessWidget {
             AppBadge.category(detail.category),
             SizedBox(width: 8.w),
             const AppBadge(
-              label: '수집 완료',
+              label: '만났어요',
               background: AppColors.primaryTint,
               foreground: AppColors.primaryDark,
             ),

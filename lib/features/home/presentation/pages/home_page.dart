@@ -323,7 +323,7 @@ class _DogamProgressCard extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '나의 도감',
+                            '내 도감',
                             style: AppTextStyles.display16.copyWith(
                               color: AppColors.ink,
                             ),
@@ -364,7 +364,7 @@ class _DogamProgressData extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '나의 도감',
+                    '내 도감',
                     style: AppTextStyles.display16.copyWith(
                       color: AppColors.ink,
                     ),
@@ -421,7 +421,7 @@ class _DogamProgressSkeleton extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '나의 도감',
+          '내 도감',
           style: AppTextStyles.display16.copyWith(color: AppColors.ink),
         ),
         SizedBox(height: 8.h),

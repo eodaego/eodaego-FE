@@ -77,7 +77,7 @@ class AgreementPage extends ConsumerWidget {
               ),
               SizedBox(height: AppSpacing.sm.h),
               Text(
-                '필수 항목을 확인해 주세요',
+                '꼭 동의해야 하는 항목이 있어요',
                 style: AppTextStyles.caption14.copyWith(color: AppColors.muted),
               ),
               const Spacer(),
@@ -123,7 +123,7 @@ class AgreementPage extends ConsumerWidget {
                 ),
               ),
               _AgreementRow(
-                label: '마케팅 정보 수신',
+                label: '마케팅 정보 받기',
                 isRequired: false,
                 checked: state.marketing,
                 onToggle: notifier.toggleMarketing,

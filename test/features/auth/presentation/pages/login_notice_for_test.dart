@@ -12,7 +12,7 @@ void main() {
 
     test('logoutUnexpected → 오류 문구 + danger', () {
       final n = loginNoticeFor('logoutUnexpected');
-      expect(n.message, '로그아웃하는 중에 문제가 생겼어요');
+      expect(n.message, '로그아웃하지 못했어요. 잠시 후 다시 시도해 주세요.');
       expect(n.color, AppColors.danger);
     });
 

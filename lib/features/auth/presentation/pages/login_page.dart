@@ -25,11 +25,14 @@ import '../providers/auth_provider.dart';
     case 'logoutSuccess':
       return (message: '로그아웃했어요', color: AppColors.ink);
     case 'logoutUnexpected':
-      return (message: '로그아웃하는 중에 문제가 생겼어요', color: AppColors.danger);
+      return (
+        message: '로그아웃하지 못했어요. 잠시 후 다시 시도해 주세요.',
+        color: AppColors.danger,
+      );
     case 'errorAuthExpired':
       return (message: '로그인 시간이 지났어요. 다시 로그인해 주세요.', color: AppColors.danger);
     case 'errorTemporaryRetry':
-      return (message: '잠깐 문제가 생겼어요. 다시 시도해 주세요.', color: AppColors.danger);
+      return (message: '잠시 후 다시 시도해 주세요', color: AppColors.danger);
     case 'loginFailed':
       return (message: '로그인하지 못했어요. 잠시 후 다시 시도해 주세요.', color: AppColors.danger);
     default:

@@ -211,9 +211,7 @@ class _CollectionGrid extends StatelessWidget {
     if (items.isEmpty) {
       // 검색 결과가 없을 때만 검색 관련 문구를 보여준다. 카테고리 필터·빈
       // 도감·게스트 모드처럼 검색과 무관한 빈 상태에는 긍정형 안내를 쓴다.
-      final message = isSearching
-          ? '찾는 이름이 없어요. 다른 이름으로 찾아보세요'
-          : '공원에서 만나면 여기에 모아둘 수 있어요';
+      final message = isSearching ? '다른 이름으로 찾아보세요' : '공원에서 만나면 여기에 모아둘 수 있어요';
       // The empty state is exactly when a refresh is most wanted, so it has to
       // stay draggable — a plain Center gives RefreshIndicator nothing to pull.
       // 비어 있을 때가 새로고침이 가장 필요한 순간이라 당겨지는 상태를 유지한다.
@@ -284,7 +282,7 @@ class _CatalogGridCard extends StatelessWidget {
               _thumbnail(),
               SizedBox(height: 8.h),
               Text(
-                collected ? (item.name ?? '') : '미수집',
+                collected ? (item.name ?? '') : '아직이에요',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: AppTextStyles.tag13Bold.copyWith(
@@ -381,7 +379,7 @@ class _CollectionError extends StatelessWidget {
             style: AppTextStyles.body17.copyWith(color: AppColors.ink),
           ),
           SizedBox(height: 12.h),
-          TextButton(onPressed: onRetry, child: const Text('다시 시도')),
+          TextButton(onPressed: onRetry, child: const Text('다시 불러오기')),
         ],
       ),
     );

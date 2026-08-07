@@ -40,7 +40,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('닉네임 바꾸기'), findsNothing);
-      expect(find.text('약관 및 정책'), findsNothing);
+      expect(find.text('약관과 정책'), findsNothing);
       expect(find.text('탈퇴하기'), findsNothing);
       expect(find.text('로그인하러 가기'), findsOneWidget);
     });

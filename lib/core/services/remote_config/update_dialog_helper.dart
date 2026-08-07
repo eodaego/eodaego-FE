@@ -65,7 +65,7 @@ class UpdateDialogHelper {
   static Future<void> _showOptionalUpdateDialog(BuildContext context) {
     return AppDialog.show(
       context: context,
-      title: '업데이트할 때가 됐어요',
+      title: '새 버전으로 바꿔 보세요',
       message: '최신 버전에서 더 편하게 쓸 수 있어요.\n지금 업데이트할까요?',
       confirmText: '업데이트',
       cancelText: '나중에',

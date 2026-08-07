@@ -55,7 +55,7 @@ class CourseCard extends StatelessWidget {
               const Spacer(),
               IconButton(
                 onPressed: onToggleSaved,
-                tooltip: saved ? '저장 해제' : '저장',
+                tooltip: saved ? '저장 지우기' : '저장',
                 icon: Icon(
                   saved ? Icons.favorite : Icons.favorite_border,
                   size: 24.w,

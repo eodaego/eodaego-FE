@@ -152,13 +152,13 @@ void main() {
       await tester.pumpWidget(_wrap(_FakeCatalogRepository(_fixtureItems())));
       await tester.pumpAndSettle();
 
-      expect(find.text('미수집'), findsOneWidget);
+      expect(find.text('아직이에요'), findsOneWidget);
 
       await tester.enterText(find.byType(TextField), '고양');
       await tester.pumpAndSettle();
 
       expect(tester.takeException(), isNull);
-      expect(find.text('미수집'), findsNothing);
+      expect(find.text('아직이에요'), findsNothing);
       expect(find.text('고양이'), findsOneWidget);
     });
 
@@ -199,7 +199,7 @@ void main() {
 
       expect(_badgeText('0/0'), findsOneWidget);
       expect(find.text('공원에서 만나면 여기에 모아둘 수 있어요'), findsOneWidget);
-      expect(find.text('찾는 이름이 없어요. 다른 이름으로 찾아보세요'), findsNothing);
+      expect(find.text('다른 이름으로 찾아보세요'), findsNothing);
     });
 
     testWidgets('검색 결과가 없으면 검색 관련 문구를 보여준다', (tester) async {
@@ -210,7 +210,7 @@ void main() {
       await tester.enterText(find.byType(TextField), '없는이름');
       await tester.pumpAndSettle();
 
-      expect(find.text('찾는 이름이 없어요. 다른 이름으로 찾아보세요'), findsOneWidget);
+      expect(find.text('다른 이름으로 찾아보세요'), findsOneWidget);
     });
 
     testWidgets('당겨서 새로고침하면 목록을 다시 조회해 새 항목을 보여준다', (tester) async {

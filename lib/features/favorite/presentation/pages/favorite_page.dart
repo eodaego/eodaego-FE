@@ -17,8 +17,8 @@ import '../../../../router/route_paths.dart';
 
 /// 즐겨찾기 정렬 기준
 enum _FavoriteSort {
-  recent('최근 저장순'),
-  duration('소요시간순');
+  recent('최근에 저장한 순'),
+  duration('걸리는 시간 순');
 
   const _FavoriteSort(this.label);
 
