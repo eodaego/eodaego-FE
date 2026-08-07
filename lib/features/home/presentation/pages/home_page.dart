@@ -78,8 +78,8 @@ class HomePage extends StatelessWidget {
 
 /// 오늘 공원 날씨 카드 — 탭하면 상세로 간다.
 ///
-/// 혼잡도·미세먼지는 서버 API가 없어 넣지 않는다. 실데이터 옆에 목업을 두면
-/// 카드 전체의 신뢰가 깎인다.
+/// 하단에 혼잡도 한 줄을 함께 보여준다. 미세먼지는 서버 API가 없어 넣지 않는다.
+/// 실데이터 옆에 목업을 두면 카드 전체의 신뢰가 깎인다.
 class _WeatherCard extends ConsumerWidget {
   const _WeatherCard();
 
@@ -135,13 +135,13 @@ class _WeatherCard extends ConsumerWidget {
 ///
 /// 최고/최저는 [WeatherEntity.todayRange]가 null이면(오늘 슬롯이 없으면) 그
 /// 줄 자체를 그리지 않는다 — `0° / 0°`로 거짓 표시하지 않는다.
-class _WeatherCardData extends StatelessWidget {
+class _WeatherCardData extends ConsumerWidget {
   const _WeatherCardData({required this.weather});
 
   final WeatherEntity weather;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final range = weather.todayRange(nowKst());
 
     return Column(
@@ -189,6 +189,37 @@ class _WeatherCardData extends StatelessWidget {
             style: AppTextStyles.body15.copyWith(color: AppColors.muted),
           ),
         ],
+        // 혼잡도 조회는 503이 정상 시나리오다(AI 서버 불가·수집 데이터 없음).
+        // 실패하면 이 줄만 조용히 사라지고 날씨는 그대로 보인다.
+        ref
+            .watch(currentCongestionProvider)
+            .when(
+              loading: () => const SizedBox.shrink(),
+              error: (_, _) => const SizedBox.shrink(),
+              data: (congestion) => Padding(
+                padding: EdgeInsets.only(top: 6.h),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 8.w,
+                      height: 8.w,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        // 서버가 모르는 등급을 주면 색 분기 없이 라벨만 보여준다.
+                        color: congestion.level?.color ?? AppColors.muted,
+                      ),
+                    ),
+                    SizedBox(width: 6.w),
+                    Text(
+                      '지금 공원은 ${congestion.label}',
+                      style: AppTextStyles.body15.copyWith(
+                        color: AppColors.muted,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
       ],
     );
   }
