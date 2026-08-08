@@ -405,6 +405,11 @@ class _CourseRecommendPageState extends ConsumerState<CourseRecommendPage> {
               '코스를 만들고 있어요',
               style: AppTextStyles.body15.copyWith(color: AppColors.muted),
             ),
+            SizedBox(height: AppSpacing.xs.h),
+            Text(
+              '조금만 기다리면 돼요',
+              style: AppTextStyles.caption14.copyWith(color: AppColors.muted),
+            ),
           ],
         ),
       ),
