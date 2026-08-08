@@ -1,0 +1,90 @@
+{
+  "courses": [
+    {
+      "id": "11111111-1111-4111-8111-111111111111",
+      "title": "동물 만나러 가는 길",
+      "tagLabels": ["동물듬뿍", "아이와 걷기 좋아요"],
+      "estimatedDurationMinutes": 120,
+      "entrance": "MAIN_GATE",
+      "exit": "SOUTH_GATE",
+      "favorite": false,
+      "places": [
+        {"visitOrder": 1, "name": "맹수마을", "category": "ANIMAL"},
+        {"visitOrder": 2, "name": "바다동물관", "category": "ANIMAL"},
+        {"visitOrder": 3, "name": "음악분수", "category": "PLACE"},
+        {"visitOrder": 4, "name": "꼬마동물마을", "category": "ANIMAL"}
+      ]
+    },
+    {
+      "id": "22222222-2222-4222-8222-222222222222",
+      "title": "초록초록 자연 산책",
+      "tagLabels": ["자연 산책"],
+      "estimatedDurationMinutes": 90,
+      "entrance": "REAR_GATE",
+      "exit": "REAR_GATE",
+      "favorite": false,
+      "places": [
+        {"visitOrder": 1, "name": "식물원", "category": "PLANT"},
+        {"visitOrder": 2, "name": "장미원", "category": "PLANT"},
+        {"visitOrder": 3, "name": "숲속의무대", "category": "PLACE"}
+      ]
+    },
+    {
+      "id": "33333333-3333-4333-8333-333333333333",
+      "title": "구석구석 명소 탐험",
+      "tagLabels": ["명소 탐험", "사진 찍기 좋아요"],
+      "estimatedDurationMinutes": 60,
+      "entrance": "GUI_GATE",
+      "exit": "MAIN_GATE",
+      "favorite": false,
+      "places": [
+        {"visitOrder": 1, "name": "전래동화마을", "category": "PLACE"},
+        {"visitOrder": 2, "name": "음악분수", "category": "PLACE"},
+        {"visitOrder": 3, "name": "팔각당", "category": "PLACE"}
+      ]
+    },
+    {
+      "id": "44444444-4444-4444-8444-444444444444",
+      "title": "아기 동물 산책",
+      "tagLabels": ["동물듬뿍"],
+      "estimatedDurationMinutes": 60,
+      "entrance": "MAIN_GATE",
+      "exit": "MAIN_GATE",
+      "favorite": false,
+      "places": [
+        {"visitOrder": 1, "name": "꼬마동물마을", "category": "ANIMAL"},
+        {"visitOrder": 2, "name": "초식동물마을", "category": "ANIMAL"},
+        {"visitOrder": 3, "name": "정문광장", "category": "PLACE"}
+      ]
+    },
+    {
+      "id": "55555555-5555-4555-8555-555555555555",
+      "title": "늦은 오후 숲길",
+      "tagLabels": ["자연 산책", "쉬어가기 좋아요"],
+      "estimatedDurationMinutes": 200,
+      "entrance": "GUI_GATE",
+      "exit": "NEUNGDONG_GATE",
+      "favorite": false,
+      "places": [
+        {"visitOrder": 1, "name": "숲속산책길", "category": "PLANT"},
+        {"visitOrder": 2, "name": "은행나무길", "category": "PLANT"},
+        {"visitOrder": 3, "name": "식물원", "category": "PLANT"},
+        {"visitOrder": 4, "name": "팔각당", "category": "PLACE"}
+      ]
+    },
+    {
+      "id": "66666666-6666-4666-8666-666666666666",
+      "title": "분수쇼 한 바퀴",
+      "tagLabels": ["명소 탐험"],
+      "estimatedDurationMinutes": 90,
+      "entrance": "REAR_GATE",
+      "exit": "WEST_GATE",
+      "favorite": false,
+      "places": [
+        {"visitOrder": 1, "name": "음악분수", "category": "PLACE"},
+        {"visitOrder": 2, "name": "팔각당", "category": "PLACE"},
+        {"visitOrder": 3, "name": "정문광장", "category": "PLACE"}
+      ]
+    }
+  ]
+}
