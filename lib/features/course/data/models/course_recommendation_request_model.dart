@@ -7,8 +7,9 @@ part 'course_recommendation_request_model.g.dart';
 ///
 /// `POST /api/1/courses/recommendations` 요청 본문.
 ///
-/// **주의**: `entrance`·`exit`는 필수다. 나머지는 건너뛰면 null로 보내며,
-/// 백엔드가 기본값을 채우지 않고 AI 서버에 null 그대로 전달한다.
+/// **주의**: `entrance`·`exit`는 필수다. 나머지는 건너뛰면 `includeIfNull: false`로
+/// 필드 자체가 빠진다. 백엔드는 없는 필드를 null로 읽고 기본값을 채우지 않은 채
+/// AI 서버에 그대로 전달하므로, 명시적 null을 보내는 것과 결과가 같다.
 @freezed
 class CourseRecommendationRequestModel with _$CourseRecommendationRequestModel {
   // ignore: invalid_annotation_target
