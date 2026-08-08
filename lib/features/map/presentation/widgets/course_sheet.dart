@@ -54,38 +54,49 @@ class CourseSheet extends ConsumerWidget {
                 ),
               ),
               SizedBox(height: 12.h),
-              Text(
-                '지금 보는 코스',
-                style: AppTextStyles.caption14.copyWith(color: AppColors.muted),
-              ),
-              SizedBox(height: 6.h),
-              Text(
-                course.title,
-                style: AppTextStyles.display16.copyWith(color: AppColors.ink),
-              ),
-              SizedBox(height: 12.h),
-              for (var i = 0; i < course.places.length; i++)
-                Padding(
-                  padding: EdgeInsets.only(bottom: 10.h),
-                  child: Row(
-                    children: [
-                      MapMarker(
-                        number: i + 1,
-                        color: course.places[i].category.color,
-                        size: 26,
-                      ),
-                      SizedBox(width: 10.w),
-                      Text(
-                        course.places[i].name,
-                        style: AppTextStyles.body15.copyWith(
-                          color: AppColors.ink,
-                        ),
-                      ),
-                      const Spacer(),
-                      AppBadge.category(course.places[i].category),
-                    ],
+              if (course == null)
+                Text(
+                  '코스를 고르면 여기에 표시돼요',
+                  style: AppTextStyles.body15.copyWith(color: AppColors.muted),
+                )
+              else ...[
+                Text(
+                  '지금 보는 코스',
+                  style: AppTextStyles.caption14.copyWith(
+                    color: AppColors.muted,
                   ),
                 ),
+                SizedBox(height: 6.h),
+                Text(
+                  course.title,
+                  style: AppTextStyles.display16.copyWith(
+                    color: AppColors.ink,
+                  ),
+                ),
+                SizedBox(height: 12.h),
+                for (var i = 0; i < course.places.length; i++)
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 10.h),
+                    child: Row(
+                      children: [
+                        MapMarker(
+                          number: i + 1,
+                          color: course.places[i].category.color,
+                          size: 26,
+                        ),
+                        SizedBox(width: 10.w),
+                        Text(
+                          course.places[i].name,
+                          style: AppTextStyles.body15.copyWith(
+                            color: AppColors.ink,
+                          ),
+                        ),
+                        const Spacer(),
+                        AppBadge.category(course.places[i].category),
+                      ],
+                    ),
+                  ),
+              ],
               SizedBox(height: 8.h),
               if (restricted)
                 const _GuestGate()

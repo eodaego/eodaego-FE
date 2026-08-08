@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../constants/app_colors.dart';
 import '../constants/spacing_and_radius.dart';
 import '../constants/text_styles.dart';
-import '../mock/mock_course.dart';
+import '../../features/course/domain/entities/course_entity.dart';
 import 'app_badge.dart';
 import 'app_button.dart';
 
@@ -19,7 +19,7 @@ class CourseCard extends StatelessWidget {
     this.onGo,
   });
 
-  final MockCourse course;
+  final CourseEntity course;
   final bool saved;
   final VoidCallback? onToggleSaved;
   final VoidCallback? onGo;
@@ -39,7 +39,10 @@ class CourseCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              AppBadge.category(course.category, label: course.tagLabel),
+              AppBadge.category(
+                course.dominantCategory,
+                label: course.badgeLabel,
+              ),
               SizedBox(width: 8.w),
               AppBadge(
                 label: course.durationLabel,
@@ -48,7 +51,7 @@ class CourseCard extends StatelessWidget {
               ),
               SizedBox(width: 8.w),
               AppBadge(
-                label: course.entranceLabel,
+                label: course.gateLabel,
                 background: AppColors.surfaceDim,
                 foreground: AppColors.muted,
               ),

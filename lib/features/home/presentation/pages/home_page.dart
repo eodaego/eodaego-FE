@@ -268,7 +268,9 @@ class _CoursePreviewCard extends ConsumerWidget {
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(AppRadius.lg.r),
-        onTap: () => context.go(RoutePaths.map),
+        onTap: () => course == null
+            ? context.push(RoutePaths.courseRecommend)
+            : context.go(RoutePaths.map),
         child: Padding(
           padding: EdgeInsets.all(16.w),
           child: Column(
@@ -289,17 +291,20 @@ class _CoursePreviewCard extends ConsumerWidget {
               ),
               SizedBox(height: 12.h),
               Text(
-                course.title,
+                // 아직 고른 코스가 없다. 가짜 코스를 보여주지 않고 추천으로 유도한다.
+                course?.title ?? '오늘 갈 코스를 골라볼까요?',
                 style: AppTextStyles.display19.copyWith(color: AppColors.ink),
               ),
               SizedBox(height: 16.h),
               AppButton.reward(
-                text: '코스 보기',
+                text: course == null ? '코스 추천받기' : '코스 보기',
                 width: double.infinity,
                 height: 52.h,
                 // 카드(radius 24) 내부 버튼은 radius 12 (동심원 규칙)
                 borderRadius: BorderRadius.circular(AppRadius.sm.r),
-                onPressed: () => context.go(RoutePaths.map),
+                onPressed: () => course == null
+                    ? context.push(RoutePaths.courseRecommend)
+                    : context.go(RoutePaths.map),
               ),
             ],
           ),
