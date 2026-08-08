@@ -77,11 +77,11 @@ class DioClient {
     required SecureTokenStorage tokenStorage,
     required Future<void> Function({String? messageKey}) onForceLogout,
   }) {
+    // 타임아웃을 전역으로 두지 않는다. 코스 추천은 백엔드가 AI 서버를 동기로
+    // 호출해 응답이 10초를 넘기는데, 전역 10초가 그걸 먼저 끊어버렸다.
+    // 오래 걸리는 게 정상인 엔드포인트와 아닌 엔드포인트를 한 값으로 묶을 수 없다.
     final baseOptions = BaseOptions(
       baseUrl: EnvConfig.apiBaseUrl,
-      connectTimeout: const Duration(seconds: 10),
-      receiveTimeout: const Duration(seconds: 10),
-      sendTimeout: const Duration(seconds: 10),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
