@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../../../core/constants/app_colors.dart';
@@ -393,7 +394,12 @@ class _CourseRecommendPageState extends ConsumerState<CourseRecommendPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const CircularProgressIndicator(color: AppColors.primary),
+            // AI 생성이라 대기가 길다. 스피너 대신 계속 볼 만한 그림을 둔다.
+            Lottie.asset(
+              'assets/animations/Loader_Cat.json',
+              width: 360.w,
+              repeat: true,
+            ),
             SizedBox(height: 16.h),
             Text(
               '코스를 만들고 있어요',
@@ -485,7 +491,7 @@ class _ResultNotice extends StatelessWidget {
 }
 
 /// 결과 카드 스와이프 — 내부 PageView가 가로 제스처를 소비 (외부 스텝과 충돌 없음).
-class _ResultCards extends StatefulWidget {
+class _ResultCards extends StatelessWidget {
   const _ResultCards({
     super.key,
     required this.results,
@@ -498,55 +504,24 @@ class _ResultCards extends StatefulWidget {
   final void Function(CourseEntity) onGo;
 
   @override
-  State<_ResultCards> createState() => _ResultCardsState();
-}
-
-class _ResultCardsState extends State<_ResultCards> {
-  final PageController _controller = PageController(viewportFraction: 0.92);
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          child: PageView.builder(
-            controller: _controller,
-            itemCount: widget.results.length,
-            itemBuilder: (context, index) {
-              final course = widget.results[index];
-              return Padding(
-                padding: EdgeInsets.symmetric(horizontal: 6.w),
-                child: SingleChildScrollView(
-                  child: CourseCard(
-                    course: course,
-                    saved: course.favorite,
-                    onToggleSaved: () => widget.onToggleSaved(course),
-                    onGo: () => widget.onGo(course),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-        SizedBox(height: 12.h),
-        SmoothPageIndicator(
-          controller: _controller,
-          count: widget.results.length,
-          effect: WormEffect(
-            dotHeight: 8.h,
-            dotWidth: 8.w,
-            activeDotColor: AppColors.primary,
-            dotColor: AppColors.line,
-          ),
-        ),
-        SizedBox(height: 16.h),
-      ],
+    // 세로 스크롤이라 바깥 스텝 PageView(가로)와 제스처가 겹치지 않는다.
+    return ListView.separated(
+      padding: EdgeInsets.symmetric(
+        horizontal: AppSpacing.lg.w,
+        vertical: AppSpacing.sm.h,
+      ),
+      itemCount: results.length,
+      separatorBuilder: (_, _) => SizedBox(height: 14.h),
+      itemBuilder: (context, index) {
+        final course = results[index];
+        return CourseCard(
+          course: course,
+          saved: course.favorite,
+          onToggleSaved: () => onToggleSaved(course),
+          onGo: () => onGo(course),
+        );
+      },
     );
   }
 }
