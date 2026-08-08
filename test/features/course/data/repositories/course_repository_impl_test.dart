@@ -108,11 +108,7 @@ void main() {
             entrance: 'MAIN_GATE',
             exit: 'SOUTH_GATE',
             places: [
-              CoursePlaceModel(
-                visitOrder: 1,
-                name: '맹수마을',
-                category: 'ANIMAL',
-              ),
+              CoursePlaceModel(visitOrder: 1, name: '맹수마을', category: 'ANIMAL'),
             ],
           ),
         ],

@@ -69,9 +69,7 @@ class CourseSheet extends ConsumerWidget {
                 SizedBox(height: 6.h),
                 Text(
                   course.title,
-                  style: AppTextStyles.display16.copyWith(
-                    color: AppColors.ink,
-                  ),
+                  style: AppTextStyles.display16.copyWith(color: AppColors.ink),
                 ),
                 SizedBox(height: 12.h),
                 for (var i = 0; i < course.places.length; i++)
