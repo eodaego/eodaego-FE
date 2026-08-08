@@ -160,17 +160,22 @@ class _FavoriteCoursesProviderElement
   FavoriteSort get sort => (origin as FavoriteCoursesProvider).sort;
 }
 
-String _$favoriteToggleHash() => r'c6b0104f609e6e3a10b136d39984de481f1854b4';
+String _$favoriteToggleHash() => r'be041d3d38c0fd400330d39d2f162053265eb9de';
 
 /// 즐겨찾기 토글 1회 = API 호출 + 목록 무효화.
 ///
 /// 하트 상태 자체는 갖지 않는다. 화면이 자기 목록을 낙관적으로 먼저 뒤집고,
 /// 실패하면 되돌린다. 등록·삭제 둘 다 멱등이라 더블탭·재시도가 안전하다.
 ///
+/// **주의**: keepAlive다. 화면이 `ref.read(...notifier)`로만 쓰고 watch하지 않아
+/// autoDispose면 API 응답을 기다리는 동안 폐기된다. 폐기 시 Riverpod이 내부
+/// `_futureCompleter`를 완료시키면서 비우지 않아, 응답 후 `state` 대입이
+/// `Bad state: Future already completed`로 터졌다.
+///
 /// Copied from [FavoriteToggle].
 @ProviderFor(FavoriteToggle)
 final favoriteToggleProvider =
-    AutoDisposeAsyncNotifierProvider<FavoriteToggle, void>.internal(
+    AsyncNotifierProvider<FavoriteToggle, void>.internal(
       FavoriteToggle.new,
       name: r'favoriteToggleProvider',
       debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -180,6 +185,6 @@ final favoriteToggleProvider =
       allTransitiveDependencies: null,
     );
 
-typedef _$FavoriteToggle = AutoDisposeAsyncNotifier<void>;
+typedef _$FavoriteToggle = AsyncNotifier<void>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

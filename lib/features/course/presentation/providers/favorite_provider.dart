@@ -18,7 +18,12 @@ Future<List<CourseEntity>> favoriteCourses(Ref ref, FavoriteSort sort) {
 ///
 /// 하트 상태 자체는 갖지 않는다. 화면이 자기 목록을 낙관적으로 먼저 뒤집고,
 /// 실패하면 되돌린다. 등록·삭제 둘 다 멱등이라 더블탭·재시도가 안전하다.
-@riverpod
+///
+/// **주의**: keepAlive다. 화면이 `ref.read(...notifier)`로만 쓰고 watch하지 않아
+/// autoDispose면 API 응답을 기다리는 동안 폐기된다. 폐기 시 Riverpod이 내부
+/// `_futureCompleter`를 완료시키면서 비우지 않아, 응답 후 `state` 대입이
+/// `Bad state: Future already completed`로 터졌다.
+@Riverpod(keepAlive: true)
 class FavoriteToggle extends _$FavoriteToggle {
   @override
   FutureOr<void> build() {}
@@ -46,9 +51,10 @@ class FavoriteToggle extends _$FavoriteToggle {
     }
 
     // 서버 진실로 목록을 다시 맞춘다 — 정렬 순서도 서버가 정한다.
-    for (final sort in FavoriteSort.values) {
-      ref.invalidate(favoriteCoursesProvider(sort));
-    }
+    // sort별로 하나씩 무효화하면 debug 빌드에서 Riverpod이 확인차 provider를
+    // 먼저 build해버려(element.dart `_debugAssertCanDependOn`) 아무도 안 보는
+    // 목록까지 4번 조회한다. family 통째로 넘기면 살아 있는 것만 건드린다.
+    ref.invalidate(favoriteCoursesProvider);
     return true;
   }
 }
