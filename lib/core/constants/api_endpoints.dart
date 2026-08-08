@@ -42,4 +42,12 @@ class ApiEndpoints {
   // Congestion — 백엔드가 내부망 AI 서버에서 받아 중계한다.
   // 데이터가 없거나 AI 서버가 죽으면 503이며, 이는 정상 시나리오다.
   static const String congestionCurrent = '$_v1/congestion/current';
+
+  // Course — 추천은 백엔드가 내부망 AI 서버를 호출해 중계하고 결과를 저장한다.
+  // 호출할 때마다 서버에 코스가 새로 생성된다.
+  static const String courseRecommendations = '$_v1/courses/recommendations';
+
+  // Course Favorite — 등록·삭제 모두 멱등이다.
+  static const String favorites = '$_v1/favorites';
+  static const String favoriteCourse = '$_v1/favorites/{courseId}';
 }
