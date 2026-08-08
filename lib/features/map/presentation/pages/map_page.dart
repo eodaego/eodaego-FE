@@ -75,38 +75,40 @@ class MapPage extends ConsumerWidget {
                               ),
                             ),
                           ),
-                          for (var i = 0; i < selected.places.length; i++)
-                            Align(
-                              alignment:
-                                  _markerAlignments[i %
-                                      _markerAlignments.length],
-                              child: MapMarker(
-                                number: i + 1,
-                                color: selected.places[i].category.color,
-                              ),
-                            ),
-                          Positioned(
-                            left: 16.w,
-                            bottom: 16.h,
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 10.w,
-                                vertical: 6.h,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppColors.surface,
-                                borderRadius: BorderRadius.circular(
-                                  AppRadius.xs.r,
+                          if (selected != null)
+                            for (var i = 0; i < selected.places.length; i++)
+                              Align(
+                                alignment:
+                                    _markerAlignments[i %
+                                        _markerAlignments.length],
+                                child: MapMarker(
+                                  number: i + 1,
+                                  color: selected.places[i].category.color,
                                 ),
                               ),
-                              child: Text(
-                                selected.entranceLabel,
-                                style: AppTextStyles.tag13Bold.copyWith(
-                                  color: AppColors.ink,
+                          if (selected != null)
+                            Positioned(
+                              left: 16.w,
+                              bottom: 16.h,
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 10.w,
+                                  vertical: 6.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppColors.surface,
+                                  borderRadius: BorderRadius.circular(
+                                    AppRadius.xs.r,
+                                  ),
+                                ),
+                                child: Text(
+                                  selected.gateLabel,
+                                  style: AppTextStyles.tag13Bold.copyWith(
+                                    color: AppColors.ink,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
                         ],
                       ),
                     ),

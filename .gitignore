@@ -73,3 +73,6 @@ android/app/keystore/
 # 내부 작업 문서 (에이전트 플랜 스캐폴딩) - 추적 제외
 docs/superpowers/
 .superpowers/
+
+# PR 본문 초안 - 추적 제외
+.pr/

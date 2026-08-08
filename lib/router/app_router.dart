@@ -15,7 +15,7 @@ import '../features/collection/domain/entities/catalog_item_entity.dart';
 import '../features/collection/presentation/pages/collection_detail_page.dart';
 import '../features/collection/presentation/pages/collection_page.dart';
 import '../features/course/presentation/pages/course_recommend_page.dart';
-import '../features/favorite/presentation/pages/favorite_page.dart';
+import '../features/course/presentation/pages/favorite_page.dart';
 import '../features/home/presentation/pages/home_page.dart';
 import '../features/map/presentation/pages/map_page.dart';
 import '../features/quiz/presentation/pages/quiz_page.dart';
