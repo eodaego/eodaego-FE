@@ -160,7 +160,7 @@ class _FavoriteCoursesProviderElement
   FavoriteSort get sort => (origin as FavoriteCoursesProvider).sort;
 }
 
-String _$favoriteToggleHash() => r'be041d3d38c0fd400330d39d2f162053265eb9de';
+String _$favoriteToggleHash() => r'7064f3fa57ddda4ddfe4e9365f8d3ee6406e46da';
 
 /// 즐겨찾기 토글 1회 = API 호출 + 목록 무효화.
 ///

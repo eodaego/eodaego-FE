@@ -11,11 +11,16 @@ class MapMarker extends StatelessWidget {
     required this.number,
     required this.color,
     this.size = 34,
+    this.elevated = true,
   });
 
   final int number;
   final Color color;
   final double size;
+
+  /// 그림자 여부. 지도 위에 떠 있을 때만 켠다 — 흰 카드나 목록 안에서는
+  /// 띄울 지면이 없어 숫자가 번져 보인다.
+  final bool elevated;
 
   @override
   Widget build(BuildContext context) {
@@ -26,13 +31,15 @@ class MapMarker extends StatelessWidget {
         shape: BoxShape.circle,
         color: color,
         border: Border.all(color: AppColors.onPrimary, width: 3),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.ink.withValues(alpha: 0.2),
-            offset: const Offset(0, 3),
-            blurRadius: 8,
-          ),
-        ],
+        boxShadow: elevated
+            ? [
+                BoxShadow(
+                  color: AppColors.ink.withValues(alpha: 0.2),
+                  offset: const Offset(0, 3),
+                  blurRadius: 8,
+                ),
+              ]
+            : null,
       ),
       child: Center(
         child: Text(
