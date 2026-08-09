@@ -17,6 +17,9 @@ dependencies:
   app_links: ^6.4.0 # 딥링크 URI 수신
   url_launcher: ^6.3.2 # 외부 URL 및 앱 실행
   share_plus: ^12.0.1 # 네이티브 공유 시트
+  google_maps_flutter: 2.14.2 # 실제 공원 지도와 코스 마커
+  google_maps_flutter_android: 2.16.1 # 프로젝트 Kotlin 2.1 호환 구현체
+  google_maps_flutter_ios: 2.15.4 # google_maps_flutter 2.14.2 기준 구현체
   # 상태 관리 및 데이터 모델
   flutter_riverpod: ^2.6.1 # Riverpod 상태 관리
   riverpod_annotation: ^2.6.1 # Riverpod 코드 생성 어노테이션

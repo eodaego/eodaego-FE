@@ -7,8 +7,8 @@ part 'course_model.g.dart';
 ///
 /// `CourseResponse.places[]` 원소.
 ///
-/// **주의**: 응답의 `facilityId`·`latitude`·`longitude`는 쓸 화면이 없어 선언하지 않는다.
-/// `mapX`·`mapY`는 문서상 항상 null이다.
+/// **주의**: 응답의 `facilityId`는 현재 사용하지 않는다.
+/// `mapX`·`mapY`는 문서상 항상 null이라 약도 좌표는 프론트에서 관리한다.
 @freezed
 class CoursePlaceModel with _$CoursePlaceModel {
   const factory CoursePlaceModel({
@@ -20,6 +20,12 @@ class CoursePlaceModel with _$CoursePlaceModel {
 
     /// 카테고리 원문 (`ANIMAL`/`PLANT`/`PLACE`)
     String? category,
+
+    /// 실제 지도에 표시할 위도
+    double? latitude,
+
+    /// 실제 지도에 표시할 경도
+    double? longitude,
   }) = _CoursePlaceModel;
 
   factory CoursePlaceModel.fromJson(Map<String, dynamic> json) =>

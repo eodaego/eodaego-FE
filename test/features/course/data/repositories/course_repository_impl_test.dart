@@ -108,7 +108,13 @@ void main() {
             entrance: 'MAIN_GATE',
             exit: 'SOUTH_GATE',
             places: [
-              CoursePlaceModel(visitOrder: 1, name: '맹수마을', category: 'ANIMAL'),
+              CoursePlaceModel(
+                visitOrder: 1,
+                name: '맹수마을',
+                category: 'ANIMAL',
+                latitude: 37.5487,
+                longitude: 127.0812,
+              ),
             ],
           ),
         ],
@@ -124,6 +130,8 @@ void main() {
       expect(result.first.id, 'c1');
       expect(result.first.entrance, ParkGate.mainGate);
       expect(result.first.places.first.category, DogamCategory.animal);
+      expect(result.first.places.first.latitude, 37.5487);
+      expect(result.first.places.first.longitude, 127.0812);
     });
 
     test('drops_places_whose_category_the_app_does_not_know', () async {

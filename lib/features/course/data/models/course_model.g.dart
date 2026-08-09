@@ -12,6 +12,8 @@ _$CoursePlaceModelImpl _$$CoursePlaceModelImplFromJson(
   visitOrder: (json['visitOrder'] as num?)?.toInt() ?? 0,
   name: json['name'] as String? ?? '',
   category: json['category'] as String?,
+  latitude: (json['latitude'] as num?)?.toDouble(),
+  longitude: (json['longitude'] as num?)?.toDouble(),
 );
 
 Map<String, dynamic> _$$CoursePlaceModelImplToJson(
@@ -20,6 +22,8 @@ Map<String, dynamic> _$$CoursePlaceModelImplToJson(
   'visitOrder': instance.visitOrder,
   'name': instance.name,
   'category': instance.category,
+  'latitude': instance.latitude,
+  'longitude': instance.longitude,
 };
 
 _$CourseModelImpl _$$CourseModelImplFromJson(Map<String, dynamic> json) =>

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
+import '../../../../core/constants/app_message_keys.dart';
 import '../../../../core/constants/dogam_category.dart';
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/network/dio_exception_handler.dart';
@@ -56,7 +57,7 @@ class CourseRepositoryImpl implements CourseRepository {
         debugPrint('[Course] ❌ AI 서버 응답 없음 (503)');
         throw ServerException(
           message: '지금은 코스를 만들지 못했어요. 잠시 후 다시 시도해 주세요.',
-          messageKey: 'errorCourseAiUnavailable',
+          messageKey: AppMessageKeys.errorCourseAiUnavailable,
           originalException: e,
         );
       }
@@ -65,7 +66,7 @@ class CourseRepositoryImpl implements CourseRepository {
       if (e is AppException) rethrow;
       throw ServerException(
         message: '코스를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.',
-        messageKey: 'errorCourseUnexpected',
+        messageKey: AppMessageKeys.errorCourseUnexpected,
         originalException: e,
       );
     }
@@ -94,7 +95,7 @@ class CourseRepositoryImpl implements CourseRepository {
       if (e is AppException) rethrow;
       throw ServerException(
         message: '저장한 코스를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.',
-        messageKey: 'errorFavoriteUnexpected',
+        messageKey: AppMessageKeys.errorFavoriteUnexpected,
         originalException: e,
       );
     }
@@ -135,6 +136,8 @@ class CourseRepositoryImpl implements CourseRepository {
           visitOrder: place.visitOrder,
           name: place.name,
           category: category,
+          latitude: place.latitude,
+          longitude: place.longitude,
         ),
       );
     }

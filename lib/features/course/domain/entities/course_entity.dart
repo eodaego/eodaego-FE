@@ -3,19 +3,22 @@ import 'course_options.dart';
 
 /// 코스에 포함된 장소.
 ///
-/// 서버가 주는 좌표(latitude/longitude)와 시설 ID는 쓸 화면이 없어 담지 않는다.
-/// 실제 지도를 붙일 때 추가한다.
+/// 서버가 주는 좌표는 실제 지도 마커에 사용한다.
 class CoursePlaceEntity {
   const CoursePlaceEntity({
     required this.visitOrder,
     required this.name,
     required this.category,
+    this.latitude,
+    this.longitude,
   });
 
   /// 방문 순서(1부터)
   final int visitOrder;
   final String name;
   final DogamCategory category;
+  final double? latitude;
+  final double? longitude;
 }
 
 /// 추천받은 코스.

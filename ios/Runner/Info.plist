@@ -37,6 +37,8 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>GIDClientID</key>
 	<string>294662201113-rnr5lb8hqt71cr7ovdjjcjedj2jtnv8e.apps.googleusercontent.com</string>
+	<key>GoogleMapsAPIKey</key>
+	<string>$(MAPS_API_KEY)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>

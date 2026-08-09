@@ -30,6 +30,12 @@ mixin _$CoursePlaceModel {
   /// 카테고리 원문 (`ANIMAL`/`PLANT`/`PLACE`)
   String? get category => throw _privateConstructorUsedError;
 
+  /// 실제 지도에 표시할 위도
+  double? get latitude => throw _privateConstructorUsedError;
+
+  /// 실제 지도에 표시할 경도
+  double? get longitude => throw _privateConstructorUsedError;
+
   /// Serializes this CoursePlaceModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
@@ -47,7 +53,13 @@ abstract class $CoursePlaceModelCopyWith<$Res> {
     $Res Function(CoursePlaceModel) then,
   ) = _$CoursePlaceModelCopyWithImpl<$Res, CoursePlaceModel>;
   @useResult
-  $Res call({int visitOrder, String name, String? category});
+  $Res call({
+    int visitOrder,
+    String name,
+    String? category,
+    double? latitude,
+    double? longitude,
+  });
 }
 
 /// @nodoc
@@ -68,6 +80,8 @@ class _$CoursePlaceModelCopyWithImpl<$Res, $Val extends CoursePlaceModel>
     Object? visitOrder = null,
     Object? name = null,
     Object? category = freezed,
+    Object? latitude = freezed,
+    Object? longitude = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -83,6 +97,14 @@ class _$CoursePlaceModelCopyWithImpl<$Res, $Val extends CoursePlaceModel>
                 ? _value.category
                 : category // ignore: cast_nullable_to_non_nullable
                       as String?,
+            latitude: freezed == latitude
+                ? _value.latitude
+                : latitude // ignore: cast_nullable_to_non_nullable
+                      as double?,
+            longitude: freezed == longitude
+                ? _value.longitude
+                : longitude // ignore: cast_nullable_to_non_nullable
+                      as double?,
           )
           as $Val,
     );
@@ -98,7 +120,13 @@ abstract class _$$CoursePlaceModelImplCopyWith<$Res>
   ) = __$$CoursePlaceModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int visitOrder, String name, String? category});
+  $Res call({
+    int visitOrder,
+    String name,
+    String? category,
+    double? latitude,
+    double? longitude,
+  });
 }
 
 /// @nodoc
@@ -118,6 +146,8 @@ class __$$CoursePlaceModelImplCopyWithImpl<$Res>
     Object? visitOrder = null,
     Object? name = null,
     Object? category = freezed,
+    Object? latitude = freezed,
+    Object? longitude = freezed,
   }) {
     return _then(
       _$CoursePlaceModelImpl(
@@ -133,6 +163,14 @@ class __$$CoursePlaceModelImplCopyWithImpl<$Res>
             ? _value.category
             : category // ignore: cast_nullable_to_non_nullable
                   as String?,
+        latitude: freezed == latitude
+            ? _value.latitude
+            : latitude // ignore: cast_nullable_to_non_nullable
+                  as double?,
+        longitude: freezed == longitude
+            ? _value.longitude
+            : longitude // ignore: cast_nullable_to_non_nullable
+                  as double?,
       ),
     );
   }
@@ -145,6 +183,8 @@ class _$CoursePlaceModelImpl implements _CoursePlaceModel {
     this.visitOrder = 0,
     this.name = '',
     this.category,
+    this.latitude,
+    this.longitude,
   });
 
   factory _$CoursePlaceModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -164,9 +204,17 @@ class _$CoursePlaceModelImpl implements _CoursePlaceModel {
   @override
   final String? category;
 
+  /// 실제 지도에 표시할 위도
+  @override
+  final double? latitude;
+
+  /// 실제 지도에 표시할 경도
+  @override
+  final double? longitude;
+
   @override
   String toString() {
-    return 'CoursePlaceModel(visitOrder: $visitOrder, name: $name, category: $category)';
+    return 'CoursePlaceModel(visitOrder: $visitOrder, name: $name, category: $category, latitude: $latitude, longitude: $longitude)';
   }
 
   @override
@@ -178,12 +226,17 @@ class _$CoursePlaceModelImpl implements _CoursePlaceModel {
                 other.visitOrder == visitOrder) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.category, category) ||
-                other.category == category));
+                other.category == category) &&
+            (identical(other.latitude, latitude) ||
+                other.latitude == latitude) &&
+            (identical(other.longitude, longitude) ||
+                other.longitude == longitude));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, visitOrder, name, category);
+  int get hashCode =>
+      Object.hash(runtimeType, visitOrder, name, category, latitude, longitude);
 
   /// Create a copy of CoursePlaceModel
   /// with the given fields replaced by the non-null parameter values.
@@ -207,6 +260,8 @@ abstract class _CoursePlaceModel implements CoursePlaceModel {
     final int visitOrder,
     final String name,
     final String? category,
+    final double? latitude,
+    final double? longitude,
   }) = _$CoursePlaceModelImpl;
 
   factory _CoursePlaceModel.fromJson(Map<String, dynamic> json) =
@@ -223,6 +278,14 @@ abstract class _CoursePlaceModel implements CoursePlaceModel {
   /// 카테고리 원문 (`ANIMAL`/`PLANT`/`PLACE`)
   @override
   String? get category;
+
+  /// 실제 지도에 표시할 위도
+  @override
+  double? get latitude;
+
+  /// 실제 지도에 표시할 경도
+  @override
+  double? get longitude;
 
   /// Create a copy of CoursePlaceModel
   /// with the given fields replaced by the non-null parameter values.

@@ -14,6 +14,7 @@
 # RELEASE_KEY_ALIAS: key alias
 # RELEASE_KEY_PASSWORD: key 비밀번호
 # GOOGLE_SERVICES_JSON: Firebase google-services.json
+# GOOGLE_MAPS_API_KEY_ANDROID: Android용 Google Maps API 키
 # GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_BASE64: Play Console 서비스 계정 (base64)
 # ===================================================================
 
@@ -259,6 +260,16 @@ jobs:
 
       - name: Install dependencies
         run: flutter pub get
+
+      - name: Create Google Maps config
+        env:
+          GOOGLE_MAPS_API_KEY_ANDROID: ${{ secrets.GOOGLE_MAPS_API_KEY_ANDROID }}
+        run: |
+          if [ -z "$GOOGLE_MAPS_API_KEY_ANDROID" ]; then
+            echo "::error::GOOGLE_MAPS_API_KEY_ANDROID secret is required"
+            exit 1
+          fi
+          printf '\nMAPS_API_KEY=%s\n' "$GOOGLE_MAPS_API_KEY_ANDROID" >> android/local.properties
 
       - name: Set up Java
         uses: actions/setup-java@v4

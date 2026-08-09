@@ -41,6 +41,7 @@
 # 📝 환경 설정 (선택):
 # ENV_FILE (선택): .env 파일 내용
 # SECRETS_XCCONFIG (선택): ios/Flutter/Secrets.xcconfig 내용
+# GOOGLE_MAPS_API_KEY_IOS: iOS용 Google Maps API 키
 #
 # ===================================================================
 
@@ -545,6 +546,16 @@ jobs:
 
       - name: Install dependencies
         run: flutter pub get
+
+      - name: Create Google Maps config
+        env:
+          GOOGLE_MAPS_API_KEY_IOS: ${{ secrets.GOOGLE_MAPS_API_KEY_IOS }}
+        run: |
+          if [ -z "$GOOGLE_MAPS_API_KEY_IOS" ]; then
+            echo "::error::GOOGLE_MAPS_API_KEY_IOS secret is required"
+            exit 1
+          fi
+          printf 'MAPS_API_KEY=%s\n' "$GOOGLE_MAPS_API_KEY_IOS" > ios/Flutter/Maps.xcconfig
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
