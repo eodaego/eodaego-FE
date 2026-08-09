@@ -33,7 +33,6 @@
 #
 # 📝 환경 설정 (선택):
 # ENV_FILE (선택): .env 파일 내용
-# SECRETS_XCCONFIG (선택): ios/Flutter/Secrets.xcconfig 내용
 # GOOGLE_MAPS_API_KEY_IOS: iOS용 Google Maps API 키
 #
 # ===================================================================
@@ -121,23 +120,6 @@ jobs:
       - name: Select Xcode version
         run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app/Contents/Developer
 
-      - name: Create .env file
-        run: |
-          cat << 'EOF' > ${{ env.ENV_FILE_PATH }}
-          ${{ secrets.ENV_FILE || secrets.ENV }}
-          EOF
-          echo "✅ ${{ env.ENV_FILE_PATH }} file created"
-
-      - name: Create Secrets.xcconfig file
-        run: |
-          mkdir -p ios/Flutter
-          if [ -n "${{ secrets.SECRETS_XCCONFIG }}" ]; then
-            echo "${{ secrets.SECRETS_XCCONFIG }}" > ios/Flutter/Secrets.xcconfig
-            echo "Secrets.xcconfig created"
-          else
-            echo "// No secrets provided" > ios/Flutter/Secrets.xcconfig
-          fi
-
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -212,13 +194,12 @@ jobs:
           path: final_release_notes.txt
           retention-days: 1
 
+      # .env는 보안상 아티팩트에 포함하지 않고, build-ios의 "Ensure .env file exists"에서 secrets로 재생성
       - name: Upload project files
         uses: actions/upload-artifact@v4
         with:
           name: project-files
           path: |
-            ${{ env.ENV_FILE_PATH }}
-            ios/Flutter/Secrets.xcconfig
             pubspec.yaml
             lib/
             assets/

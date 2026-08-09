@@ -122,7 +122,7 @@ Worktree 생성 성공 후, **에이전트가 `.gitignore`를 분석하여 민�
 |---------|----------|------|
 | Firebase 설정 | `google-services.json`, `GoogleService-Info.plist` | Firebase 연동 설정 |
 | 서명 키/인증서 | `key.properties`, `*.jks`, `*.p12`, `*.p8`, `*.mobileprovision` | 앱 서명 인증서 |
-| 빌드 설정 | `Secrets.xcconfig`, 민감한 `*.xcconfig` | iOS 빌드 비밀 설정 |
+| 빌드 설정 | `Maps.xcconfig`, 민감한 `*.xcconfig` | iOS 빌드 비밀 설정 |
 | 환경 변수 | `*.env` | 환경별 설정 파일 |
 | IDE 로컬 설정 | `settings.local.json` | Claude/Cursor 로컬 설정 |
 

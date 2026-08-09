@@ -1,64 +1,46 @@
 ---
 name: google-maps-setup
-description: Google Maps API Key 설정 — Android local.properties, iOS Secrets.xcconfig, 키 주입 흐름, CI 환경변수 주입. 지도 관련 빌드 오류나 신규 환경 세팅 시 사용.
+description: Google Maps API Key 설정 — Android local.properties, iOS Maps.xcconfig, 키 주입 흐름, CI 환경변수 주입. 지도 관련 빌드 오류나 신규 환경 세팅 시 사용.
 ---
 
 # Google Maps API Key 설정 가이드
 
-> **작성일**: 2026-01-16
-> **대상 독자**: 개발자, 신규 팀원
-> **문서 버전**: 1.0.0
-
-이 문서는 Google Maps SDK 사용을 위한 API Key 설정 방법을 설명합니다.
+Google Maps SDK 사용을 위한 API Key 설정 방법입니다.
+양 플랫폼 모두 변수명은 **`MAPS_API_KEY`** 하나로 통일되어 있습니다.
 
 ---
 
 ## 1. API Key 발급
 
-1. [Google Cloud Console](https://console.cloud.google.com/)에 접속
-2. 프로젝트 선택 또는 새 프로젝트 생성
-3. **APIs & Services > Credentials** 메뉴로 이동
-4. **CREATE CREDENTIALS > API key** 클릭
-5. 생성된 API Key 복사
+1. [Google Cloud Console](https://console.cloud.google.com/) 접속
+2. **APIs & Services > Credentials > CREATE CREDENTIALS > API key**
+3. 플랫폼별로 **키를 각각 발급**합니다 (CI 시크릿이 분리되어 있음)
 
-### 권장: API Key 제한 설정
+### 필수: API Key 제한 설정
 
-보안을 위해 API Key에 제한을 설정하세요:
-
-- **Android**: 앱 패키지명 + SHA-1 인증서 지문으로 제한
-- **iOS**: 앱 번들 ID로 제한
+- **Android**: 앱 패키지명(`com.elipair.eodaego`) + SHA-1 인증서 지문
+- **iOS**: 앱 번들 ID
 
 ---
 
 ## 2. Android 설정
 
-### 2.1 local.properties에 키 추가
-
-`android/local.properties` 파일에 다음 줄을 추가합니다:
+`android/local.properties`에 다음 줄을 추가합니다:
 
 ```text
-GOOGLE_MAPS_API_KEY=발급받은_API_KEY
+MAPS_API_KEY=발급받은_ANDROID_KEY
 ```
 
-> **참고**: `local.properties`는 `.gitignore`에 포함되어 있어 Git에 커밋되지 않습니다.
-
-### 2.2 템플릿 파일
-
-처음 설정하는 경우 템플릿을 참고하세요:
-
-```bash
-# 템플릿 확인
-cat android/local.properties.example
-```
+> `local.properties`는 `.gitignore`에 포함되어 커밋되지 않습니다.
 
 ### 키 주입 흐름
 
 ```text
-local.properties (GOOGLE_MAPS_API_KEY=xxx)
+local.properties (MAPS_API_KEY=xxx)
        ↓
-build.gradle.kts (manifestPlaceholders로 주입)
+android/app/build.gradle.kts (manifestPlaceholders["MAPS_API_KEY"])
        ↓
-AndroidManifest.xml (${GOOGLE_MAPS_API_KEY} → 실제 값)
+AndroidManifest.xml (com.google.android.geo.API_KEY = ${MAPS_API_KEY})
        ↓
 Google Maps SDK 초기화
 ```
@@ -67,35 +49,28 @@ Google Maps SDK 초기화
 
 ## 3. iOS 설정
 
-### 3.1 Secrets.xcconfig 생성
-
-`ios/Flutter/Secrets.xcconfig` 파일을 생성합니다:
+템플릿을 복사한 뒤 실제 키를 입력합니다:
 
 ```bash
-# 템플릿 복사
-cp ios/Flutter/Secrets.xcconfig.example ios/Flutter/Secrets.xcconfig
+cp ios/Flutter/Maps.xcconfig.example ios/Flutter/Maps.xcconfig
 ```
-
-### 3.2 키 입력
-
-`ios/Flutter/Secrets.xcconfig` 파일을 열고 실제 키를 입력합니다:
 
 ```text
-GOOGLE_MAPS_API_KEY=발급받은_API_KEY
+MAPS_API_KEY=발급받은_IOS_KEY
 ```
 
-> **참고**: `Secrets.xcconfig`는 `.gitignore`에 포함되어 있어 Git에 커밋되지 않습니다.
+> `Maps.xcconfig`는 `ios/.gitignore`에 포함되어 커밋되지 않습니다.
 
 ### 키 주입 흐름
 
 ```text
-Secrets.xcconfig (GOOGLE_MAPS_API_KEY=xxx)
+Maps.xcconfig (MAPS_API_KEY=xxx)
        ↓
-Debug.xcconfig / Release.xcconfig (#include)
+Debug.xcconfig / Release.xcconfig (#include? "Maps.xcconfig")
        ↓
-Info.plist ($(GOOGLE_MAPS_API_KEY) → 실제 값)
+Info.plist (GoogleMapsAPIKey = $(MAPS_API_KEY))
        ↓
-AppDelegate.swift (Bundle에서 읽어서 GMSServices.provideAPIKey 호출)
+AppDelegate.swift (Bundle에서 읽어 GMSServices.provideAPIKey 호출)
        ↓
 Google Maps SDK 초기화
 ```
@@ -104,57 +79,64 @@ Google Maps SDK 초기화
 
 ## 4. 빠른 설정 체크리스트
 
-### Android
-
-- [ ] `android/local.properties`에 `GOOGLE_MAPS_API_KEY` 추가
-
-### iOS
-
-- [ ] `ios/Flutter/Secrets.xcconfig.example`을 `Secrets.xcconfig`로 복사
-- [ ] `Secrets.xcconfig`에 실제 API Key 입력
+- [ ] `android/local.properties`에 `MAPS_API_KEY` 추가
+- [ ] `ios/Flutter/Maps.xcconfig.example` → `Maps.xcconfig` 복사 후 키 입력
 
 ---
 
 ## 5. 트러블슈팅
 
-### "API key not found" 오류
+### 지도가 빈 화면으로 뜸 (에러 없이 조용히 실패)
 
-1. **Android**: `local.properties`에 키가 있는지 확인
-2. **iOS**: `Secrets.xcconfig`에 키가 있는지 확인
-3. 빌드 캐시 클리어 후 재빌드:
+키 주입이 실패해도 **빌드는 성공**합니다. iOS는 `AppDelegate`가 미치환 문자열을 걸러내고, Android는 placeholder 기본값이 빈 문자열이라 그렇습니다. 아래를 순서대로 확인하세요.
+
+1. **Android**: `grep MAPS_API_KEY android/local.properties`
+2. **iOS**: 실제 빌드 설정에 값이 잡히는지 확인 (가장 확실한 검증)
    ```bash
-   flutter clean
-   flutter pub get
-   flutter run
+   cd ios && xcodebuild -workspace Runner.xcworkspace -scheme Runner \
+     -configuration Release -showBuildSettings | grep MAPS_API_KEY
    ```
-
-### iOS 디버그 콘솔에 경고 메시지
-
-```text
-⚠️ GOOGLE_MAPS_API_KEY가 비어 있습니다. Secrets.xcconfig 설정을 확인하세요.
-```
-
-→ `ios/Flutter/Secrets.xcconfig` 파일이 없거나 키가 비어있습니다.
+3. 캐시 클리어 후 재빌드:
+   ```bash
+   flutter clean && flutter pub get && flutter run
+   ```
 
 ---
 
 ## 6. CI/CD 환경
 
-CI 환경에서는 환경변수를 통해 키를 주입합니다.
+**GitHub Secrets는 플랫폼별로 분리되어 있습니다.**
 
-### GitHub Actions 예시
+| 시크릿 | 사용처 |
+|--------|--------|
+| `GOOGLE_MAPS_API_KEY_ANDROID` | `PROJECT-FLUTTER-ANDROID-PLAYSTORE-CICD.yaml` |
+| `GOOGLE_MAPS_API_KEY_IOS` | `PROJECT-FLUTTER-IOS-TESTFLIGHT.yaml`, `PROJECT-FLUTTER-IOS-TEST-TESTFLIGHT.yaml` |
+
+두 워크플로우 모두 **빌드를 수행하는 잡 안에서** 설정 파일을 직접 생성하며, 시크릿이 비어 있으면 즉시 실패합니다.
 
 ```yaml
-- name: Setup Android API Keys
+# Android — build-android 잡
+- name: Create Google Maps config
+  env:
+    GOOGLE_MAPS_API_KEY_ANDROID: ${{ secrets.GOOGLE_MAPS_API_KEY_ANDROID }}
   run: |
-    echo "GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }}" >> android/local.properties
+    if [ -z "$GOOGLE_MAPS_API_KEY_ANDROID" ]; then
+      echo "::error::GOOGLE_MAPS_API_KEY_ANDROID secret is required"
+      exit 1
+    fi
+    printf '\nMAPS_API_KEY=%s\n' "$GOOGLE_MAPS_API_KEY_ANDROID" >> android/local.properties
 
-- name: Setup iOS API Keys
+# iOS — build-ios 잡
+- name: Create Google Maps config
+  env:
+    GOOGLE_MAPS_API_KEY_IOS: ${{ secrets.GOOGLE_MAPS_API_KEY_IOS }}
   run: |
-    echo "GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }}" > ios/Flutter/Secrets.xcconfig
+    if [ -z "$GOOGLE_MAPS_API_KEY_IOS" ]; then
+      echo "::error::GOOGLE_MAPS_API_KEY_IOS secret is required"
+      exit 1
+    fi
+    printf 'MAPS_API_KEY=%s\n' "$GOOGLE_MAPS_API_KEY_IOS" > ios/Flutter/Maps.xcconfig
 ```
 
----
-
-**문서 작성**: Development Team
-**최종 업데이트**: 2026-01-16
+> **주의**: 설정 파일 생성은 반드시 `flutter build`·`xcodebuild archive`보다 **앞선** 스텝이어야 합니다.
+> 별도 잡에서 만들어 아티팩트로 넘기는 방식은 전달이 어긋나면 키 없는 빌드가 조용히 나가므로 쓰지 않습니다.
