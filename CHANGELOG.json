@@ -1,14 +1,38 @@
 {
   "metadata": {
-    "lastUpdated": "2026-08-09T00:38:27Z",
-    "currentVersion": "1.0.35",
+    "lastUpdated": "2026-08-09T06:31:25Z",
+    "currentVersion": "1.0.36",
     "projectType": "flutter",
     "projectTypes": [
       "flutter"
     ],
-    "totalReleases": 9
+    "totalReleases": 10
   },
   "releases": [
+    {
+      "version": "1.0.36",
+      "project_type": "flutter",
+      "project_types": [
+        "flutter"
+      ],
+      "date": "2026-08-09",
+      "pr_number": 32,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **기타**\n\n  * docs : 도감 API 식별자 이슈 문서를 기능요청으로 정리\n  * chore : iOS 최소 배포 타겟을 15.0으로 상향\n  * chore : riverpod 생성 코드 해시 갱신\n  * fix : 도감 수집률을 소수점 첫째 자리까지 표시\n  * fix : 도감 조회 카테고리를 항상 PLACE로 고정\n  * chore : iOS 워크플로우 미사용 Secrets.xcconfig 주입 제거 #30\n\n> 💡 더 정확한 릴리스 노트를 원한다면 Claude Code에서 `/github` 스킬로 PR 릴리스 노트를 업데이트할 수 있습니다.",
+      "parsed_changes": {
+        "기타": {
+          "title": "기타",
+          "items": [
+            "docs : 도감 API 식별자 이슈 문서를 기능요청으로 정리",
+            "chore : iOS 최소 배포 타겟을 15.0으로 상향",
+            "chore : riverpod 생성 코드 해시 갱신",
+            "fix : 도감 수집률을 소수점 첫째 자리까지 표시",
+            "fix : 도감 조회 카테고리를 항상 PLACE로 고정",
+            "chore : iOS 워크플로우 미사용 Secrets.xcconfig 주입 제거 #30"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "1.0.35",
       "project_type": "flutter",
