@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
 import '../constants/api_endpoints.dart';
+import '../constants/app_message_keys.dart';
 import '../storage/secure_token_storage.dart';
 import 'api_error_response.dart';
 
@@ -99,7 +100,7 @@ class AuthInterceptor extends QueuedInterceptor {
     // 이미 재시도한 요청이 다시 401이면 무한 루프 방지 → 강제 로그아웃
     // 재시도 후에도 인증 거부 = 토큰이 유효하지 않음
     if (err.requestOptions.extra['_isRetry'] == true) {
-      await _handleForceLogout(messageKey: 'errorAuthExpired');
+      await _handleForceLogout(messageKey: AppMessageKeys.errorAuthExpired);
       return handler.next(err);
     }
 
@@ -107,7 +108,7 @@ class AuthInterceptor extends QueuedInterceptor {
 
     if (refreshToken == null || refreshToken.trim().isEmpty) {
       // Refresh Token이 없으면 강제 로그아웃 (세션 만료와 동일한 UX)
-      await _handleForceLogout(messageKey: 'errorAuthExpired');
+      await _handleForceLogout(messageKey: AppMessageKeys.errorAuthExpired);
       return handler.next(err);
     }
 
@@ -144,7 +145,7 @@ class AuthInterceptor extends QueuedInterceptor {
     if (response.statusCode != 200) {
       if (_shouldForceLogoutForReissueStatus(response.statusCode)) {
         // 400/401/403 — reissue 서버가 거부한 케이스. 재시도해도 동일한 결과일 가능성 높음
-        await _handleForceLogout(messageKey: 'errorAuthExpired');
+        await _handleForceLogout(messageKey: AppMessageKeys.errorAuthExpired);
       }
       return handler.next(err);
     }
@@ -155,7 +156,7 @@ class AuthInterceptor extends QueuedInterceptor {
         debugPrint('❌ 토큰 재발급 응답 파싱 실패: statusCode=${response.statusCode}');
       }
       // 200이지만 토큰 형식이 잘못됨 → 서버 응답 이상, 일시 오류로 안내
-      await _handleForceLogout(messageKey: 'errorTemporaryRetry');
+      await _handleForceLogout(messageKey: AppMessageKeys.errorTemporaryRetry);
       return handler.next(err);
     }
 
@@ -178,7 +179,7 @@ class AuthInterceptor extends QueuedInterceptor {
     } catch (e) {
       if (_isAccessTokenRejected(e)) {
         // 새 토큰으로 재시도했는데도 401 — access token 자체가 무효
-        await _handleForceLogout(messageKey: 'errorAuthExpired');
+        await _handleForceLogout(messageKey: AppMessageKeys.errorAuthExpired);
       }
       return handler.next(e is DioException ? e : err);
     }
@@ -300,9 +301,9 @@ class AuthInterceptor extends QueuedInterceptor {
       case 'INVALID_TOKEN':
       case 'REFRESH_TOKEN_NOT_FOUND':
       case 'REFRESH_TOKEN_MISMATCH':
-        return 'errorAuthExpired';
+        return AppMessageKeys.errorAuthExpired;
       default:
-        return 'errorTemporaryRetry';
+        return AppMessageKeys.errorTemporaryRetry;
     }
   }
 

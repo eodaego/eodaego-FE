@@ -1,4 +1,5 @@
 import '../../../../core/mock/mock_asset_loader.dart';
+import '../../domain/entities/course_options.dart';
 import '../models/course_favorite_list_model.dart';
 import '../models/course_model.dart';
 import '../models/course_recommendation_request_model.dart';
@@ -57,17 +58,17 @@ class CourseMockDataSource implements CourseRemoteDataSource {
     ];
 
     // 서버 정렬을 흉내 낸다 — 소요시간 정렬만 관찰 가능한 차이를 만든다.
-    if (sort == 'DURATION_SHORT') {
+    if (sort == FavoriteSort.durationShort.serverValue) {
       saved.sort(
         (a, b) =>
             a.estimatedDurationMinutes.compareTo(b.estimatedDurationMinutes),
       );
-    } else if (sort == 'DURATION_LONG') {
+    } else if (sort == FavoriteSort.durationLong.serverValue) {
       saved.sort(
         (a, b) =>
             b.estimatedDurationMinutes.compareTo(a.estimatedDurationMinutes),
       );
-    } else if (sort == 'OLDEST') {
+    } else if (sort == FavoriteSort.oldest.serverValue) {
       // 등록 순서를 따로 기록하지 않는다 — 목에서는 뒤집기로 충분하다.
       final reversed = saved.reversed.toList();
       saved

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
+import '../../../../core/constants/app_message_keys.dart';
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/network/dio_exception_handler.dart';
 import '../../../../core/utils/kst_clock.dart';
@@ -76,7 +77,7 @@ class WeatherRepositoryImpl implements WeatherRepository {
       if (e is AppException) rethrow;
       throw ServerException(
         message: '날씨를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.',
-        messageKey: 'errorWeatherUnexpected',
+        messageKey: AppMessageKeys.errorWeatherUnexpected,
         originalException: e,
       );
     }
@@ -107,7 +108,7 @@ class WeatherRepositoryImpl implements WeatherRepository {
       if (e is AppException) rethrow;
       throw ServerException(
         message: '혼잡도를 불러오지 못했어요.',
-        messageKey: 'errorCongestionUnexpected',
+        messageKey: AppMessageKeys.errorCongestionUnexpected,
         originalException: e,
       );
     }

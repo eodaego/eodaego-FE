@@ -1,5 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+
+import '../../constants/device_type.dart';
 import '../device/device_info_service.dart';
 import '../device/device_id_manager.dart';
 
@@ -92,7 +94,7 @@ class FirebaseMessagingService {
       return {
         'deviceId': 'unknown',
         'deviceName': 'Unknown Device',
-        'deviceType': 'UNKNOWN',
+        'deviceType': DeviceType.unknown,
         'osVersion': 'Unknown',
       };
     }

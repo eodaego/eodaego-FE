@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../../core/constants/app_message_keys.dart';
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/network/connectivity_service.dart';
 import '../../../user/presentation/providers/user_provider.dart';
@@ -176,7 +177,7 @@ class AgreementNotifier extends _$AgreementNotifier {
           : ServerException(
               // message는 로그/디버그용 — 사용자 노출은 messageKey 경유
               message: 'temporary error, please retry',
-              messageKey: 'errorTemporaryRetry',
+              messageKey: AppMessageKeys.errorTemporaryRetry,
               originalException: e,
             );
       state = state.copyWith(isSubmitting: false);

@@ -75,8 +75,8 @@ class _CurrentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(top: 8.h, bottom: 8.h),
-      padding: EdgeInsets.all(20.w),
+      margin: EdgeInsets.only(top: AppSpacing.sm.h, bottom: AppSpacing.sm.h),
+      padding: EdgeInsets.all(AppSpacing.lg.w),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(AppRadius.lg.r),
@@ -120,16 +120,16 @@ class _CurrentCard extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: AppSpacing.base.h),
           Row(
             children: [
               _Metric(label: '습도', value: '${weather.humidity}%'),
-              SizedBox(width: 24.w),
+              SizedBox(width: AppSpacing.xl.w),
               _Metric(label: '바람', value: '${weather.windSpeed}m/s'),
             ],
           ),
           if (weather.observedAt != null) ...[
-            SizedBox(height: 12.h),
+            SizedBox(height: AppSpacing.md.h),
             Text(
               '${_hourLabel(weather.observedAt!)} 기준',
               style: AppTextStyles.caption14.copyWith(color: AppColors.muted),
@@ -175,7 +175,7 @@ class _DayHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(top: 16.h, bottom: 8.h),
+      padding: EdgeInsets.only(top: AppSpacing.base.h, bottom: AppSpacing.sm.h),
       child: Text(
         label,
         style: AppTextStyles.display16.copyWith(color: AppColors.primaryDark),
@@ -193,7 +193,7 @@ class _ForecastRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.h),
+      padding: EdgeInsets.symmetric(vertical: AppSpacing.sm.h),
       child: Row(
         children: [
           SizedBox(
@@ -211,7 +211,7 @@ class _ForecastRow extends StatelessWidget {
             size: 20.w,
             color: AppColors.muted,
           ),
-          SizedBox(width: 12.w),
+          SizedBox(width: AppSpacing.md.w),
           Text(
             '${forecast.temperature.round()}°',
             style: AppTextStyles.label16Semibold.copyWith(color: AppColors.ink),
@@ -236,7 +236,7 @@ class _EmptyForecast extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 32.h),
+      padding: EdgeInsets.symmetric(vertical: AppSpacing.xxl.h),
       child: Center(
         child: Text(
           '예보는 잠시 뒤에 볼 수 있어요',
@@ -256,16 +256,16 @@ class _LoadingBody extends StatelessWidget {
     return ListView(
       padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg.w),
       children: [
-        SizedBox(height: 8.h),
+        SizedBox(height: AppSpacing.sm.h),
         AppSkeleton(
           width: double.infinity,
           height: 160.h,
           borderRadius: BorderRadius.circular(AppRadius.lg.r),
         ),
-        SizedBox(height: 24.h),
+        SizedBox(height: AppSpacing.xl.h),
         for (var i = 0; i < 8; i++) ...[
           AppSkeleton(width: double.infinity, height: 24.h),
-          SizedBox(height: 16.h),
+          SizedBox(height: AppSpacing.base.h),
         ],
       ],
     );
@@ -287,17 +287,17 @@ class _ErrorBody extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.cloud_off_outlined, size: 44.w, color: AppColors.muted),
-            SizedBox(height: 16.h),
+            SizedBox(height: AppSpacing.base.h),
             Text(
               '날씨를 불러오지 못했어요',
               style: AppTextStyles.display17.copyWith(color: AppColors.ink),
             ),
-            SizedBox(height: 8.h),
+            SizedBox(height: AppSpacing.sm.h),
             Text(
               '잠시 후 다시 시도해 주세요',
               style: AppTextStyles.body15.copyWith(color: AppColors.muted),
             ),
-            SizedBox(height: 24.h),
+            SizedBox(height: AppSpacing.xl.h),
             AppButton(text: '다시 불러오기', onPressed: onRetry),
           ],
         ),

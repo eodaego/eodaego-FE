@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
+import '../../../../core/constants/app_message_keys.dart';
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/network/dio_exception_handler.dart';
 import '../../domain/entities/agreement_status_entity.dart';
@@ -35,7 +36,7 @@ class UserRepositoryImpl implements UserRepository {
       if (e is AppException) rethrow;
       throw ServerException(
         message: '닉네임을 바꾸지 못했어요. 잠시 후 다시 시도해 주세요.',
-        messageKey: 'errorNicknameUpdateUnexpected',
+        messageKey: AppMessageKeys.errorNicknameUpdateUnexpected,
         originalException: e,
       );
     }
@@ -57,7 +58,7 @@ class UserRepositoryImpl implements UserRepository {
       if (e is AppException) rethrow;
       throw ServerException(
         message: '닉네임을 확인하지 못했어요. 잠시 후 다시 시도해 주세요.',
-        messageKey: 'errorNicknameCheckUnexpected',
+        messageKey: AppMessageKeys.errorNicknameCheckUnexpected,
         originalException: e,
       );
     }
@@ -76,7 +77,7 @@ class UserRepositoryImpl implements UserRepository {
     } catch (e) {
       throw ServerException(
         message: '탈퇴하지 못했어요. 잠시 후 다시 시도해 주세요.',
-        messageKey: 'errorDeleteAccountUnexpected',
+        messageKey: AppMessageKeys.errorDeleteAccountUnexpected,
         originalException: e,
       );
     }
@@ -111,7 +112,7 @@ class UserRepositoryImpl implements UserRepository {
       if (e is AppException) rethrow;
       throw ServerException(
         message: '약관 동의 상태를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.',
-        messageKey: 'errorAgreementFetchUnexpected',
+        messageKey: AppMessageKeys.errorAgreementFetchUnexpected,
         originalException: e,
       );
     }
@@ -138,7 +139,7 @@ class UserRepositoryImpl implements UserRepository {
       if (e is AppException) rethrow;
       throw ServerException(
         message: '약관 동의를 저장하지 못했어요. 잠시 후 다시 시도해 주세요.',
-        messageKey: 'errorAgreementSaveUnexpected',
+        messageKey: AppMessageKeys.errorAgreementSaveUnexpected,
         originalException: e,
       );
     }

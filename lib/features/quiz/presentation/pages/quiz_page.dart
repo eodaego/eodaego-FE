@@ -92,14 +92,14 @@ class _QuizBody extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 8.h),
+          SizedBox(height: AppSpacing.sm.h),
           AppBadge.category(question.category),
-          SizedBox(height: 16.h),
+          SizedBox(height: AppSpacing.base.h),
           Text(
             question.question,
             style: AppTextStyles.display22.copyWith(color: AppColors.ink),
           ),
-          SizedBox(height: 20.h),
+          SizedBox(height: AppSpacing.lg.h),
           Center(
             child: CatalogImage(
               code: question.code,
@@ -107,7 +107,7 @@ class _QuizBody extends StatelessWidget {
               size: imageSize,
             ),
           ),
-          SizedBox(height: 24.h),
+          SizedBox(height: AppSpacing.xl.h),
           for (var i = 0; i < question.choices.length; i++) _choice(i),
           if (locked.isNotEmpty && !answered)
             Center(
@@ -116,7 +116,7 @@ class _QuizBody extends StatelessWidget {
                 style: AppTextStyles.caption14.copyWith(color: AppColors.muted),
               ),
             ),
-          SizedBox(height: 24.h),
+          SizedBox(height: AppSpacing.xl.h),
         ],
       ),
     );
@@ -135,7 +135,7 @@ class _QuizBody extends StatelessWidget {
         ? AppColors.uncollected
         : (correctSelected ? AppColors.primary : AppColors.line);
     return Padding(
-      padding: EdgeInsets.only(bottom: 12.h),
+      padding: EdgeInsets.only(bottom: AppSpacing.md.h),
       child: SizedBox(
         width: double.infinity,
         child: Material(
@@ -226,15 +226,15 @@ class _LoadingBody extends StatelessWidget {
     return ListView(
       padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg.w),
       children: [
-        SizedBox(height: 8.h),
+        SizedBox(height: AppSpacing.sm.h),
         AppSkeleton(
           width: 72.w,
           height: 24.h,
           borderRadius: BorderRadius.circular(AppRadius.xs.r),
         ),
-        SizedBox(height: 16.h),
+        SizedBox(height: AppSpacing.base.h),
         AppSkeleton(width: double.infinity, height: 28.h),
-        SizedBox(height: 20.h),
+        SizedBox(height: AppSpacing.lg.h),
         Center(
           child: AppSkeleton(
             width: imageSize,
@@ -242,14 +242,14 @@ class _LoadingBody extends StatelessWidget {
             borderRadius: BorderRadius.circular(AppRadius.lg.r),
           ),
         ),
-        SizedBox(height: 24.h),
+        SizedBox(height: AppSpacing.xl.h),
         for (var i = 0; i < 3; i++) ...[
           AppSkeleton(
             width: double.infinity,
             height: 60.h,
             borderRadius: BorderRadius.circular(AppRadius.md.r),
           ),
-          SizedBox(height: 12.h),
+          SizedBox(height: AppSpacing.md.h),
         ],
       ],
     );
@@ -269,12 +269,12 @@ class _ErrorBody extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.quiz_outlined, size: 44.w, color: AppColors.muted),
-            SizedBox(height: 16.h),
+            SizedBox(height: AppSpacing.base.h),
             Text(
               '퀴즈를 불러오지 못했어요',
               style: AppTextStyles.display17.copyWith(color: AppColors.ink),
             ),
-            SizedBox(height: 8.h),
+            SizedBox(height: AppSpacing.sm.h),
             Text(
               '잠시 후 다시 시도해 주세요',
               style: AppTextStyles.body15.copyWith(color: AppColors.muted),

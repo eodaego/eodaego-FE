@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_urls.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
@@ -158,7 +159,7 @@ class _AgreementsPageState extends ConsumerState<AgreementsPage> {
           agreedLabel: requiredLabel,
           onTap: () => _openLegal(
             title: '이용약관',
-            assetPath: 'assets/legals/terms_of_service.json',
+            assetPath: AppAssets.termsOfService,
             url: AppUrls.termsOfService,
           ),
         ),
@@ -167,7 +168,7 @@ class _AgreementsPageState extends ConsumerState<AgreementsPage> {
           agreedLabel: requiredLabel,
           onTap: () => _openLegal(
             title: '개인정보처리방침',
-            assetPath: 'assets/legals/privacy_policy.json',
+            assetPath: AppAssets.privacyPolicy,
             url: AppUrls.privacyPolicy,
           ),
         ),
@@ -176,7 +177,7 @@ class _AgreementsPageState extends ConsumerState<AgreementsPage> {
           agreedLabel: requiredLabel,
           onTap: () => _openLegal(
             title: '위치정보 이용약관',
-            assetPath: 'assets/legals/location_terms.json',
+            assetPath: AppAssets.locationTerms,
             url: AppUrls.locationTerms,
           ),
         ),
@@ -188,7 +189,7 @@ class _AgreementsPageState extends ConsumerState<AgreementsPage> {
           // 넘기지 않는다 — 확정되면 url 인자만 추가하면 된다.
           onTap: () => _openLegal(
             title: '마케팅 정보 수신 동의',
-            assetPath: 'assets/legals/marketing_consent.json',
+            assetPath: AppAssets.marketingConsent,
           ),
           trailing: Switch(
             value: status.marketing,

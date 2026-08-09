@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../../core/constants/app_message_keys.dart';
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/storage/secure_token_storage.dart';
@@ -144,7 +145,8 @@ class AuthNotifier extends _$AuthNotifier {
       // 실제 로그인 실패(네트워크/서버/Firebase 등). 앱은 멈추지 않고,
       // 로그인 화면에 안내(AppSnackbar)만 띄운다.
       debugPrint('⚠️ [$provider] 로그인 실패: $e');
-      ref.read(loginNoticeKeyProvider.notifier).state = 'loginFailed';
+      ref.read(loginNoticeKeyProvider.notifier).state =
+          AppMessageKeys.loginFailed;
       state = const AsyncValue.data(null);
     }
   }
@@ -153,12 +155,14 @@ class AuthNotifier extends _$AuthNotifier {
     state = const AsyncValue.loading();
     try {
       await ref.read(signOutUseCaseProvider).execute();
-      ref.read(loginNoticeKeyProvider.notifier).state = 'logoutSuccess';
+      ref.read(loginNoticeKeyProvider.notifier).state =
+          AppMessageKeys.logoutSuccess;
     } catch (e) {
       // repo가 로컬 정리를 best-effort로 이미 수행함(토큰삭제 실행).
       // 여기 도달 = 토큰삭제 자체 실패 등 극히 드문 경우 → 안내만.
       debugPrint('⚠️ 로그아웃 중 예상 밖 오류: $e');
-      ref.read(loginNoticeKeyProvider.notifier).state = 'logoutUnexpected';
+      ref.read(loginNoticeKeyProvider.notifier).state =
+          AppMessageKeys.logoutUnexpected;
     } finally {
       state = const AsyncValue.data(null); // 항상 로그아웃 완료 상태
     }

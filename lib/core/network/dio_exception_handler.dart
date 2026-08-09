@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
+import '../constants/app_message_keys.dart';
 import '../errors/app_exception.dart';
 import 'api_error_response.dart';
 
@@ -41,7 +42,7 @@ class DioExceptionHandler {
     if (_isTimeoutError(e)) {
       return NetworkException(
         message: 'request timeout',
-        messageKey: 'errorNetworkTimeout',
+        messageKey: AppMessageKeys.errorNetworkTimeout,
         code: 'timeout',
         originalException: e,
       );
@@ -50,7 +51,7 @@ class DioExceptionHandler {
     if (_isConnectionError(e)) {
       return NetworkException(
         message: 'connection error',
-        messageKey: 'errorNetworkOffline',
+        messageKey: AppMessageKeys.errorNetworkOffline,
         code: 'connection-error',
         originalException: e,
       );
@@ -67,7 +68,7 @@ class DioExceptionHandler {
     if (statusCode != null && statusCode >= 500) {
       return ServerException(
         message: 'server error',
-        messageKey: 'errorTemporaryRetry',
+        messageKey: AppMessageKeys.errorTemporaryRetry,
         code: errorCode,
         originalException: e,
       );
@@ -83,25 +84,25 @@ class DioExceptionHandler {
       ),
       401 => AuthException(
         message: 'unauthorized',
-        messageKey: 'errorTemporaryRetry',
+        messageKey: AppMessageKeys.errorTemporaryRetry,
         code: errorCode,
         originalException: e,
       ),
       403 => AuthException(
         message: 'forbidden',
-        messageKey: 'errorTemporaryRetry',
+        messageKey: AppMessageKeys.errorTemporaryRetry,
         code: errorCode,
         originalException: e,
       ),
       404 => ServerException(
         message: 'not found',
-        messageKey: 'errorTemporaryRetry',
+        messageKey: AppMessageKeys.errorTemporaryRetry,
         code: errorCode,
         originalException: e,
       ),
       409 => ServerException(
         message: 'conflict',
-        messageKey: 'errorTemporaryRetry',
+        messageKey: AppMessageKeys.errorTemporaryRetry,
         code: errorCode,
         originalException: e,
       ),
@@ -125,7 +126,7 @@ class DioExceptionHandler {
       // 오프라인/미확인 에러 — errorCode는 null이 맞음
       return NetworkException(
         message: 'network error',
-        messageKey: 'errorNetworkOffline',
+        messageKey: AppMessageKeys.errorNetworkOffline,
         code: errorCode, // 오프라인 시 null, 정상
         originalException: e,
       );
@@ -133,14 +134,14 @@ class DioExceptionHandler {
     if (statusCode >= 400 && statusCode < 500) {
       return ValidationException(
         message: 'unhandled client error ($statusCode)',
-        messageKey: 'errorTemporaryRetry',
+        messageKey: AppMessageKeys.errorTemporaryRetry,
         code: errorCode,
         originalException: e,
       );
     }
     return ServerException(
       message: 'unhandled server error ($statusCode)',
-      messageKey: 'errorTemporaryRetry',
+      messageKey: AppMessageKeys.errorTemporaryRetry,
       code: errorCode,
       originalException: e,
     );

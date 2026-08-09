@@ -11,6 +11,7 @@ import '../../../../core/providers/guest_mode_provider.dart';
 import '../../../../core/providers/selected_course_provider.dart';
 import '../../../../core/widgets/app_badge.dart';
 import '../../../../core/widgets/app_button.dart';
+import '../../../../core/widgets/app_snackbar.dart';
 import '../../../../core/widgets/category_chip.dart';
 import '../../../../core/widgets/course_card.dart';
 import '../../../../core/widgets/dashed_rrect_painter.dart';
@@ -71,8 +72,10 @@ class _FavoritePageState extends ConsumerState<FavoritePage> {
         .toggle(courseId: course.id, favorite: false);
 
     if (!ok && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('저장을 지우지 못했어요. 잠시 후 다시 시도해 주세요.')),
+      AppSnackbar.show(
+        context,
+        message: '저장을 지우지 못했어요. 잠시 후 다시 시도해 주세요',
+        backgroundColor: AppColors.danger,
       );
     }
   }
@@ -94,7 +97,7 @@ class _FavoritePageState extends ConsumerState<FavoritePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 8.h),
+              SizedBox(height: AppSpacing.sm.h),
               Row(
                 children: [
                   Text(
@@ -103,7 +106,7 @@ class _FavoritePageState extends ConsumerState<FavoritePage> {
                       color: AppColors.ink,
                     ),
                   ),
-                  SizedBox(width: 8.w),
+                  SizedBox(width: AppSpacing.sm.w),
                   AppBadge(
                     label: '${state.valueOrNull?.length ?? 0}개',
                     background: AppColors.surfaceDim,
@@ -111,11 +114,12 @@ class _FavoritePageState extends ConsumerState<FavoritePage> {
                   ),
                 ],
               ),
-              SizedBox(height: 12.h),
+              SizedBox(height: AppSpacing.md.h),
               Row(
                 children: [
                   for (final chip in _SortChip.values) ...[
-                    if (chip != _SortChip.values.first) SizedBox(width: 8.w),
+                    if (chip != _SortChip.values.first)
+                      SizedBox(width: AppSpacing.sm.w),
                     CategoryChip(
                       label: _chipLabel(chip),
                       selected: _sort == chip,
@@ -199,13 +203,13 @@ class _EmptyState extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: AppSpacing.base.h),
           Text(
             '마음에 드는 코스에 하트를 누르면\n여기에 모아둘 수 있어요',
             textAlign: TextAlign.center,
             style: AppTextStyles.body15.copyWith(color: AppColors.muted),
           ),
-          SizedBox(height: 20.h),
+          SizedBox(height: AppSpacing.lg.h),
           AppButton(
             text: '지도에서 코스 보러 가기',
             backgroundColor: AppColors.surface,

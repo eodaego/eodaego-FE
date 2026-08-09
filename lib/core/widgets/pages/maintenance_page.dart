@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../constants/app_colors.dart';
+import '../../constants/spacing_and_radius.dart';
 import '../../constants/text_styles.dart';
 
 /// 서버 점검 안내. TODO: 어대GO 점검 화면 디자인으로 교체.
@@ -13,13 +14,13 @@ class MaintenancePage extends StatelessWidget {
       backgroundColor: AppColors.canvas,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(AppSpacing.lg),
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text('잠시 점검 중이에요', style: AppTextStyles.display24),
-                const SizedBox(height: 12),
+                const SizedBox(height: AppSpacing.md),
                 Text(
                   '더 나은 서비스를 위해 점검하고 있어요.\n잠시 후 다시 시도해 주세요.',
                   textAlign: TextAlign.center,

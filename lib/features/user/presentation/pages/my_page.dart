@@ -162,7 +162,7 @@ class _MyPageState extends ConsumerState<MyPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SizedBox(height: 24.h),
+            SizedBox(height: AppSpacing.xl.h),
             _ProfileHeader(
               nickname: nickname,
               // 게스트는 바꿀 닉네임(계정) 자체가 없으므로 링크를 숨긴다.
@@ -173,17 +173,17 @@ class _MyPageState extends ConsumerState<MyPage> {
                       '?nickname=${Uri.encodeComponent(nickname)}',
                     ),
             ),
-            SizedBox(height: 32.h),
+            SizedBox(height: AppSpacing.xxl.h),
             Text(
               '내 도감',
               style: AppTextStyles.display16.copyWith(color: AppColors.ink),
             ),
-            SizedBox(height: 12.h),
+            SizedBox(height: AppSpacing.md.h),
             _StatsCard(
               summaryAsync: summaryAsync,
               onTap: () => context.go(RoutePaths.collection),
             ),
-            SizedBox(height: 32.h),
+            SizedBox(height: AppSpacing.xxl.h),
             if (isGuest)
               AppButton(
                 text: '로그인하러 가기',
@@ -218,7 +218,7 @@ class _MyPageState extends ConsumerState<MyPage> {
                     : () => _confirmDeleteAccount(context),
               ),
             ],
-            SizedBox(height: 32.h),
+            SizedBox(height: AppSpacing.xxl.h),
             // 로딩 중엔 빈 문자열 — Text가 줄 높이는 유지하므로 자리가 안 튄다.
             Center(
               child: Text(
@@ -226,7 +226,7 @@ class _MyPageState extends ConsumerState<MyPage> {
                 style: AppTextStyles.caption14.copyWith(color: AppColors.muted),
               ),
             ),
-            SizedBox(height: 32.h),
+            SizedBox(height: AppSpacing.xxl.h),
           ],
         ),
       ),

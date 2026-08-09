@@ -27,7 +27,7 @@ class CourseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.all(AppSpacing.base.w),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(AppRadius.lg.r),
@@ -43,13 +43,13 @@ class CourseCard extends StatelessWidget {
                 course.dominantCategory,
                 label: course.badgeLabel,
               ),
-              SizedBox(width: 8.w),
+              SizedBox(width: AppSpacing.sm.w),
               AppBadge(
                 label: course.durationLabel,
                 background: AppColors.surfaceDim,
                 foreground: AppColors.muted,
               ),
-              SizedBox(width: 8.w),
+              SizedBox(width: AppSpacing.sm.w),
               AppBadge(
                 label: course.gateLabel,
                 background: AppColors.surfaceDim,
@@ -67,15 +67,15 @@ class CourseCard extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 4.h),
+          SizedBox(height: AppSpacing.xs.h),
           Text(
             course.title,
             style: AppTextStyles.display19.copyWith(color: AppColors.ink),
           ),
-          SizedBox(height: 12.h),
+          SizedBox(height: AppSpacing.md.h),
           for (var i = 0; i < course.places.length; i++)
             Padding(
-              padding: EdgeInsets.only(bottom: 8.h),
+              padding: EdgeInsets.only(bottom: AppSpacing.sm.h),
               child: Row(
                 children: [
                   _NumberDot(
@@ -90,7 +90,7 @@ class CourseCard extends StatelessWidget {
                 ],
               ),
             ),
-          SizedBox(height: 8.h),
+          SizedBox(height: AppSpacing.sm.h),
           AppButton(
             text: '이 코스로 갈래!',
             width: double.infinity,

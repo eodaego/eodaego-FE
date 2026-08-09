@@ -88,7 +88,7 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 8.h),
+              SizedBox(height: AppSpacing.sm.h),
               Row(
                 children: [
                   Text(
@@ -97,7 +97,7 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
                       color: AppColors.ink,
                     ),
                   ),
-                  SizedBox(width: 8.w),
+                  SizedBox(width: AppSpacing.sm.w),
                   itemsAsync.when(
                     loading: () => AppSkeleton(width: 52.w, height: 22.h),
                     error: (_, _) => const SizedBox.shrink(),
@@ -113,7 +113,7 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
                   ),
                 ],
               ),
-              SizedBox(height: 12.h),
+              SizedBox(height: AppSpacing.md.h),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
@@ -124,7 +124,7 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
                       onTap: () => setState(() => _filter = null),
                     ),
                     for (final c in DogamCategory.values) ...[
-                      SizedBox(width: 8.w),
+                      SizedBox(width: AppSpacing.sm.w),
                       CategoryChip(
                         label: c.label,
                         selected: _filter == c,
@@ -135,7 +135,7 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
                   ],
                 ),
               ),
-              SizedBox(height: 12.h),
+              SizedBox(height: AppSpacing.md.h),
               TextField(
                 onChanged: (v) => setState(() => _query = v.trim()),
                 style: AppTextStyles.body15.copyWith(color: AppColors.ink),
@@ -147,7 +147,9 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
                   prefixIcon: const Icon(Icons.search, color: AppColors.muted),
                   filled: true,
                   fillColor: AppColors.surface,
-                  contentPadding: EdgeInsets.symmetric(vertical: 12.h),
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: AppSpacing.md.h,
+                  ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AppRadius.md.r),
                     borderSide: const BorderSide(color: AppColors.line),
@@ -158,7 +160,7 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
                   ),
                 ),
               ),
-              SizedBox(height: 12.h),
+              SizedBox(height: AppSpacing.md.h),
               Expanded(
                 child: RefreshIndicator(
                   onRefresh: _refresh,
@@ -280,7 +282,7 @@ class _CatalogGridCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _thumbnail(),
-              SizedBox(height: 8.h),
+              SizedBox(height: AppSpacing.sm.h),
               Text(
                 collected ? (item.name ?? '') : '아직이에요',
                 maxLines: 1,
@@ -289,7 +291,7 @@ class _CatalogGridCard extends StatelessWidget {
                   color: collected ? AppColors.ink : AppColors.uncollected,
                 ),
               ),
-              SizedBox(height: 4.h),
+              SizedBox(height: AppSpacing.xs.h),
               Text(
                 item.category.label,
                 style: AppTextStyles.caption14.copyWith(
@@ -350,9 +352,9 @@ class _CollectionListSkeleton extends StatelessWidget {
             AppSkeleton(
               width: 64.w,
               height: 64.w,
-              borderRadius: BorderRadius.circular(32.r),
+              borderRadius: BorderRadius.circular(AppRadius.xl.r),
             ),
-            SizedBox(height: 8.h),
+            SizedBox(height: AppSpacing.sm.h),
             AppSkeleton(width: 56.w, height: 13.h),
             SizedBox(height: 6.h),
             AppSkeleton(width: 32.w, height: 12.h),
@@ -378,7 +380,7 @@ class _CollectionError extends StatelessWidget {
             '도감을 불러오지 못했어요',
             style: AppTextStyles.body17.copyWith(color: AppColors.ink),
           ),
-          SizedBox(height: 12.h),
+          SizedBox(height: AppSpacing.md.h),
           TextButton(onPressed: onRetry, child: const Text('다시 불러오기')),
         ],
       ),

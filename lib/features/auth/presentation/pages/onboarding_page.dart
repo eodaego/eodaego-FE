@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../router/route_paths.dart';
 
@@ -18,7 +19,7 @@ class OnboardingPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text('어대GO에 온 걸 환영해요', style: AppTextStyles.display24),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppSpacing.xl),
             ElevatedButton(
               onPressed: () => context.go(RoutePaths.login),
               child: Text('시작하기', style: AppTextStyles.label16Semibold),

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
@@ -81,15 +82,15 @@ class _RewardBody extends ConsumerWidget {
                 '정답이에요!',
                 style: AppTextStyles.display26.copyWith(color: AppColors.ink),
               ),
-              SizedBox(height: 12.h),
+              SizedBox(height: AppSpacing.md.h),
               // 마스코트 에셋이 없으면 자리 자체를 차지하지 않는다.
               Image.asset(
-                'assets/images/mascot/celebrate.png',
+                AppAssets.celebrateMascot,
                 width: 120.w,
                 height: 120.w,
                 errorBuilder: (_, _, _) => const SizedBox.shrink(),
               ),
-              SizedBox(height: 12.h),
+              SizedBox(height: AppSpacing.md.h),
               // scale-in 0.8 → 1.0, easeOutBack 400ms — 앱 유일 진입 애니메이션
               TweenAnimationBuilder<double>(
                 tween: Tween(begin: 0.8, end: 1.0),
@@ -99,16 +100,16 @@ class _RewardBody extends ConsumerWidget {
                     Transform.scale(scale: scale, child: child),
                 child: _RewardCard(question: question),
               ),
-              SizedBox(height: 16.h),
+              SizedBox(height: AppSpacing.base.h),
               Text(
                 '도감에 새 친구를 등록했어요',
                 style: AppTextStyles.body15.copyWith(color: AppColors.muted),
               ),
               if (!isGuest) ...[
-                SizedBox(height: 24.h),
+                SizedBox(height: AppSpacing.xl.h),
                 const _CollectionProgress(),
               ],
-              SizedBox(height: 32.h),
+              SizedBox(height: AppSpacing.xxl.h),
               AppButton(
                 text: '도감 보러 가기',
                 width: double.infinity,
@@ -148,12 +149,12 @@ class _RewardCard extends StatelessWidget {
             category: question.category,
             size: 120.w,
           ),
-          SizedBox(height: 12.h),
+          SizedBox(height: AppSpacing.md.h),
           Text(
             question.name,
             style: AppTextStyles.display19.copyWith(color: AppColors.ink),
           ),
-          SizedBox(height: 8.h),
+          SizedBox(height: AppSpacing.sm.h),
           AppBadge.category(question.category),
         ],
       ),
@@ -202,7 +203,7 @@ class _CollectionProgressGauge extends StatelessWidget {
             color: AppColors.reward,
           ),
         ),
-        SizedBox(height: 8.h),
+        SizedBox(height: AppSpacing.sm.h),
         Text(
           '${summary.collectedCount} / ${summary.totalCount} 모았어요',
           style: AppTextStyles.body15.copyWith(color: AppColors.muted),
@@ -251,12 +252,12 @@ class _ErrorBody extends StatelessWidget {
               size: 44.w,
               color: AppColors.muted,
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: AppSpacing.base.h),
             Text(
               '결과를 불러오지 못했어요',
               style: AppTextStyles.display17.copyWith(color: AppColors.ink),
             ),
-            SizedBox(height: 8.h),
+            SizedBox(height: AppSpacing.sm.h),
             Text(
               '잠시 후 다시 시도해 주세요',
               style: AppTextStyles.body15.copyWith(color: AppColors.muted),

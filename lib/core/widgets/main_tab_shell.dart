@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../router/route_paths.dart';
 import '../constants/app_colors.dart';
+import '../constants/spacing_and_radius.dart';
 import '../constants/text_styles.dart';
 
 /// 4탭 셸 스캐폴드 — 하단 탭바(홈·지도·도감·즐겨찾기) + 중앙 카메라 FAB.
@@ -100,7 +101,7 @@ class _TabItem extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(active ? activeIcon : icon, size: 26.w, color: color),
-            SizedBox(height: 4.h),
+            SizedBox(height: AppSpacing.xs.h),
             Text(label, style: AppTextStyles.tag12Bold.copyWith(color: color)),
           ],
         ),

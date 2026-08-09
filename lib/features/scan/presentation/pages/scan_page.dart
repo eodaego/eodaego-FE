@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/providers/guest_mode_provider.dart';
 import '../../../../core/widgets/dialogs/login_gate_dialog.dart';
@@ -88,7 +89,7 @@ class ScanPage extends ConsumerWidget {
                 ],
               ),
             ),
-            SizedBox(height: 24.h),
+            SizedBox(height: AppSpacing.xl.h),
           ],
         ),
       ),

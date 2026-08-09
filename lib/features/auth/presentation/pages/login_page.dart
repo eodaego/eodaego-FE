@@ -7,7 +7,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_message_keys.dart';
 import '../../../../core/constants/app_urls.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
@@ -22,18 +24,18 @@ import '../providers/auth_provider.dart';
 /// 로그인 화면 안내 키 → (문구, 색). 순수 함수 — 위젯 없이 단위 테스트 가능.
 ({String message, Color color}) loginNoticeFor(String key) {
   switch (key) {
-    case 'logoutSuccess':
+    case AppMessageKeys.logoutSuccess:
       return (message: '로그아웃했어요', color: AppColors.ink);
-    case 'logoutUnexpected':
+    case AppMessageKeys.logoutUnexpected:
       return (
         message: '로그아웃하지 못했어요. 잠시 후 다시 시도해 주세요.',
         color: AppColors.danger,
       );
-    case 'errorAuthExpired':
+    case AppMessageKeys.errorAuthExpired:
       return (message: '로그인 시간이 지났어요. 다시 로그인해 주세요.', color: AppColors.danger);
-    case 'errorTemporaryRetry':
+    case AppMessageKeys.errorTemporaryRetry:
       return (message: '잠시 후 다시 시도해 주세요', color: AppColors.danger);
-    case 'loginFailed':
+    case AppMessageKeys.loginFailed:
       return (message: '로그인하지 못했어요. 잠시 후 다시 시도해 주세요.', color: AppColors.danger);
     default:
       return (message: '다시 로그인해 주세요.', color: AppColors.ink);
@@ -62,19 +64,16 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     _privacyRecognizer = TapGestureRecognizer()
       ..onTap = () => _openLegal(
         '개인정보처리방침',
-        'assets/legals/privacy_policy.json',
+        AppAssets.privacyPolicy,
         AppUrls.privacyPolicy,
       );
     _termsRecognizer = TapGestureRecognizer()
-      ..onTap = () => _openLegal(
-        '이용약관',
-        'assets/legals/terms_of_service.json',
-        AppUrls.termsOfService,
-      );
+      ..onTap = () =>
+          _openLegal('이용약관', AppAssets.termsOfService, AppUrls.termsOfService);
     _locationRecognizer = TapGestureRecognizer()
       ..onTap = () => _openLegal(
         '위치정보 이용약관',
-        'assets/legals/location_terms.json',
+        AppAssets.locationTerms,
         AppUrls.locationTerms,
       );
 

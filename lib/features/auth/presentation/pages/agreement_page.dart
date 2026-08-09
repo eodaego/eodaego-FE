@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_urls.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
@@ -94,7 +95,7 @@ class AgreementPage extends ConsumerWidget {
                 onOpenDocument: () => _openLegal(
                   context,
                   title: '이용약관',
-                  assetPath: 'assets/legals/terms_of_service.json',
+                  assetPath: AppAssets.termsOfService,
                   url: AppUrls.termsOfService,
                 ),
               ),
@@ -106,7 +107,7 @@ class AgreementPage extends ConsumerWidget {
                 onOpenDocument: () => _openLegal(
                   context,
                   title: '개인정보처리방침',
-                  assetPath: 'assets/legals/privacy_policy.json',
+                  assetPath: AppAssets.privacyPolicy,
                   url: AppUrls.privacyPolicy,
                 ),
               ),
@@ -118,7 +119,7 @@ class AgreementPage extends ConsumerWidget {
                 onOpenDocument: () => _openLegal(
                   context,
                   title: '위치정보 이용약관',
-                  assetPath: 'assets/legals/location_terms.json',
+                  assetPath: AppAssets.locationTerms,
                   url: AppUrls.locationTerms,
                 ),
               ),
@@ -132,7 +133,7 @@ class AgreementPage extends ConsumerWidget {
                 onOpenDocument: () => _openLegal(
                   context,
                   title: '마케팅 정보 수신 동의',
-                  assetPath: 'assets/legals/marketing_consent.json',
+                  assetPath: AppAssets.marketingConsent,
                 ),
               ),
               const Spacer(),

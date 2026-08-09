@@ -105,9 +105,9 @@ class _DetailScaffold extends StatelessWidget {
               code: code,
               collected: collected,
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: AppSpacing.base.h),
             child,
-            SizedBox(height: 32.h),
+            SizedBox(height: AppSpacing.xxl.h),
           ],
         ),
       ),
@@ -176,12 +176,12 @@ class _UncollectedBody extends StatelessWidget {
           background: AppColors.surfaceDim,
           foreground: AppColors.uncollected,
         ),
-        SizedBox(height: 12.h),
+        SizedBox(height: AppSpacing.md.h),
         Text(
           '?',
           style: AppTextStyles.display26.copyWith(color: AppColors.uncollected),
         ),
-        SizedBox(height: 8.h),
+        SizedBox(height: AppSpacing.sm.h),
         Text(
           '공원에서 만나면 도감에 담을 수 있어요',
           style: AppTextStyles.body15.copyWith(color: AppColors.muted),
@@ -201,11 +201,11 @@ class _LoadingBody extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         AppSkeleton(width: 72.w, height: 24.h),
-        SizedBox(height: 12.h),
+        SizedBox(height: AppSpacing.md.h),
         AppSkeleton(width: 140.w, height: 30.h),
-        SizedBox(height: 8.h),
+        SizedBox(height: AppSpacing.sm.h),
         AppSkeleton(width: double.infinity, height: 20.h),
-        SizedBox(height: 16.h),
+        SizedBox(height: AppSpacing.base.h),
         AppSkeleton(
           width: double.infinity,
           height: 120.h,
@@ -230,7 +230,7 @@ class _ErrorBody extends StatelessWidget {
           '도감 정보를 불러오지 못했어요',
           style: AppTextStyles.body17.copyWith(color: AppColors.ink),
         ),
-        SizedBox(height: 12.h),
+        SizedBox(height: AppSpacing.md.h),
         TextButton(onPressed: onRetry, child: const Text('다시 불러오기')),
       ],
     );
@@ -250,7 +250,7 @@ class _LoadedBody extends StatelessWidget {
         Row(
           children: [
             AppBadge.category(detail.category),
-            SizedBox(width: 8.w),
+            SizedBox(width: AppSpacing.sm.w),
             const AppBadge(
               label: '만났어요',
               background: AppColors.primaryTint,
@@ -258,20 +258,20 @@ class _LoadedBody extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height: 12.h),
+        SizedBox(height: AppSpacing.md.h),
         Text(
           detail.name,
           style: AppTextStyles.display26.copyWith(color: AppColors.ink),
         ),
-        SizedBox(height: 8.h),
+        SizedBox(height: AppSpacing.sm.h),
         Text(
           detail.feature,
           style: AppTextStyles.body15.copyWith(color: AppColors.muted),
         ),
-        SizedBox(height: 16.h),
+        SizedBox(height: AppSpacing.base.h),
         Container(
           width: double.infinity,
-          padding: EdgeInsets.all(16.w),
+          padding: EdgeInsets.all(AppSpacing.base.w),
           decoration: BoxDecoration(
             color: AppColors.surface,
             borderRadius: BorderRadius.circular(AppRadius.lg.r),
@@ -293,7 +293,7 @@ class _LoadedBody extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: 24.h),
+        SizedBox(height: AppSpacing.xl.h),
         if (detail.collectedAt != null)
           Row(
             children: [
