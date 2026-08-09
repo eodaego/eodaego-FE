@@ -371,8 +371,8 @@ class _DogamProgressData extends StatelessWidget {
               // 한 덩어리로 읽혀야 한다.
               SizedBox(height: 14.h),
               Text(
-                // 서버가 반올림한 백분율을 그대로 쓴다
-                '${summary.collectionRate.round()}%',
+                // 서버가 소수점 첫째 자리까지 반올림해 내려준 값을 그대로 쓴다
+                '${summary.collectionRate.toStringAsFixed(1)}%',
                 style: AppTextStyles.display34.copyWith(
                   color: AppColors.primaryDark,
                 ),

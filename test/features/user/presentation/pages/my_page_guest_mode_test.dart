@@ -52,7 +52,7 @@ void main() {
 
       // 위 override가 던지지 않았다는 것 자체가 "요청하지 않았다"는 증거다.
       expect(tester.takeException(), isNull);
-      expect(find.text('0%'), findsOneWidget);
+      expect(find.text('0.0%'), findsOneWidget);
       expect(find.text('0'), findsOneWidget);
     });
   });

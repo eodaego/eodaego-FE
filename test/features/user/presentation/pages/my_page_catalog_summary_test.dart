@@ -18,7 +18,7 @@ import 'package:flutter_test/flutter_test.dart';
 const _summary = CatalogSummaryEntity(
   totalCount: 80,
   collectedCount: 24,
-  collectionRate: 30,
+  collectionRate: 30.5,
   collectedByCategory: {
     DogamCategory.animal: 8,
     DogamCategory.plant: 8,
@@ -68,7 +68,7 @@ void main() {
       await tester.pump();
 
       expect(find.byType(AppSkeleton), findsNWidgets(2));
-      expect(find.text('0%'), findsNothing);
+      expect(find.text('0.0%'), findsNothing);
       expect(find.text('0'), findsNothing);
 
       gate.complete(_summary);
@@ -88,12 +88,12 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('수집 현황을 불러오지 못했어요'), findsOneWidget);
-      expect(find.text('0%'), findsNothing);
+      expect(find.text('0.0%'), findsNothing);
       expect(find.text('0'), findsNothing);
       expect(find.byType(AppSkeleton), findsNothing);
     });
 
-    testWidgets('조회에 성공하면 실제 값을 보여준다', (tester) async {
+    testWidgets('조회에 성공하면 수집률을 소수점 한 자리까지 보여준다', (tester) async {
       _useDesignViewport(tester);
 
       await tester.pumpWidget(
@@ -101,7 +101,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('30%'), findsOneWidget);
+      expect(find.text('30.5%'), findsOneWidget);
       expect(find.text('24'), findsOneWidget);
     });
   });

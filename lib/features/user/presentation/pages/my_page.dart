@@ -309,7 +309,7 @@ class _StatsCard extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: 18.h),
           child: async == null
-              ? const _StatsRow(percentText: '0%', countText: '0')
+              ? const _StatsRow(percentText: '0.0%', countText: '0')
               : async.when(
                   loading: () => const _StatsRow(loading: true),
                   // 카드 틀은 유지하고, 0을 사실처럼 보여주는 대신 짧게 알린다.
@@ -322,7 +322,8 @@ class _StatsCard extends StatelessWidget {
                     ),
                   ),
                   data: (summary) => _StatsRow(
-                    percentText: '${summary.collectionRate.round()}%',
+                    percentText:
+                        '${summary.collectionRate.toStringAsFixed(1)}%',
                     countText: '${summary.collectedCount}',
                   ),
                 ),
