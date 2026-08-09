@@ -47,15 +47,14 @@ class _FakeCatalogRepository implements CatalogRepository {
 
 Future<PlaceCatalogStatus> _resolve(
   _FakeCatalogRepository repository, {
-  String placeName = '동물나라',
-  DogamCategory category = DogamCategory.animal,
+  String placeName = '맹수마을',
 }) async {
   final container = ProviderContainer(
     overrides: [catalogRepositoryProvider.overrideWithValue(repository)],
   );
   addTearDown(container.dispose);
   return container.read(
-    placeCatalogStatusProvider(placeName: placeName, category: category).future,
+    placeCatalogStatusProvider(placeName: placeName).future,
   );
 }
 
@@ -66,16 +65,16 @@ void main() {
         _FakeCatalogRepository(const [
           CatalogItemEntity(
             id: 'a1',
-            category: DogamCategory.animal,
+            category: DogamCategory.place,
             collected: true,
-            name: '동물나라',
-            imageUrl: 'https://example.com/a1.png',
-            code: 'A001',
+            name: '맹수마을',
+            imageUrl: 'https://example.com/c1.png',
+            code: 'C001',
           ),
         ]),
       );
 
-      expect(status.collected?.code, 'A001');
+      expect(status.collected?.code, 'C001');
       expect(status.inCatalog, isTrue);
     });
 
@@ -85,7 +84,7 @@ void main() {
         _FakeCatalogRepository(const [
           CatalogItemEntity(
             id: 'a1',
-            category: DogamCategory.animal,
+            category: DogamCategory.place,
             collected: false,
           ),
         ]),
@@ -103,16 +102,18 @@ void main() {
     });
 
     test('부분 일치로 딸려온 다른 이름을 수집한 항목으로 오인하지 않는다', () async {
-      // '동물나라'로 검색하면 서버가 '동물나라 사육장'까지 물어온다. 그걸 수집으로
-      // 읽으면 엉뚱한 도감 상세로 보내게 된다.
+      // 실제 공원 시설 중 유일한 접두사 충돌이다 — '식물원'으로 검색하면 서버가
+      // '식물원 카페테리아'까지 물어온다. 그걸 수집으로 읽으면 엉뚱한 도감
+      // 상세로 보내게 된다.
       final status = await _resolve(
+        placeName: '식물원',
         _FakeCatalogRepository(const [
           CatalogItemEntity(
-            id: 'a9',
-            category: DogamCategory.animal,
+            id: 'c9',
+            category: DogamCategory.place,
             collected: true,
-            name: '동물나라 사육장',
-            code: 'A009',
+            name: '식물원 카페테리아',
+            code: 'C009',
           ),
         ]),
       );
@@ -122,15 +123,14 @@ void main() {
       expect(status.inCatalog, isTrue);
     });
 
-    test('부분 일치 오탐을 줄이려고 카테고리도 함께 좁혀 보낸다', () async {
+    test('코스 장소의 표시 카테고리와 무관하게 항상 PLACE로 조회한다', () async {
+      // 백엔드는 AI 시설을 (PLACE, externalId)로만 도감에 넣는다. 코스 응답의
+      // category(동물나라→ANIMAL 등)는 화면 표시용이라, 그걸로 조회하면
+      // 동물·식물 장소가 전부 "도감에 없음"으로 떨어진다.
       final repository = _FakeCatalogRepository(const []);
-      await _resolve(
-        repository,
-        placeName: '음악분수',
-        category: DogamCategory.place,
-      );
+      await _resolve(repository, placeName: '맹수마을');
 
-      expect(repository.lastName, '음악분수');
+      expect(repository.lastName, '맹수마을');
       expect(repository.lastCategory, DogamCategory.place);
     });
   });

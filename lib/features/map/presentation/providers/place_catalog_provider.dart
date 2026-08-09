@@ -25,9 +25,16 @@ typedef PlaceCatalogStatus = ({CatalogItemEntity? collected, bool inCatalog});
 /// **이름이 채워져 돌아온 항목만이 수집한 항목**이고, 결과가 비었으면 도감에
 /// 없는 시설이다(또는 미수집 + SUSPENDED/RETIRED — 어차피 못 모으니 같이 묶는다).
 ///
-/// **주의**: 서버 검색은 부분 일치라 "동물나라"가 "동물나라 사육장"까지 물어온다.
-/// 카테고리를 함께 넘겨 좁히고, 수집 판정은 이름 완전 일치로 한 번 더 조인다.
-/// 정확한 키(`facilityId` ↔ 도감 `externalId`)는 관리용 API에만 있어 못 쓴다.
+/// **주의**: 조회 카테고리는 코스 장소의 카테고리가 **아니라** 항상 `PLACE`다.
+/// 백엔드는 AI 시설을 `(PLACE, externalId)`로만 도감에 동기화하고
+/// (`CatalogItemService`), 코스 응답의 `category`는 화면 표시용으로 다시 매긴
+/// 값이다(`CourseRecommendationService.mapCategory` — 동물나라→ANIMAL,
+/// 자연나라→PLANT). 즉 '맹수마을'은 코스에선 ANIMAL이지만 도감에선 PLACE다.
+/// 표시용 카테고리로 조회하면 동물·식물 장소가 전부 "도감에 없음"으로 떨어진다.
+///
+/// **주의**: 서버 검색은 부분 일치라 "식물원"이 "식물원 카페테리아"까지 물어온다.
+/// 그래서 수집 판정은 이름 완전 일치로 한 번 더 조인다. 정확한 키
+/// (`facilityId` ↔ 도감 `externalId`)는 앱이 쓰는 API에 없어 못 쓴다.
 ///
 /// **주의**: 인자 이름을 `name`으로 두면 riverpod 생성 코드의 provider `name`
 /// 필드와 부딪혀 컴파일이 깨진다. 그래서 [placeName]이다.
@@ -35,11 +42,10 @@ typedef PlaceCatalogStatus = ({CatalogItemEntity? collected, bool inCatalog});
 Future<PlaceCatalogStatus> placeCatalogStatus(
   Ref ref, {
   required String placeName,
-  required DogamCategory category,
 }) async {
   final matches = await ref
       .watch(catalogRepositoryProvider)
-      .getCatalogItems(category: category, name: placeName);
+      .getCatalogItems(category: DogamCategory.place, name: placeName);
 
   final collected = matches
       .where((item) => item.collected && item.name == placeName)

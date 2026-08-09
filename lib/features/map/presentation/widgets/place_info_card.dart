@@ -29,12 +29,7 @@ class PlaceInfoCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final status = ref
-        .watch(
-          placeCatalogStatusProvider(
-            placeName: place.name,
-            category: place.category,
-          ),
-        )
+        .watch(placeCatalogStatusProvider(placeName: place.name))
         .valueOrNull;
 
     // ③ 도감에 없는 시설은 아래로 붙일 게 없다. 한 줄을 이름 밑에 끼워 카드를
