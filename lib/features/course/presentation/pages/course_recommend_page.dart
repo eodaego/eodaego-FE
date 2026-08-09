@@ -8,12 +8,14 @@ import 'package:lottie/lottie.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_message_keys.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/providers/selected_course_provider.dart';
 import '../../../../core/widgets/app_back_app_bar.dart';
 import '../../../../core/widgets/app_button.dart';
+import '../../../../core/widgets/app_snackbar.dart';
 import '../../../../core/widgets/course_card.dart';
 import '../../../../router/route_paths.dart';
 import '../../domain/entities/course_entity.dart';
@@ -81,6 +83,9 @@ class CourseRecommendPage extends ConsumerStatefulWidget {
 }
 
 class _CourseRecommendPageState extends ConsumerState<CourseRecommendPage> {
+  /// 결과 페이지 인덱스 — 조건 스텝 5개(0~4) 뒤.
+  static const _resultPageIndex = 5;
+
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
@@ -140,7 +145,10 @@ class _CourseRecommendPageState extends ConsumerState<CourseRecommendPage> {
   }
 
   void _back(BuildContext context) {
-    if (_currentPage > 0) {
+    // 결과까지 왔으면 위저드로 되돌리지 않는다 — 코스에 들어오기 전 화면으로
+    // 바로 나간다. 추천은 호출할 때마다 AI 서버를 거치고 서버에 코스가 새로
+    // 저장되므로, 스텝으로 되돌아가 조건만 고치는 길을 열어두면 안 된다.
+    if (_currentPage > 0 && _currentPage < _resultPageIndex) {
       _pageController.previousPage(
         duration: const Duration(milliseconds: 250),
         curve: Curves.easeOut,
@@ -162,8 +170,10 @@ class _CourseRecommendPageState extends ConsumerState<CourseRecommendPage> {
 
     if (!ok && mounted) {
       notifier.markFavorite(course.id, !next);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('저장하지 못했어요. 잠시 후 다시 시도해 주세요.')),
+      AppSnackbar.show(
+        context,
+        message: '저장하지 못했어요. 잠시 후 다시 시도해 주세요',
+        backgroundColor: AppColors.danger,
       );
     }
   }
@@ -181,7 +191,7 @@ class _CourseRecommendPageState extends ConsumerState<CourseRecommendPage> {
       body: SafeArea(
         child: Column(
           children: [
-            SizedBox(height: 8.h),
+            SizedBox(height: AppSpacing.sm.h),
             SmoothPageIndicator(
               controller: _pageController,
               count: 6,
@@ -192,10 +202,15 @@ class _CourseRecommendPageState extends ConsumerState<CourseRecommendPage> {
                 dotColor: AppColors.line,
               ),
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: AppSpacing.base.h),
             Expanded(
               child: PageView(
                 controller: _pageController,
+                // 앱바 뒤로가기만 막으면 결과에서 오른쪽으로 밀어 위저드로
+                // 돌아갈 수 있다. 결과에서는 스와이프도 함께 막는다.
+                physics: _currentPage == _resultPageIndex
+                    ? const NeverScrollableScrollPhysics()
+                    : null,
                 onPageChanged: (i) => setState(() => _currentPage = i),
                 children: [
                   _stepPage(
@@ -312,7 +327,7 @@ class _CourseRecommendPageState extends ConsumerState<CourseRecommendPage> {
   /// 결과 스텝은 코스 카드 안에 CTA가 있어 버튼을 두지 않는다.
   Widget _footer() {
     final page = _currentPage;
-    if (page == 5) return const SizedBox.shrink();
+    if (page == _resultPageIndex) return const SizedBox.shrink();
 
     final selected = switch (page) {
       0 => _entrance != null,
@@ -349,19 +364,19 @@ class _CourseRecommendPageState extends ConsumerState<CourseRecommendPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 8.h),
+          SizedBox(height: AppSpacing.sm.h),
           Text(
             question,
             style: AppTextStyles.display24.copyWith(color: AppColors.ink),
           ),
-          SizedBox(height: 8.h),
+          SizedBox(height: AppSpacing.sm.h),
           Text(
             hint,
             style: AppTextStyles.caption14.copyWith(color: AppColors.muted),
           ),
-          SizedBox(height: 24.h),
+          SizedBox(height: AppSpacing.xl.h),
           grid,
-          SizedBox(height: 24.h),
+          SizedBox(height: AppSpacing.xl.h),
         ],
       ),
     );
@@ -400,7 +415,7 @@ class _CourseRecommendPageState extends ConsumerState<CourseRecommendPage> {
               width: 360.w,
               repeat: true,
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: AppSpacing.base.h),
             Text(
               '코스를 만들고 있어요',
               style: AppTextStyles.body15.copyWith(color: AppColors.muted),
@@ -417,7 +432,7 @@ class _CourseRecommendPageState extends ConsumerState<CourseRecommendPage> {
         // AI 서버 장애는 조건 문제가 아니다. 조건을 바꾸라고 하면 헛수고를 시킨다.
         final aiDown =
             error is AppException &&
-            error.messageKey == 'errorCourseAiUnavailable';
+            error.messageKey == AppMessageKeys.errorCourseAiUnavailable;
         final message = error is AppException
             ? error.message
             : '코스를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.';
@@ -476,7 +491,7 @@ class _ResultNotice extends StatelessWidget {
             textAlign: TextAlign.center,
             style: AppTextStyles.body15.copyWith(color: AppColors.muted),
           ),
-          SizedBox(height: 20.h),
+          SizedBox(height: AppSpacing.lg.h),
           Center(
             child: AppButton(
               text: buttonText,
