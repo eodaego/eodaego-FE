@@ -18,7 +18,10 @@ class _FakeCatalogRepository implements CatalogRepository {
   final collectedIds = <String>[];
 
   @override
-  Future<List<CatalogItemEntity>> getCatalogItems() async => [
+  Future<List<CatalogItemEntity>> getCatalogItems({
+    DogamCategory? category,
+    String? name,
+  }) async => [
     for (final item in items)
       collectedIds.contains(item.id) ? item.copyWith(collected: true) : item,
   ];

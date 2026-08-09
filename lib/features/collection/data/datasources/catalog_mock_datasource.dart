@@ -14,10 +14,24 @@ class CatalogMockDataSource implements CatalogRemoteDataSource {
   static const _catalogAsset = 'assets/mock/catalog.json';
   static const _detailsAsset = 'assets/mock/catalog_details.json';
 
+  /// 실 서버와 같은 규칙으로 거른다 — [name]은 부분 일치, 미수집 항목은 응답의
+  /// `name`이 null이라 이름으로는 걸리지 않는다(목 데이터도 그 상태 그대로다).
   @override
-  Future<CatalogListResponseModel> getCatalog() async {
+  Future<CatalogListResponseModel> getCatalog({
+    String? category,
+    String? name,
+  }) async {
     final json = await loadMockJson(_catalogAsset);
-    return CatalogListResponseModel.fromJson(json);
+    final all = CatalogListResponseModel.fromJson(json);
+    if (category == null && name == null) return all;
+
+    final items = all.items.where((item) {
+      if (category != null && item.category != category) return false;
+      if (name != null && !(item.name ?? '').contains(name)) return false;
+      return true;
+    }).toList();
+
+    return all.copyWith(items: items);
   }
 
   /// 도감 상세 조회

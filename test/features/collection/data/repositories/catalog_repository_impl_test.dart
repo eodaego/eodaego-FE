@@ -29,7 +29,10 @@ class _FakeCatalogDataSource implements CatalogRemoteDataSource {
   final collectedIds = <String>[];
 
   @override
-  Future<CatalogListResponseModel> getCatalog() async => list;
+  Future<CatalogListResponseModel> getCatalog({
+    String? category,
+    String? name,
+  }) async => list;
 
   @override
   Future<CatalogItemDetailModel> getCatalogItem(String catalogItemId) async =>

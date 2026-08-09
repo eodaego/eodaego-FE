@@ -21,7 +21,10 @@ class _FakeCatalogRepository implements CatalogRepository {
   final CatalogItemDetailEntity? detail;
 
   @override
-  Future<List<CatalogItemEntity>> getCatalogItems() async => const [];
+  Future<List<CatalogItemEntity>> getCatalogItems({
+    DogamCategory? category,
+    String? name,
+  }) async => const [];
 
   @override
   Future<CatalogItemDetailEntity> getCatalogItem(String id) async {

@@ -17,7 +17,10 @@ class _FakeCatalogRepository implements CatalogRepository {
   final List<CatalogItemEntity> items;
 
   @override
-  Future<List<CatalogItemEntity>> getCatalogItems() async => items;
+  Future<List<CatalogItemEntity>> getCatalogItems({
+    DogamCategory? category,
+    String? name,
+  }) async => items;
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -27,7 +30,10 @@ class _FakeCatalogRepository implements CatalogRepository {
 /// "게스트는 목록을 요청하지 않는다"를 증명한다.
 class _ThrowingCatalogRepository implements CatalogRepository {
   @override
-  Future<List<CatalogItemEntity>> getCatalogItems() async {
+  Future<List<CatalogItemEntity>> getCatalogItems({
+    DogamCategory? category,
+    String? name,
+  }) async {
     throw StateError('게스트는 도감 목록 API를 요청하면 안 된다');
   }
 
@@ -44,7 +50,10 @@ class _SequenceCatalogRepository implements CatalogRepository {
   int _call = 0;
 
   @override
-  Future<List<CatalogItemEntity>> getCatalogItems() async {
+  Future<List<CatalogItemEntity>> getCatalogItems({
+    DogamCategory? category,
+    String? name,
+  }) async {
     final batch = batches[_call.clamp(0, batches.length - 1)];
     _call++;
     return batch;

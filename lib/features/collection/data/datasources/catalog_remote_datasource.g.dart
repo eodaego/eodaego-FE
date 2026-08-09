@@ -18,9 +18,16 @@ class _CatalogRemoteDataSource implements CatalogRemoteDataSource {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<CatalogListResponseModel> getCatalog() async {
+  Future<CatalogListResponseModel> getCatalog({
+    String? category,
+    String? name,
+  }) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'category': category,
+      r'name': name,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<CatalogListResponseModel>(

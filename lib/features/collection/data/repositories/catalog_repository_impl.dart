@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
+import '../../../../core/constants/app_message_keys.dart';
 import '../../../../core/constants/dogam_category.dart';
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/network/dio_exception_handler.dart';
@@ -20,9 +21,15 @@ class CatalogRepositoryImpl implements CatalogRepository {
   CatalogRepositoryImpl(this._dataSource);
 
   @override
-  Future<List<CatalogItemEntity>> getCatalogItems() async {
+  Future<List<CatalogItemEntity>> getCatalogItems({
+    DogamCategory? category,
+    String? name,
+  }) async {
     try {
-      final response = await _dataSource.getCatalog();
+      final response = await _dataSource.getCatalog(
+        category: category?.serverValue,
+        name: name,
+      );
 
       final items = <CatalogItemEntity>[];
       // Unknown category values seen in this response, collected instead of
@@ -68,7 +75,7 @@ class CatalogRepositoryImpl implements CatalogRepository {
       if (e is AppException) rethrow;
       throw ServerException(
         message: '도감을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.',
-        messageKey: 'errorCatalogListUnexpected',
+        messageKey: AppMessageKeys.errorCatalogListUnexpected,
         originalException: e,
       );
     }
@@ -84,7 +91,7 @@ class CatalogRepositoryImpl implements CatalogRepository {
         debugPrint('[Catalog] ⚠️ 알 수 없는 카테고리: ${dto.category} (상세 표시 불가)');
         throw ServerException(
           message: '아직 준비 중인 항목이에요.',
-          messageKey: 'errorCatalogUnknownCategory',
+          messageKey: AppMessageKeys.errorCatalogUnknownCategory,
         );
       }
 
@@ -108,7 +115,7 @@ class CatalogRepositoryImpl implements CatalogRepository {
       if (e is AppException) rethrow;
       throw ServerException(
         message: '도감 정보를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.',
-        messageKey: 'errorCatalogDetailUnexpected',
+        messageKey: AppMessageKeys.errorCatalogDetailUnexpected,
         originalException: e,
       );
     }
@@ -148,7 +155,7 @@ class CatalogRepositoryImpl implements CatalogRepository {
       if (e is AppException) rethrow;
       throw ServerException(
         message: '수집 현황을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.',
-        messageKey: 'errorCatalogSummaryUnexpected',
+        messageKey: AppMessageKeys.errorCatalogSummaryUnexpected,
         originalException: e,
       );
     }

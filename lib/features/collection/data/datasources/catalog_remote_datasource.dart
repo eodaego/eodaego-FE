@@ -21,12 +21,20 @@ abstract class CatalogRemoteDataSource {
 
   /// 도감 목록 조회
   ///
-  /// 필터 없이 전체를 받는다.
+  /// [category]·[name]을 모두 생략하면 전체를 받는다.
+  ///
+  /// **주의**: [name]은 서버에서 **부분 일치**(대소문자 구분)로 검색된다.
+  /// 미수집 항목도 검색에는 걸리지만 응답의 `name`·`imageUrl`은 null로 내려온다
+  /// — 즉 "도감에 있으나 아직 안 모았다"를 이걸로 알아낸다.
+  /// status가 SUSPENDED/RETIRED인 미수집 항목은 아예 제외된다.
   ///
   /// - 200: 목록 + 수집 개수
   /// - 401: 인증 실패
   @GET(ApiEndpoints.catalog)
-  Future<CatalogListResponseModel> getCatalog();
+  Future<CatalogListResponseModel> getCatalog({
+    @Query('category') String? category,
+    @Query('name') String? name,
+  });
 
   /// 도감 상세 조회
   ///
