@@ -12,4 +12,12 @@ abstract final class AppHaptics {
   /// Light tap feedback for buttons and tappable icons
   /// 버튼·아이콘 탭에 주는 가벼운 진동
   static void tap() => HapticFeedback.lightImpact();
+
+  /// Subtle tick for continuous trembling effects
+  /// 연속 떨림 연출에 쓰는 잔진동
+  static void tick() => HapticFeedback.selectionClick();
+
+  /// Heavy thud for hitting a limit
+  /// 한계에 닿는 순간 주는 묵직한 진동
+  static void thud() => HapticFeedback.heavyImpact();
 }
