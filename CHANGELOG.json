@@ -1,14 +1,40 @@
 {
   "metadata": {
-    "lastUpdated": "2026-08-09T06:31:25Z",
-    "currentVersion": "1.0.36",
+    "lastUpdated": "2026-08-10T11:18:03Z",
+    "currentVersion": "1.0.37",
     "projectType": "flutter",
     "projectTypes": [
       "flutter"
     ],
-    "totalReleases": 10
+    "totalReleases": 11
   },
   "releases": [
+    {
+      "version": "1.0.37",
+      "project_type": "flutter",
+      "project_types": [
+        "flutter"
+      ],
+      "date": "2026-08-10",
+      "pr_number": 35,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **기타**\n\n  * Merge pull request #34 from eodaego/20260809_#33_대기화면_고양이_탭반응과_공용버튼_진동\n  * docs : 리포트 문서 작성 #33\n  * style : 도감 상세 대표 이미지 확대 및 모서리 클리핑\n  * feat : 대기 화면 고양이를 풍선 상호작용으로 확장 #33\n  * docs : 이슈 문서 정리와 v1.0.37 릴리즈 노트 추가\n  * chore : 도감 목데이터 너구리를 바위너구리로 수정\n  * style : 스낵바 모서리 반경을 sm으로 축소\n  * feat : 공용 버튼 진동과 대기 화면 고양이 탭 반응 추가 #33\n\n> 💡 더 정확한 릴리스 노트를 원한다면 Claude Code에서 `/github` 스킬로 PR 릴리스 노트를 업데이트할 수 있습니다.",
+      "parsed_changes": {
+        "기타": {
+          "title": "기타",
+          "items": [
+            "Merge pull request #34 from eodaego/20260809_#33_대기화면_고양이_탭반응과_공용버튼_진동",
+            "docs : 리포트 문서 작성 #33",
+            "style : 도감 상세 대표 이미지 확대 및 모서리 클리핑",
+            "feat : 대기 화면 고양이를 풍선 상호작용으로 확장 #33",
+            "docs : 이슈 문서 정리와 v1.0.37 릴리즈 노트 추가",
+            "chore : 도감 목데이터 너구리를 바위너구리로 수정",
+            "style : 스낵바 모서리 반경을 sm으로 축소",
+            "feat : 공용 버튼 진동과 대기 화면 고양이 탭 반응 추가 #33"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "1.0.36",
       "project_type": "flutter",
