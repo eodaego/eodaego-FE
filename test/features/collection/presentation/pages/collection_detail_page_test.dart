@@ -1,4 +1,5 @@
 import 'package:eodaego/core/constants/dogam_category.dart';
+import 'package:eodaego/core/widgets/catalog_image.dart';
 import 'package:eodaego/features/collection/domain/entities/catalog_item_detail_entity.dart';
 import 'package:eodaego/features/collection/domain/entities/catalog_item_entity.dart';
 import 'package:eodaego/features/collection/domain/repositories/catalog_repository.dart';
@@ -136,5 +137,6 @@ void main() {
     // 카테고리 아이콘을 보여준다 — 미수집과 같은 화면이 되면 안 된다.
     expect(find.text('?'), findsNothing);
     expect(find.byIcon(DogamCategory.animal.icon), findsOneWidget);
+    expect(tester.getSize(find.byType(CatalogImage)), const Size(353, 260));
   });
 }
