@@ -59,7 +59,6 @@ dependencies:
   animations: ^2.1.1 # 화면 전환 애니메이션
   shimmer: ^3.0.0 # 로딩 스켈레톤 효과
   lottie: ^3.3.3 # Lottie 애니메이션 (코스 생성 대기 화면)
-  vibration: ^3.1.8 # 진동 피드백
   # 위치
   geolocator: ^14.0.2 # 위치 권한 및 현재 위치 조회
   # QR 코드

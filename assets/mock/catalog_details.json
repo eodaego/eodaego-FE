@@ -13,10 +13,10 @@
   "98dc7942-3a8c-477a-bcdc-d683a46c142a": {
     "id": "98dc7942-3a8c-477a-bcdc-d683a46c142a",
     "code": "A002",
-    "name": "너구리",
+    "name": "바위너구리",
     "category": "ANIMAL",
-    "feature": "야행성이며 다양한 먹이를 가리지 않고 먹는 잡식성 포유류예요.",
-    "childDescription": "너구리는 밤에 더 활발하게 돌아다니는 친구예요!",
+    "feature": "바위가 많은 곳에서 무리를 지어 살며 주로 풀과 잎을 먹는 포유류예요.",
+    "childDescription": "바위너구리는 낮에 햇볕을 쬐고 바위 사이를 돌아다니는 친구예요!",
     "imageUrl": null,
     "collectedAt": "2026-07-24T15:30:00",
     "status": "AVAILABLE"

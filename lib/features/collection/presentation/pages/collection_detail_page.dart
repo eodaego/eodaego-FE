@@ -141,23 +141,26 @@ class _Hero extends StatelessWidget {
         color: c?.tint ?? AppColors.surfaceDim,
         borderRadius: radius,
       ),
-      child: Center(
-        child: !collected
-            ? Text(
+      clipBehavior: Clip.antiAlias,
+      child: !collected
+          ? Center(
+              child: Text(
                 '?',
                 style: AppTextStyles.display34.copyWith(
                   color: AppColors.uncollected,
                 ),
-              )
-            : (c == null
-                  ? const SizedBox.shrink()
-                  : CatalogImage(
+              ),
+            )
+          : (c == null
+                ? const SizedBox.shrink()
+                : SizedBox.expand(
+                    child: CatalogImage(
                       imageUrl: imageUrl,
                       code: code,
                       category: c,
-                      size: 120.w,
-                    )),
-      ),
+                      size: 200.w,
+                    ),
+                  )),
     );
   }
 }

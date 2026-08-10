@@ -151,7 +151,7 @@ class _SnackbarOverlayState extends State<_SnackbarOverlay>
               ),
               decoration: BoxDecoration(
                 color: widget.backgroundColor ?? AppColors.ink,
-                borderRadius: BorderRadius.circular(AppRadius.lg.r),
+                borderRadius: BorderRadius.circular(AppRadius.sm.r),
               ),
               child: Row(
                 children: [
