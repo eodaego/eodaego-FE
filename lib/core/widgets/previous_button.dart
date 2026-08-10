@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
+import '../constants/app_haptics.dart';
 
 /// 뒤로가기 버튼 위젯
 ///
@@ -44,8 +45,7 @@ class PreviousButton extends StatelessWidget {
             : null,
       ),
       onPressed: () {
-        // 버튼 탭 햅틱 — VibrationService 포팅 전까지 내장 API 사용
-        HapticFeedback.lightImpact();
+        AppHaptics.tap();
         onPressed();
       },
     );

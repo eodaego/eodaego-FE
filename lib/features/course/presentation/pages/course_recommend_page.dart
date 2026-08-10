@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lottie/lottie.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../../../core/constants/app_colors.dart';
@@ -22,6 +21,7 @@ import '../../domain/entities/course_entity.dart';
 import '../../domain/entities/course_options.dart';
 import '../providers/course_provider.dart';
 import '../providers/favorite_provider.dart';
+import '../widgets/course_loading_cat.dart';
 import '../widgets/option_grid.dart';
 
 /// 희망 체류시간 선택지 — 서버에는 분(int)으로 보낸다.
@@ -405,29 +405,7 @@ class _CourseRecommendPageState extends ConsumerState<CourseRecommendPage> {
     final state = ref.watch(courseRecommendationProvider);
 
     return state.when(
-      loading: () => Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // AI 생성이라 대기가 길다. 스피너 대신 계속 볼 만한 그림을 둔다.
-            Lottie.asset(
-              'assets/animations/Loader_Cat.json',
-              width: 360.w,
-              repeat: true,
-            ),
-            SizedBox(height: AppSpacing.base.h),
-            Text(
-              '코스를 만들고 있어요',
-              style: AppTextStyles.body15.copyWith(color: AppColors.muted),
-            ),
-            SizedBox(height: AppSpacing.xs.h),
-            Text(
-              '조금만 기다리면 돼요',
-              style: AppTextStyles.caption14.copyWith(color: AppColors.muted),
-            ),
-          ],
-        ),
-      ),
+      loading: () => const Center(child: CourseLoadingCat()),
       error: (error, _) {
         // AI 서버 장애는 조건 문제가 아니다. 조건을 바꾸라고 하면 헛수고를 시킨다.
         final aiDown =
