@@ -100,4 +100,74 @@ void main() {
       expect(flipped.places, course.places);
     });
   });
+
+  group('markCollected', () {
+    // 코스 응답의 수집 여부는 추천 시점 스냅숏이고 추천은 POST라 다시 못 받는다.
+    // 앱 안에서 도감을 모았을 때 지도가 계속 '아직'을 그리지 않게 하는 자리다.
+    const linked = CoursePlaceEntity(
+      visitOrder: 1,
+      name: '음악분수',
+      category: DogamCategory.place,
+      catalogItemId: 'catalog-1',
+    );
+    const other = CoursePlaceEntity(
+      visitOrder: 2,
+      name: '맹수마을',
+      category: DogamCategory.animal,
+      catalogItemId: 'catalog-2',
+    );
+    const outsideCatalog = CoursePlaceEntity(
+      visitOrder: 3,
+      name: '바다동물관',
+      category: DogamCategory.animal,
+    );
+
+    CourseEntity courseOf(List<CoursePlaceEntity> places) => CourseEntity(
+      id: 'c1',
+      title: '코스',
+      tagLabels: const [],
+      estimatedDurationMinutes: 60,
+      entrance: ParkGate.mainGate,
+      exit: ParkGate.southGate,
+      favorite: true,
+      places: places,
+    );
+
+    test('marks_only_the_place_linked_to_the_collected_catalog_item', () {
+      final course = courseOf([linked, other, outsideCatalog]);
+
+      final updated = course.markCollected('catalog-1');
+
+      expect(updated.places[0].collected, isTrue);
+      expect(updated.places[1].collected, isFalse);
+      expect(updated.places[2].collected, isFalse);
+      // 원본은 건드리지 않는다.
+      expect(course.places[0].collected, isFalse);
+    });
+
+    test('keeps_every_other_field_of_the_marked_place', () {
+      final updated = courseOf([linked]).markCollected('catalog-1');
+      final place = updated.places.single;
+
+      expect(place.visitOrder, linked.visitOrder);
+      expect(place.name, linked.name);
+      expect(place.category, linked.category);
+      expect(place.catalogItemId, linked.catalogItemId);
+      expect(updated.favorite, isTrue);
+    });
+
+    test('returns_the_same_course_when_no_place_is_linked_to_it', () {
+      // 마커 비트맵은 코스 인스턴스가 바뀌면 전부 다시 굽는다. 퀴즈로 모은
+      // 도감이 지금 코스와 무관할 때가 대부분이라 헛돌면 안 된다.
+      final course = courseOf([linked, outsideCatalog]);
+
+      expect(identical(course.markCollected('catalog-9'), course), isTrue);
+    });
+
+    test('returns_the_same_course_when_the_place_is_already_collected', () {
+      final course = courseOf([linked.copyWith(collected: true)]);
+
+      expect(identical(course.markCollected('catalog-1'), course), isTrue);
+    });
+  });
 }

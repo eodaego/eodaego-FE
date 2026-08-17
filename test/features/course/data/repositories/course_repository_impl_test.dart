@@ -155,7 +155,11 @@ void main() {
                 category: 'ANIMAL',
                 catalogItemId: 'd4d20450-bcda-456d-aa13-5c3df478ad4f',
               ),
-              CoursePlaceModel(visitOrder: 3, name: '바다동물관', category: 'ANIMAL'),
+              CoursePlaceModel(
+                visitOrder: 3,
+                name: '바다동물관',
+                category: 'ANIMAL',
+              ),
             ],
           ),
         ],

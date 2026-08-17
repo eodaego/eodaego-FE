@@ -163,14 +163,9 @@ class _MapPageState extends ConsumerState<MapPage> {
                                   left: 14.w,
                                   right: 14.w,
                                   top: 14.h,
-                                  child: KeyedSubtree(
-                                    // 다른 마커를 누르면 도감 조회가 새로 돌도록
-                                    // 카드를 갈아끼운다.
-                                    key: ValueKey(tapped.name),
-                                    child: PlaceInfoCard(
-                                      place: tapped,
-                                      onClose: _closePlace,
-                                    ),
+                                  child: PlaceInfoCard(
+                                    place: tapped,
+                                    onClose: _closePlace,
                                   ),
                                 ),
                             ],

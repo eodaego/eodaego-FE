@@ -37,10 +37,26 @@ class CoursePlaceEntity {
   final String? catalogItemId;
 
   /// 현재 회원의 도감 수집 여부.
+  ///
+  /// **주의**: 코스를 추천받은 시점의 스냅숏이다. 앱 안에서 도감을 모으면
+  /// [CourseEntity.markCollected]로 맞춰 준다.
   final bool collected;
 
   final double? latitude;
   final double? longitude;
+
+  /// 수집 여부만 뒤집은 새 인스턴스를 돌려준다 — 원본은 그대로 둔다.
+  CoursePlaceEntity copyWith({bool? collected}) {
+    return CoursePlaceEntity(
+      visitOrder: visitOrder,
+      name: name,
+      category: category,
+      catalogItemId: catalogItemId,
+      collected: collected ?? this.collected,
+      latitude: latitude,
+      longitude: longitude,
+    );
+  }
 }
 
 /// 추천받은 코스.
@@ -114,8 +130,8 @@ class CourseEntity {
   /// "정문 → 남문". 서버가 모르는 출입문을 주면 그 자리를 '-'로 둔다.
   String get gateLabel => '${entrance?.label ?? '-'} → ${exit?.label ?? '-'}';
 
-  /// 즐겨찾기만 뒤집은 새 인스턴스를 돌려준다 — 원본은 그대로 둔다.
-  CourseEntity copyWith({bool? favorite}) {
+  /// 즐겨찾기·장소만 갈아끼운 새 인스턴스를 돌려준다 — 원본은 그대로 둔다.
+  CourseEntity copyWith({bool? favorite, List<CoursePlaceEntity>? places}) {
     return CourseEntity(
       id: id,
       title: title,
@@ -124,7 +140,32 @@ class CourseEntity {
       entrance: entrance,
       exit: exit,
       favorite: favorite ?? this.favorite,
-      places: places,
+      places: places ?? this.places,
+    );
+  }
+
+  /// 방금 모은 도감 항목과 연결된 장소를 수집 상태로 뒤집은 코스를 돌려준다.
+  ///
+  /// 코스 응답의 수집 여부는 추천받은 시점의 스냅숏이고, 추천은 POST라 같은
+  /// 코스를 다시 받아올 수 없다. 앱 안에서 도감을 모으면 이 자리에서 직접
+  /// 맞춰야 지도 마커와 장소 카드가 방금 모은 곳을 계속 '아직'으로 그리지 않는다.
+  ///
+  /// Returns: 바뀔 장소가 없으면 자기 자신. 지도 마커 비트맵은 코스 인스턴스가
+  /// 바뀔 때 다시 구우므로, 헛돌지 않게 같은 인스턴스를 돌려주는 편이 낫다.
+  CourseEntity markCollected(String catalogItemId) {
+    final matches = places.any(
+      (place) => place.catalogItemId == catalogItemId && !place.collected,
+    );
+    if (!matches) return this;
+
+    return copyWith(
+      places: [
+        for (final place in places)
+          if (place.catalogItemId == catalogItemId)
+            place.copyWith(collected: true)
+          else
+            place,
+      ],
     );
   }
 }

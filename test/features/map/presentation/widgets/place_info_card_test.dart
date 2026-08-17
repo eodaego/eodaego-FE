@@ -21,13 +21,17 @@ import 'package:flutter_test/flutter_test.dart';
 
 /// HTTP 경계를 대신하는 페이크.
 ///
-/// [detail]이 null이면 상세 조회가 던진다. 수집하지 않은 장소의 상세를 부르면
-/// 실제 서버가 403으로 막으므로, "부르지 않는다"를 호출 횟수 대신 화면이
-/// 멀쩡한지로 지킨다.
+/// [detailCalls]로 왕복 횟수를 센다. 화면만 보고는 "부르지 않았다"를 지킬 수
+/// 없다 — FutureProvider가 예외를 AsyncError로 삼켜서 `valueOrNull`이 null이
+/// 되고, 미수집 카드는 부르든 안 부르든 똑같이 그려지기 때문이다. 실제 서버는
+/// 미수집 항목의 상세를 403으로 막으므로 이 횟수가 곧 지켜야 할 계약이다.
 class _FakeCatalogRepository implements CatalogRepository {
   _FakeCatalogRepository({this.detail});
 
   final CatalogItemDetailEntity? detail;
+
+  /// 상세 조회가 실제로 나간 횟수 — 경계에서 관찰한 값이다.
+  int detailCalls = 0;
 
   @override
   Future<List<CatalogItemEntity>> getCatalogItems({
@@ -37,6 +41,7 @@ class _FakeCatalogRepository implements CatalogRepository {
 
   @override
   Future<CatalogItemDetailEntity> getCatalogItem(String id) async {
+    detailCalls++;
     final loaded = detail;
     if (loaded == null) {
       throw StateError('수집하지 않은 장소의 상세를 호출하면 안 된다 (서버가 403으로 막는다)');
@@ -87,41 +92,42 @@ Future<void> _pumpCard(
 
 void main() {
   group('지도 장소 카드', () {
-    testWidgets('sends_the_visitor_to_the_catalog_when_the_place_is_collected', (
-      tester,
-    ) async {
-      await _pumpCard(
-        tester,
-        const CoursePlaceEntity(
-          visitOrder: 1,
-          name: '음악분수',
-          category: DogamCategory.place,
-          catalogItemId: 'f077dafb',
-          collected: true,
-        ),
-        repository: _FakeCatalogRepository(
-          detail: const CatalogItemDetailEntity(
-            id: 'f077dafb',
+    testWidgets(
+      'sends_the_visitor_to_the_catalog_when_the_place_is_collected',
+      (tester) async {
+        await _pumpCard(
+          tester,
+          const CoursePlaceEntity(
+            visitOrder: 1,
             name: '음악분수',
             category: DogamCategory.place,
-            feature: '',
-            childDescription: '',
-            code: 'L001',
+            catalogItemId: 'f077dafb',
+            collected: true,
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
+          repository: _FakeCatalogRepository(
+            detail: const CatalogItemDetailEntity(
+              id: 'f077dafb',
+              name: '음악분수',
+              category: DogamCategory.place,
+              feature: '',
+              childDescription: '',
+              code: 'L001',
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
 
-      expect(find.text('✓ 도감에 있어요'), findsOneWidget);
-      expect(find.text('도감 L001'), findsOneWidget);
-      expect(find.text('도감에서 보기'), findsOneWidget);
-      expect(find.text('여기서 찍기'), findsNothing);
-    });
+        expect(find.text('✓ 도감에 있어요'), findsOneWidget);
+        expect(find.text('도감 L001'), findsOneWidget);
+        expect(find.text('도감에서 보기'), findsOneWidget);
+        expect(find.text('여기서 찍기'), findsNothing);
+      },
+    );
 
     testWidgets('invites_a_photo_when_the_place_is_in_the_catalog_but_unmet', (
       tester,
     ) async {
-      // 상세를 부르면 페이크가 던진다 — 화면이 멀쩡하다는 것이 곧 부르지 않았다는 뜻이다.
+      final repository = _FakeCatalogRepository();
       await _pumpCard(
         tester,
         const CoursePlaceEntity(
@@ -130,6 +136,7 @@ void main() {
           category: DogamCategory.animal,
           catalogItemId: 'd4d20450',
         ),
+        repository: repository,
       );
       await tester.pumpAndSettle();
 
@@ -137,6 +144,8 @@ void main() {
       expect(find.text('찍으면 도감에 등록돼요'), findsOneWidget);
       expect(find.text('여기서 찍기'), findsOneWidget);
       expect(find.text('도감에서 보기'), findsNothing);
+      // 서버가 403으로 막는 자리다. 화면 문구만으로는 이 계약이 안 지켜진다.
+      expect(repository.detailCalls, 0);
     });
 
     testWidgets('offers_no_call_to_action_for_a_place_outside_the_catalog', (

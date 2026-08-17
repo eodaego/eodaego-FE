@@ -4,10 +4,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/dogam_category.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/app_badge.dart';
 import '../../../../core/widgets/app_button.dart';
+import '../../../../core/widgets/catalog_image.dart';
 import '../../../../router/route_paths.dart';
 import '../../../collection/presentation/providers/catalog_provider.dart';
 import '../../../course/domain/entities/course_entity.dart';
@@ -108,6 +110,7 @@ class PlaceInfoCard extends ConsumerWidget {
               _CatalogBody(
                 catalogItemId: catalogItemId,
                 collected: place.collected,
+                category: place.category,
               ),
             ],
           ],
@@ -129,10 +132,15 @@ class PlaceInfoCard extends ConsumerWidget {
 /// **주의**: 미수집 항목의 상세는 서버가 403으로 막는다. [collected]가 false면
 /// 절대 부르지 않는다.
 class _CatalogBody extends ConsumerWidget {
-  const _CatalogBody({required this.catalogItemId, required this.collected});
+  const _CatalogBody({
+    required this.catalogItemId,
+    required this.collected,
+    required this.category,
+  });
 
   final String catalogItemId;
   final bool collected;
+  final DogamCategory category;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -145,7 +153,20 @@ class _CatalogBody extends ConsumerWidget {
       children: [
         Row(
           children: [
-            _Thumbnail(imageUrl: detail?.imageUrl),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(AppRadius.sm.r),
+              // ① 사진은 서버 사진 → 로컬 일러스트 → 카테고리 아이콘 3단 폴백을
+              // 타는 공용 위젯에 맡긴다. `?`는 이 앱에서 미수집을 뜻하는 글자라
+              // '도감에 있어요' 옆에 두면 서로 어긋난다.
+              child: collected
+                  ? CatalogImage(
+                      category: category,
+                      size: 72.w,
+                      imageUrl: detail?.imageUrl,
+                      code: detail?.code,
+                    )
+                  : const _UnmetThumbnail(),
+            ),
             SizedBox(width: AppSpacing.md.w),
             Expanded(
               child: Column(
@@ -197,38 +218,21 @@ class _CatalogBody extends ConsumerWidget {
   }
 }
 
-/// 수집한 항목만 실사 이미지를 준다 — 미수집은 서버가 `imageUrl`을 null로 가린다.
-class _Thumbnail extends StatelessWidget {
-  const _Thumbnail({required this.imageUrl});
-
-  final String? imageUrl;
+/// ② 아직 못 모은 자리 — 서버가 사진을 가리므로 도감 목록과 같은 `?`를 둔다.
+class _UnmetThumbnail extends StatelessWidget {
+  const _UnmetThumbnail();
 
   @override
   Widget build(BuildContext context) {
-    final size = 72.w;
-    final placeholder = Container(
-      width: size,
-      height: size,
+    return Container(
+      width: 72.w,
+      height: 72.w,
       color: AppColors.surfaceDim,
       alignment: Alignment.center,
       child: Text(
         '?',
         style: AppTextStyles.display26.copyWith(color: AppColors.uncollected),
       ),
-    );
-
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(AppRadius.sm.r),
-      child: imageUrl == null
-          ? placeholder
-          : Image.network(
-              imageUrl!,
-              width: size,
-              height: size,
-              fit: BoxFit.cover,
-              // 원격 이미지는 실패가 정상 시나리오다. 깨진 아이콘 대신 `?`로 둔다.
-              errorBuilder: (_, _, _) => placeholder,
-            ),
     );
   }
 }

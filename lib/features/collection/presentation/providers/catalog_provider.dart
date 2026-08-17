@@ -5,6 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/config/env_config.dart';
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/network/dio_client.dart';
+import '../../../../core/providers/selected_course_provider.dart';
 import '../../data/datasources/catalog_mock_datasource.dart';
 import '../../data/datasources/catalog_remote_datasource.dart';
 import '../../data/repositories/catalog_repository_impl.dart';
@@ -107,4 +108,13 @@ Future<void> collectCatalogItemByCode(Ref ref, String code) async {
 
   ref.invalidate(catalogSummaryProvider);
   ref.invalidate(catalogItemsProvider);
+
+  // The selected course carries a snapshot of collection state; nothing refetches it.
+  // 지금 보는 코스는 추천 시점의 수집 여부를 들고 있고 아무도 다시 받아오지 않는다.
+  // 방금 모은 장소가 지도에서 계속 '아직'으로 보이지 않도록 여기서 맞춘다.
+  // 코스 타입을 이름으로 쓰지 않아 course feature를 직접 import하지 않는다.
+  final collectedId = item.id;
+  ref
+      .read(selectedCourseProvider.notifier)
+      .update((course) => course?.markCollected(collectedId));
 }
