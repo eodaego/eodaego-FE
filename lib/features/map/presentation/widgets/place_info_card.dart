@@ -211,7 +211,9 @@ class _CatalogBody extends ConsumerWidget {
             width: double.infinity,
             height: 52.h,
             borderRadius: BorderRadius.circular(AppRadius.sm.r),
-            onPressed: () => context.go(RoutePaths.scan),
+            // push다 — go로 보내면 스택이 갈려 촬영 화면의 닫기(pop)가 터진다.
+            // 탭바 중앙 카메라 버튼도 같은 이유로 push를 쓴다.
+            onPressed: () => context.push(RoutePaths.scan),
           ),
       ],
     );

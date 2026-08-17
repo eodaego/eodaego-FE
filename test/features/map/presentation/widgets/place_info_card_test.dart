@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 
 /// 마커 카드가 갈라지는 세 얼굴 — 판정 근거는 코스 응답의 두 필드뿐이다.
 ///
@@ -164,6 +165,66 @@ void main() {
       expect(find.text('구경하고 가는 곳이에요'), findsOneWidget);
       expect(find.text('여기서 찍기'), findsNothing);
       expect(find.text('도감에서 보기'), findsNothing);
+    });
+
+    testWidgets('leaves_a_way_back_when_sending_the_visitor_to_the_camera', (
+      tester,
+    ) async {
+      // 촬영 화면(`/scan`)은 탭 셸 밖 루트 라우트이고 닫기 버튼이 pop이다.
+      // 여기서 go로 보내면 스택이 갈려 닫기가 'nothing to pop'으로 터진다.
+      final router = GoRouter(
+        initialLocation: '/',
+        routes: [
+          GoRoute(
+            path: '/',
+            builder: (_, _) => Scaffold(
+              body: PlaceInfoCard(
+                place: const CoursePlaceEntity(
+                  visitOrder: 2,
+                  name: '맹수마을',
+                  category: DogamCategory.animal,
+                  catalogItemId: 'd4d20450',
+                ),
+                onClose: () {},
+              ),
+            ),
+          ),
+          GoRoute(
+            path: '/scan',
+            builder: (_, _) => const Scaffold(body: Text('촬영 화면')),
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+
+      tester.view.physicalSize = const Size(393, 852);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            catalogRepositoryProvider.overrideWith(
+              (ref) => _FakeCatalogRepository(),
+            ),
+          ],
+          child: ScreenUtilInit(
+            designSize: const Size(393, 852),
+            builder: (context, _) => MaterialApp.router(routerConfig: router),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('여기서 찍기'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('촬영 화면'), findsOneWidget);
+      expect(
+        router.routerDelegate.canPop(),
+        isTrue,
+        reason: '촬영 화면에서 닫기를 누르면 지도로 돌아올 수 있어야 한다',
+      );
     });
 
     testWidgets('draws_the_uncollected_face_without_waiting_for_a_response', (
