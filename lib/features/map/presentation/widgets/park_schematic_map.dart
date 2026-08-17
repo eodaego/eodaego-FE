@@ -78,6 +78,7 @@ class ParkSchematicMap extends StatelessWidget {
                 // 선택은 같은 카테고리의 dark로 표시한다. 다른 색으로 바꾸면
                 // '색 = 카테고리' 규칙이 깨진다.
                 color: isSelected ? place.category.dark : place.category.color,
+                checkColor: place.collected ? place.category.dark : null,
                 size: 32,
               ),
             ),

@@ -168,6 +168,7 @@ class _PlaceRow extends StatelessWidget {
                 // 지도에서 켜지는 마커가 어긋나면 연결 자체가 무너진다.
                 number: place.visitOrder,
                 color: selected ? place.category.dark : place.category.color,
+                checkColor: place.collected ? place.category.dark : null,
                 size: 26,
                 elevated: false,
               ),

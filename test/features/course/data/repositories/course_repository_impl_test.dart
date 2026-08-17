@@ -134,6 +134,48 @@ void main() {
       expect(result.first.places.first.longitude, 127.0812);
     });
 
+    test('carries_the_catalog_link_of_each_place_into_the_entity', () async {
+      // 이 두 값이 지도 카드·마커의 수집 표시를 가르는 유일한 근거다.
+      // 도감에 동기화되지 않은 시설은 catalogItemId가 null로 온다.
+      final fake = _FakeCourseDataSource(
+        courses: const [
+          CourseModel(
+            id: 'c1',
+            places: [
+              CoursePlaceModel(
+                visitOrder: 1,
+                name: '음악분수',
+                category: 'PLACE',
+                catalogItemId: 'f077dafb-2f4c-47bd-ac96-5530b9485023',
+                collected: true,
+              ),
+              CoursePlaceModel(
+                visitOrder: 2,
+                name: '맹수마을',
+                category: 'ANIMAL',
+                catalogItemId: 'd4d20450-bcda-456d-aa13-5c3df478ad4f',
+              ),
+              CoursePlaceModel(visitOrder: 3, name: '바다동물관', category: 'ANIMAL'),
+            ],
+          ),
+        ],
+      );
+      final repository = CourseRepositoryImpl(fake);
+
+      final result = await repository.recommendCourses(
+        entrance: ParkGate.mainGate,
+        exit: ParkGate.mainGate,
+      );
+
+      final places = result.first.places;
+      expect(places[0].catalogItemId, 'f077dafb-2f4c-47bd-ac96-5530b9485023');
+      expect(places[0].collected, isTrue);
+      expect(places[1].catalogItemId, 'd4d20450-bcda-456d-aa13-5c3df478ad4f');
+      expect(places[1].collected, isFalse);
+      expect(places[2].catalogItemId, isNull);
+      expect(places[2].collected, isFalse);
+    });
+
     test('drops_places_whose_category_the_app_does_not_know', () async {
       // 서버에 카테고리가 추가되면 색·아이콘이 없어 그릴 수 없다.
       final fake = _FakeCourseDataSource(

@@ -9,8 +9,8 @@ import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/app_badge.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../router/route_paths.dart';
+import '../../../collection/presentation/providers/catalog_provider.dart';
 import '../../../course/domain/entities/course_entity.dart';
-import '../providers/place_catalog_provider.dart';
 import 'map_marker.dart';
 
 /// 마커를 누르면 지도 위에 뜨는 장소 카드.
@@ -18,8 +18,8 @@ import 'map_marker.dart';
 /// 네이티브 `InfoWindow`를 대신한다 — 그건 Google Maps SDK가 그려서 앱 스타일을
 /// 입힐 수 없고, 약도 모드에서는 아예 뜨지 않았다.
 ///
-/// 코스 장소가 들고 있는 정보는 순서·이름·카테고리뿐이라, 나머지는 도감에서
-/// 끌어온다([placeCatalogStatusProvider]). 도감 상태에 따라 카드가 세 얼굴을 갖는다.
+/// 도감 상태는 코스 응답이 함께 준다(`collected`·`catalogItemId`). 그에 따라
+/// 카드가 세 얼굴을 갖는다. 사진과 도감 코드가 필요한 ①만 도감 상세를 부른다.
 class PlaceInfoCard extends ConsumerWidget {
   const PlaceInfoCard({super.key, required this.place, required this.onClose});
 
@@ -28,17 +28,13 @@ class PlaceInfoCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final status = ref
-        .watch(placeCatalogStatusProvider(placeName: place.name))
-        .valueOrNull;
-
     // ③ 도감에 없는 시설은 아래로 붙일 게 없다. 한 줄을 이름 밑에 끼워 카드를
     // 짧게 둔다 — 따로 떼면 흰 여백만 남은 큰 상자로 보인다.
     //
     // 문구는 '코스에만 있는 장소예요'였다가 바꿨다. 코스와 도감이 별개 목록이라는
     // 내부 사정을 알아야 이해되는 말이었다.
-    final onlyInCourse =
-        status != null && status.collected == null && !status.inCatalog;
+    final catalogItemId = place.catalogItemId;
+    final onlyInCourse = catalogItemId == null;
 
     return Material(
       color: AppColors.surface,
@@ -60,6 +56,7 @@ class PlaceInfoCard extends ConsumerWidget {
                 MapMarker(
                   number: place.visitOrder,
                   color: place.category.color,
+                  checkColor: place.collected ? place.category.dark : null,
                   size: 26,
                   elevated: false,
                 ),
@@ -106,11 +103,12 @@ class PlaceInfoCard extends ConsumerWidget {
                 ),
               ],
             ),
-            // 도감 조회 중에는 아래 절반을 그리지 않는다. 스켈레톤을 깔면 카드
-            // 높이가 두 번 튀어(로딩 → 상태별) 지도를 가리는 면적이 출렁인다.
-            if (status != null && !onlyInCourse) ...[
+            if (catalogItemId != null) ...[
               SizedBox(height: 14.h),
-              _CatalogBody(status: status),
+              _CatalogBody(
+                catalogItemId: catalogItemId,
+                collected: place.collected,
+              ),
             ],
           ],
         ),
@@ -123,31 +121,43 @@ class PlaceInfoCard extends ConsumerWidget {
 ///
 /// ③ 도감에 없는 시설은 찍어도 등록되지 않아 CTA가 없고, 안내 한 줄은 카드
 /// 헤더가 직접 그린다.
-class _CatalogBody extends StatelessWidget {
-  const _CatalogBody({required this.status});
+///
+/// ②는 서버를 부르지 않아 첫 프레임에 완성된다. ①만 사진과 도감 코드를 위해
+/// 상세를 부르는데, 수집 여부를 이미 알고 있으니 칩과 버튼은 먼저 그려 둔다 —
+/// 도착을 기다렸다가 그리면 카드 높이가 튀어 지도를 가리는 면적이 출렁인다.
+///
+/// **주의**: 미수집 항목의 상세는 서버가 403으로 막는다. [collected]가 false면
+/// 절대 부르지 않는다.
+class _CatalogBody extends ConsumerWidget {
+  const _CatalogBody({required this.catalogItemId, required this.collected});
 
-  final PlaceCatalogStatus status;
+  final String catalogItemId;
+  final bool collected;
 
   @override
-  Widget build(BuildContext context) {
-    final collected = status.collected;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final detail = collected
+        ? ref.watch(catalogItemDetailProvider(catalogItemId)).valueOrNull
+        : null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            _Thumbnail(imageUrl: collected?.imageUrl),
+            _Thumbnail(imageUrl: detail?.imageUrl),
             SizedBox(width: AppSpacing.md.w),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _StatusChip(collected: collected != null),
+                  _StatusChip(collected: collected),
                   SizedBox(height: 6.h),
                   Text(
-                    collected != null
-                        ? '도감 ${collected.code ?? '-'}'
+                    // 도착 전에는 빈 줄로 자리만 잡는다. '-'를 깔면 코드가
+                    // 도착하는 순간 글자가 갈아끼워지는 게 보인다.
+                    collected
+                        ? (detail == null ? '' : '도감 ${detail.code ?? '-'}')
                         : '찍으면 도감에 등록돼요',
                     style: AppTextStyles.caption14.copyWith(
                       color: AppColors.muted,
@@ -160,7 +170,7 @@ class _CatalogBody extends StatelessWidget {
         ),
         SizedBox(height: 14.h),
         // ① 수집함 → 도감 상세로. ② 미수집 → 카메라로.
-        if (collected != null)
+        if (collected)
           AppButton(
             text: '도감에서 보기',
             backgroundColor: AppColors.surface,
@@ -170,11 +180,9 @@ class _CatalogBody extends StatelessWidget {
             height: 52.h,
             // 카드(radius 24) 내부 버튼은 radius 12 (동심원 규칙)
             borderRadius: BorderRadius.circular(AppRadius.sm.r),
-            // 이미 받아둔 항목을 넘겨 상세에서 다시 조회하지 않게 한다.
-            onPressed: () => context.push(
-              RoutePaths.collectionDetail(collected.id),
-              extra: collected,
-            ),
+            // 방금 부른 상세가 캐시에 올라가 있어 상세 화면은 다시 조회하지 않는다.
+            onPressed: () =>
+                context.push(RoutePaths.collectionDetail(catalogItemId)),
           )
         else
           AppButton(

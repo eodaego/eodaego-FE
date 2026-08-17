@@ -136,6 +136,8 @@ class CourseRepositoryImpl implements CourseRepository {
           visitOrder: place.visitOrder,
           name: place.name,
           category: category,
+          catalogItemId: place.catalogItemId,
+          collected: place.collected,
           latitude: place.latitude,
           longitude: place.longitude,
         ),

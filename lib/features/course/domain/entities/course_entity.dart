@@ -4,11 +4,22 @@ import 'course_options.dart';
 /// 코스에 포함된 장소.
 ///
 /// 서버가 주는 좌표는 실제 지도 마커에 사용한다.
+///
+/// [collected]와 [catalogItemId]가 지도 카드·마커의 도감 표시를 가르는 근거다.
+/// 두 값으로 세 갈래가 나온다 — 별도 상태 타입을 두지 않는다.
+///
+/// | [collected] | [catalogItemId] | 뜻 |
+/// | --- | --- | --- |
+/// | true | 있음 | 이미 수집했다 — 도감 상세로 보낸다 |
+/// | false | 있음 | 도감에 있지만 아직 안 모았다 — 촬영 CTA |
+/// | false | null | 도감에 없는 시설 — CTA를 띄우면 거짓말이 된다 |
 class CoursePlaceEntity {
   const CoursePlaceEntity({
     required this.visitOrder,
     required this.name,
     required this.category,
+    this.catalogItemId,
+    this.collected = false,
     this.latitude,
     this.longitude,
   });
@@ -17,6 +28,17 @@ class CoursePlaceEntity {
   final int visitOrder;
   final String name;
   final DogamCategory category;
+
+  /// 연결된 도감 항목 ID. 도감에 동기화되지 않은 시설이면 null이다.
+  ///
+  /// **주의**: 코스 응답의 [category]는 화면 표시용으로 다시 매긴 값이라
+  /// 도감에 저장된 카테고리(AI 시설은 항상 PLACE)와 다르다. 도감을 찾을 때는
+  /// [category]가 아니라 이 ID만 쓴다.
+  final String? catalogItemId;
+
+  /// 현재 회원의 도감 수집 여부.
+  final bool collected;
+
   final double? latitude;
   final double? longitude;
 }

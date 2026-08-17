@@ -30,6 +30,12 @@ mixin _$CoursePlaceModel {
   /// 카테고리 원문 (`ANIMAL`/`PLANT`/`PLACE`)
   String? get category => throw _privateConstructorUsedError;
 
+  /// 연결된 도감 항목 ID. 도감에 동기화되지 않은 시설이면 null
+  String? get catalogItemId => throw _privateConstructorUsedError;
+
+  /// 현재 회원의 도감 수집 여부
+  bool get collected => throw _privateConstructorUsedError;
+
   /// 실제 지도에 표시할 위도
   double? get latitude => throw _privateConstructorUsedError;
 
@@ -57,6 +63,8 @@ abstract class $CoursePlaceModelCopyWith<$Res> {
     int visitOrder,
     String name,
     String? category,
+    String? catalogItemId,
+    bool collected,
     double? latitude,
     double? longitude,
   });
@@ -80,6 +88,8 @@ class _$CoursePlaceModelCopyWithImpl<$Res, $Val extends CoursePlaceModel>
     Object? visitOrder = null,
     Object? name = null,
     Object? category = freezed,
+    Object? catalogItemId = freezed,
+    Object? collected = null,
     Object? latitude = freezed,
     Object? longitude = freezed,
   }) {
@@ -97,6 +107,14 @@ class _$CoursePlaceModelCopyWithImpl<$Res, $Val extends CoursePlaceModel>
                 ? _value.category
                 : category // ignore: cast_nullable_to_non_nullable
                       as String?,
+            catalogItemId: freezed == catalogItemId
+                ? _value.catalogItemId
+                : catalogItemId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            collected: null == collected
+                ? _value.collected
+                : collected // ignore: cast_nullable_to_non_nullable
+                      as bool,
             latitude: freezed == latitude
                 ? _value.latitude
                 : latitude // ignore: cast_nullable_to_non_nullable
@@ -124,6 +142,8 @@ abstract class _$$CoursePlaceModelImplCopyWith<$Res>
     int visitOrder,
     String name,
     String? category,
+    String? catalogItemId,
+    bool collected,
     double? latitude,
     double? longitude,
   });
@@ -146,6 +166,8 @@ class __$$CoursePlaceModelImplCopyWithImpl<$Res>
     Object? visitOrder = null,
     Object? name = null,
     Object? category = freezed,
+    Object? catalogItemId = freezed,
+    Object? collected = null,
     Object? latitude = freezed,
     Object? longitude = freezed,
   }) {
@@ -163,6 +185,14 @@ class __$$CoursePlaceModelImplCopyWithImpl<$Res>
             ? _value.category
             : category // ignore: cast_nullable_to_non_nullable
                   as String?,
+        catalogItemId: freezed == catalogItemId
+            ? _value.catalogItemId
+            : catalogItemId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        collected: null == collected
+            ? _value.collected
+            : collected // ignore: cast_nullable_to_non_nullable
+                  as bool,
         latitude: freezed == latitude
             ? _value.latitude
             : latitude // ignore: cast_nullable_to_non_nullable
@@ -183,6 +213,8 @@ class _$CoursePlaceModelImpl implements _CoursePlaceModel {
     this.visitOrder = 0,
     this.name = '',
     this.category,
+    this.catalogItemId,
+    this.collected = false,
     this.latitude,
     this.longitude,
   });
@@ -204,6 +236,15 @@ class _$CoursePlaceModelImpl implements _CoursePlaceModel {
   @override
   final String? category;
 
+  /// 연결된 도감 항목 ID. 도감에 동기화되지 않은 시설이면 null
+  @override
+  final String? catalogItemId;
+
+  /// 현재 회원의 도감 수집 여부
+  @override
+  @JsonKey()
+  final bool collected;
+
   /// 실제 지도에 표시할 위도
   @override
   final double? latitude;
@@ -214,7 +255,7 @@ class _$CoursePlaceModelImpl implements _CoursePlaceModel {
 
   @override
   String toString() {
-    return 'CoursePlaceModel(visitOrder: $visitOrder, name: $name, category: $category, latitude: $latitude, longitude: $longitude)';
+    return 'CoursePlaceModel(visitOrder: $visitOrder, name: $name, category: $category, catalogItemId: $catalogItemId, collected: $collected, latitude: $latitude, longitude: $longitude)';
   }
 
   @override
@@ -227,6 +268,10 @@ class _$CoursePlaceModelImpl implements _CoursePlaceModel {
             (identical(other.name, name) || other.name == name) &&
             (identical(other.category, category) ||
                 other.category == category) &&
+            (identical(other.catalogItemId, catalogItemId) ||
+                other.catalogItemId == catalogItemId) &&
+            (identical(other.collected, collected) ||
+                other.collected == collected) &&
             (identical(other.latitude, latitude) ||
                 other.latitude == latitude) &&
             (identical(other.longitude, longitude) ||
@@ -235,8 +280,16 @@ class _$CoursePlaceModelImpl implements _CoursePlaceModel {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, visitOrder, name, category, latitude, longitude);
+  int get hashCode => Object.hash(
+    runtimeType,
+    visitOrder,
+    name,
+    category,
+    catalogItemId,
+    collected,
+    latitude,
+    longitude,
+  );
 
   /// Create a copy of CoursePlaceModel
   /// with the given fields replaced by the non-null parameter values.
@@ -260,6 +313,8 @@ abstract class _CoursePlaceModel implements CoursePlaceModel {
     final int visitOrder,
     final String name,
     final String? category,
+    final String? catalogItemId,
+    final bool collected,
     final double? latitude,
     final double? longitude,
   }) = _$CoursePlaceModelImpl;
@@ -278,6 +333,14 @@ abstract class _CoursePlaceModel implements CoursePlaceModel {
   /// 카테고리 원문 (`ANIMAL`/`PLANT`/`PLACE`)
   @override
   String? get category;
+
+  /// 연결된 도감 항목 ID. 도감에 동기화되지 않은 시설이면 null
+  @override
+  String? get catalogItemId;
+
+  /// 현재 회원의 도감 수집 여부
+  @override
+  bool get collected;
 
   /// 실제 지도에 표시할 위도
   @override

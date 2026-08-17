@@ -9,10 +9,10 @@
       "exit": "SOUTH_GATE",
       "favorite": false,
       "places": [
-        {"visitOrder": 1, "name": "맹수마을", "category": "ANIMAL"},
-        {"visitOrder": 2, "name": "바다동물관", "category": "ANIMAL"},
-        {"visitOrder": 3, "name": "음악분수", "category": "PLACE"},
-        {"visitOrder": 4, "name": "꼬마동물마을", "category": "ANIMAL"}
+        {"visitOrder": 1, "name": "맹수마을", "category": "ANIMAL", "catalogItemId": "d4d20450-bcda-456d-aa13-5c3df478ad4f", "collected": false, "latitude": 37.54798, "longitude": 127.08302},
+        {"visitOrder": 2, "name": "바다동물관", "category": "ANIMAL", "latitude": 37.54618, "longitude": 127.08248},
+        {"visitOrder": 3, "name": "음악분수", "category": "PLACE", "catalogItemId": "f077dafb-2f4c-47bd-ac96-5530b9485023", "collected": true, "latitude": 37.54902, "longitude": 127.078},
+        {"visitOrder": 4, "name": "꼬마동물마을", "category": "ANIMAL", "catalogItemId": "931f98b6-9d79-4576-9458-117d789c8a9d", "collected": false, "latitude": 37.54812, "longitude": 127.08188}
       ]
     },
     {
@@ -24,7 +24,7 @@
       "exit": "REAR_GATE",
       "favorite": false,
       "places": [
-        {"visitOrder": 1, "name": "식물원", "category": "PLANT"},
+        {"visitOrder": 1, "name": "식물원", "category": "PLANT", "catalogItemId": "7b09e2a3-9a61-4d9b-bea7-ed50203c850c", "collected": false, "latitude": 37.54758, "longitude": 127.08064},
         {"visitOrder": 2, "name": "장미원", "category": "PLANT"},
         {"visitOrder": 3, "name": "숲속의무대", "category": "PLACE"}
       ]
@@ -38,9 +38,9 @@
       "exit": "MAIN_GATE",
       "favorite": false,
       "places": [
-        {"visitOrder": 1, "name": "전래동화마을", "category": "PLACE"},
-        {"visitOrder": 2, "name": "음악분수", "category": "PLACE"},
-        {"visitOrder": 3, "name": "팔각당", "category": "PLACE"}
+        {"visitOrder": 1, "name": "전래동화마을", "category": "PLACE", "catalogItemId": "8a5bfb6d-94d4-455b-96cf-e2be58900b87", "collected": false},
+        {"visitOrder": 2, "name": "음악분수", "category": "PLACE", "catalogItemId": "f077dafb-2f4c-47bd-ac96-5530b9485023", "collected": true, "latitude": 37.54902, "longitude": 127.078},
+        {"visitOrder": 3, "name": "팔각당", "category": "PLACE", "catalogItemId": "d8fb9300-b668-405f-adbf-42dd33b9bb75", "collected": true, "latitude": 37.54922, "longitude": 127.08214}
       ]
     },
     {
@@ -52,8 +52,8 @@
       "exit": "MAIN_GATE",
       "favorite": false,
       "places": [
-        {"visitOrder": 1, "name": "꼬마동물마을", "category": "ANIMAL"},
-        {"visitOrder": 2, "name": "초식동물마을", "category": "ANIMAL"},
+        {"visitOrder": 1, "name": "꼬마동물마을", "category": "ANIMAL", "catalogItemId": "931f98b6-9d79-4576-9458-117d789c8a9d", "collected": false, "latitude": 37.54812, "longitude": 127.08188},
+        {"visitOrder": 2, "name": "초식동물마을", "category": "ANIMAL", "catalogItemId": "084732a6-fc70-4661-8faa-ca54ab1cfa67", "collected": false, "latitude": 37.54682, "longitude": 127.08266},
         {"visitOrder": 3, "name": "정문광장", "category": "PLACE"}
       ]
     },
@@ -68,8 +68,8 @@
       "places": [
         {"visitOrder": 1, "name": "숲속산책길", "category": "PLANT"},
         {"visitOrder": 2, "name": "은행나무길", "category": "PLANT"},
-        {"visitOrder": 3, "name": "식물원", "category": "PLANT"},
-        {"visitOrder": 4, "name": "팔각당", "category": "PLACE"}
+        {"visitOrder": 3, "name": "식물원", "category": "PLANT", "catalogItemId": "7b09e2a3-9a61-4d9b-bea7-ed50203c850c", "collected": false, "latitude": 37.54758, "longitude": 127.08064},
+        {"visitOrder": 4, "name": "팔각당", "category": "PLACE", "catalogItemId": "d8fb9300-b668-405f-adbf-42dd33b9bb75", "collected": true, "latitude": 37.54922, "longitude": 127.08214}
       ]
     },
     {
@@ -81,8 +81,8 @@
       "exit": "WEST_GATE",
       "favorite": false,
       "places": [
-        {"visitOrder": 1, "name": "음악분수", "category": "PLACE"},
-        {"visitOrder": 2, "name": "팔각당", "category": "PLACE"},
+        {"visitOrder": 1, "name": "음악분수", "category": "PLACE", "catalogItemId": "f077dafb-2f4c-47bd-ac96-5530b9485023", "collected": true, "latitude": 37.54902, "longitude": 127.078},
+        {"visitOrder": 2, "name": "팔각당", "category": "PLACE", "catalogItemId": "d8fb9300-b668-405f-adbf-42dd33b9bb75", "collected": true, "latitude": 37.54922, "longitude": 127.08214},
         {"visitOrder": 3, "name": "정문광장", "category": "PLACE"}
       ]
     }

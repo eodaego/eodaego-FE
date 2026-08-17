@@ -119,6 +119,7 @@ class _ParkGoogleMapState extends State<ParkGoogleMap> {
       icons[_placeMarkerId(place)] = await createGoogleMapMarkerIcon(
         label: '${place.visitOrder}',
         color: isSelected ? place.category.dark : place.category.color,
+        checkColor: place.collected ? place.category.dark : null,
       );
     }
     if (course.entrance != null && course.entrance == course.exit) {

@@ -34,6 +34,8 @@ const _course = CourseEntity(
       visitOrder: 1,
       name: '꼬마동물마을',
       category: DogamCategory.animal,
+      catalogItemId: 'catalog-1',
+      collected: true,
     ),
     _hidden,
   ],
@@ -102,6 +104,19 @@ void main() {
 
       expect(selected.color, DogamCategory.animal.dark);
       expect(other.color, DogamCategory.animal.color);
+    });
+
+    testWidgets('이미 모은 장소에만 체크가 붙는다', (tester) async {
+      // 카테고리색은 건드리지 않는다 — 색은 계속 카테고리를 뜻하고, 체크만
+      // "이미 만났다"를 얹는다.
+      await _pumpSheet(tester);
+
+      final markers = tester.widgetList<MapMarker>(find.byType(MapMarker));
+      final byNumber = {for (final m in markers) m.number: m};
+
+      expect(byNumber[1]?.checkColor, DogamCategory.animal.dark);
+      expect(byNumber[1]?.color, DogamCategory.animal.color);
+      expect(byNumber[2]?.checkColor, isNull);
     });
 
     testWidgets('목록 번호는 지도 마커와 같은 방문 순서를 쓴다', (tester) async {

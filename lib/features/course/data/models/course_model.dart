@@ -21,6 +21,12 @@ class CoursePlaceModel with _$CoursePlaceModel {
     /// 카테고리 원문 (`ANIMAL`/`PLANT`/`PLACE`)
     String? category,
 
+    /// 연결된 도감 항목 ID. 도감에 동기화되지 않은 시설이면 null
+    String? catalogItemId,
+
+    /// 현재 회원의 도감 수집 여부
+    @Default(false) bool collected,
+
     /// 실제 지도에 표시할 위도
     double? latitude,
 
