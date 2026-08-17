@@ -82,9 +82,7 @@ Future<void> _pumpCard(
       child: ScreenUtilInit(
         designSize: const Size(393, 852),
         builder: (context, _) => MaterialApp(
-          home: Scaffold(
-            body: PlaceInfoCard(place: place, onClose: () {}),
-          ),
+          home: Scaffold(body: PlaceInfoCard(place: place)),
         ),
       ),
     ),
@@ -185,7 +183,6 @@ void main() {
                   category: DogamCategory.animal,
                   catalogItemId: 'd4d20450',
                 ),
-                onClose: () {},
               ),
             ),
           ),

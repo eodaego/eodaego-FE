@@ -22,11 +22,13 @@ import 'map_marker.dart';
 ///
 /// 도감 상태는 코스 응답이 함께 준다(`collected`·`catalogItemId`). 그에 따라
 /// 카드가 세 얼굴을 갖는다. 사진과 도감 코드가 필요한 ①만 도감 상세를 부른다.
+///
+/// 닫기 버튼은 없다 — 카드 바깥(지도)을 누르면 닫힌다. 그 판정은 카드를 띄우는
+/// `MapPage`가 한다.
 class PlaceInfoCard extends ConsumerWidget {
-  const PlaceInfoCard({super.key, required this.place, required this.onClose});
+  const PlaceInfoCard({super.key, required this.place});
 
   final CoursePlaceEntity place;
-  final VoidCallback onClose;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -38,82 +40,83 @@ class PlaceInfoCard extends ConsumerWidget {
     final catalogItemId = place.catalogItemId;
     final onlyInCourse = catalogItemId == null;
 
-    return Material(
-      color: AppColors.surface,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppRadius.lg.r),
-        side: const BorderSide(color: AppColors.line),
-      ),
-      // 지도 위에 뜨는 유일한 요소라 앱에서 예외적으로 그림자를 준다.
-      elevation: 6,
-      shadowColor: AppColors.scrim,
-      child: Padding(
-        padding: EdgeInsets.all(AppSpacing.base.w),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                MapMarker(
-                  number: place.visitOrder,
-                  color: place.category.color,
-                  checkColor: place.collected ? place.category.dark : null,
-                  size: 26,
-                  elevated: false,
-                ),
-                SizedBox(width: 10.w),
-                Expanded(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Flexible(
-                            child: Text(
-                              place.name,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: AppTextStyles.body15.copyWith(
-                                color: AppColors.ink,
+    return GestureDetector(
+      // 카드 안을 누른 건 지도를 누른 게 아니다. 여백까지 포함해 여기서 삼켜야
+      // 뒤에 깔린 바깥 탭 감지에 닿지 않는다(`MapPage`).
+      behavior: HitTestBehavior.opaque,
+      onTap: () {},
+      child: Material(
+        color: AppColors.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.lg.r),
+          side: const BorderSide(color: AppColors.line),
+        ),
+        // 지도 위에 뜨는 유일한 요소라 앱에서 예외적으로 그림자를 준다.
+        elevation: 6,
+        shadowColor: AppColors.scrim,
+        child: Padding(
+          padding: EdgeInsets.all(AppSpacing.base.w),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  MapMarker(
+                    number: place.visitOrder,
+                    color: place.category.color,
+                    checkColor: place.collected ? place.category.dark : null,
+                    size: 26,
+                    elevated: false,
+                  ),
+                  SizedBox(width: 10.w),
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Flexible(
+                              child: Text(
+                                place.name,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: AppTextStyles.body15.copyWith(
+                                  color: AppColors.ink,
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(width: AppSpacing.sm.w),
-                          AppBadge.category(place.category),
-                        ],
-                      ),
-                      if (onlyInCourse) ...[
-                        SizedBox(height: 2.h),
-                        Text(
-                          // 도감에 없는 곳이라는 사실 대신 여기서 할 수 있는 걸
-                          // 말한다 — 못 하는 걸 앞세우면 고장난 것처럼 읽힌다.
-                          '구경하고 가는 곳이에요',
-                          style: AppTextStyles.caption14.copyWith(
-                            color: AppColors.muted,
-                          ),
+                            SizedBox(width: AppSpacing.sm.w),
+                            AppBadge.category(place.category),
+                          ],
                         ),
+                        if (onlyInCourse) ...[
+                          SizedBox(height: 2.h),
+                          Text(
+                            // 도감에 없는 곳이라는 사실 대신 여기서 할 수 있는 걸
+                            // 말한다 — 못 하는 걸 앞세우면 고장난 것처럼 읽힌다.
+                            '구경하고 가는 곳이에요',
+                            style: AppTextStyles.caption14.copyWith(
+                              color: AppColors.muted,
+                            ),
+                          ),
+                        ],
                       ],
-                    ],
+                    ),
                   ),
-                ),
-                IconButton(
-                  onPressed: onClose,
-                  tooltip: '닫기',
-                  icon: Icon(Icons.close, size: 20.w, color: AppColors.muted),
+                ],
+              ),
+              if (catalogItemId != null) ...[
+                SizedBox(height: 14.h),
+                _CatalogBody(
+                  catalogItemId: catalogItemId,
+                  collected: place.collected,
+                  category: place.category,
                 ),
               ],
-            ),
-            if (catalogItemId != null) ...[
-              SizedBox(height: 14.h),
-              _CatalogBody(
-                catalogItemId: catalogItemId,
-                collected: place.collected,
-                category: place.category,
-              ),
             ],
-          ],
+          ),
         ),
       ),
     );

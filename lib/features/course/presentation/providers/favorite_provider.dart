@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../../core/providers/selected_course_provider.dart';
 import '../../domain/entities/course_entity.dart';
 import '../../domain/entities/course_options.dart';
 import 'course_provider.dart';
@@ -55,6 +56,16 @@ class FavoriteToggle extends _$FavoriteToggle {
     // 먼저 build해버려(element.dart `_debugAssertCanDependOn`) 아무도 안 보는
     // 목록까지 4번 조회한다. family 통째로 넘기면 살아 있는 것만 건드린다.
     ref.invalidate(favoriteCoursesProvider);
+
+    // The map reads a snapshot; nothing refetches it.
+    // 지도는 즐겨찾기 여부 스냅숏을 들고 있고 아무도 다시 받아오지 않는다.
+    // 즐겨찾기 탭·추천 화면에서 뒤집어도 지도 하트가 따라오도록 여기서 맞춘다.
+    // 같은 값이면 인스턴스를 유지한다 — 코스가 바뀌면 마커 비트맵을 다시 굽는다.
+    ref.read(selectedCourseProvider.notifier).update((course) {
+      if (course == null || course.id != courseId) return course;
+      if (course.favorite == favorite) return course;
+      return course.copyWith(favorite: favorite);
+    });
     return true;
   }
 }

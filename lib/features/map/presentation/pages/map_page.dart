@@ -158,15 +158,23 @@ class _MapPageState extends ConsumerState<MapPage> {
                               // 카드는 지도 위쪽에 띄운다. 아래에 두면 시트를
                               // 펼쳤을 때 그 뒤로 숨어 뜬 줄도 모르고, 좌하단
                               // Google 로고까지 가린다.
+                              // 카드 바깥을 누르면 닫는다. Listener + translucent라
+                              // 같은 탭이 지도까지 그대로 내려가, 카드를 닫자고
+                              // 지도를 못 만지게 되는 일이 없다 — 다른 마커를
+                              // 누르면 닫힘과 열림이 이어서 일어나 바로 갈아탄다.
+                              if (tapped != null)
+                                Positioned.fill(
+                                  child: Listener(
+                                    behavior: HitTestBehavior.translucent,
+                                    onPointerDown: (_) => _closePlace(),
+                                  ),
+                                ),
                               if (tapped != null)
                                 Positioned(
                                   left: 14.w,
                                   right: 14.w,
                                   top: 14.h,
-                                  child: PlaceInfoCard(
-                                    place: tapped,
-                                    onClose: _closePlace,
-                                  ),
+                                  child: PlaceInfoCard(place: tapped),
                                 ),
                             ],
                           ),
