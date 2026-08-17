@@ -1,5 +1,7 @@
 import 'package:eodaego/core/constants/dogam_category.dart';
 import 'package:eodaego/core/providers/selected_course_provider.dart';
+import 'package:eodaego/features/collection/domain/entities/catalog_item_detail_entity.dart';
+import 'package:eodaego/features/collection/presentation/providers/catalog_provider.dart';
 import 'package:eodaego/features/course/domain/entities/course_entity.dart';
 import 'package:eodaego/features/course/domain/entities/course_options.dart';
 import 'package:eodaego/features/map/presentation/pages/map_page.dart';
@@ -81,11 +83,33 @@ final _longCourse = CourseEntity(
   ],
 );
 
-Future<void> _pumpMap(
+/// 코스에 도감 연결이 걸린 장소가 있는 코스 — 앱 안에서 도감을 모으면 뒤집힌다.
+const _linkedCatalogItemId = 'f077dafb';
+
+const _linkedCourse = CourseEntity(
+  id: 'course-4',
+  title: '도감이 걸린 길',
+  tagLabels: [],
+  estimatedDurationMinutes: 60,
+  entrance: ParkGate.mainGate,
+  exit: ParkGate.southGate,
+  favorite: false,
+  places: [
+    CoursePlaceEntity(
+      visitOrder: 1,
+      name: '꿈마루',
+      category: DogamCategory.place,
+      catalogItemId: _linkedCatalogItemId,
+    ),
+  ],
+);
+
+Future<ProviderContainer> _pumpMap(
   WidgetTester tester, {
   CourseEntity course = _course,
+  List<Override> overrides = const [],
 }) async {
-  final container = ProviderContainer();
+  final container = ProviderContainer(overrides: overrides);
   addTearDown(container.dispose);
   container.read(selectedCourseProvider.notifier).state = course;
 
@@ -99,6 +123,7 @@ Future<void> _pumpMap(
     ),
   );
   await tester.pumpAndSettle();
+  return container;
 }
 
 /// 약도 안에서 마커도 카드도 없는 자리 — 좌하단 구석.
@@ -198,6 +223,63 @@ void main() {
         ),
         findsOneWidget,
       );
+    });
+  });
+
+  group('열려 있는 장소 카드', () {
+    testWidgets('follows_the_course_when_the_place_gets_collected', (
+      tester,
+    ) async {
+      // 퀴즈로 도감을 모으면 코스의 수집 여부가 갱신된다. 그때 카드를 열어둔
+      // 채였다면 마커에는 체크가 붙고 카드만 '아직'을 그리는 일이 없어야 한다.
+      final container = await _pumpMap(
+        tester,
+        course: _linkedCourse,
+        overrides: [
+          catalogItemDetailProvider(_linkedCatalogItemId).overrideWith(
+            (ref) async => const CatalogItemDetailEntity(
+              id: _linkedCatalogItemId,
+              name: '꿈마루',
+              category: DogamCategory.place,
+              feature: '',
+              childDescription: '',
+              code: 'L001',
+            ),
+          ),
+        ],
+      );
+
+      await tester.tap(_marker(1));
+      await tester.pumpAndSettle();
+      expect(find.text('아직 못 만났어요'), findsOneWidget);
+
+      container
+          .read(selectedCourseProvider.notifier)
+          .update((course) => course?.markCollected(_linkedCatalogItemId));
+      await tester.pumpAndSettle();
+
+      // 카드와 마커가 같은 얼굴이어야 한다 — 한 화면에서 서로 반대를 그리면
+      // 아이는 모은 곳을 또 찍으러 간다.
+      expect(find.text('✓ 도감에 있어요'), findsOneWidget);
+      expect(find.text('아직 못 만났어요'), findsNothing);
+      expect(tester.widget<MapMarker>(_marker(1)).checkColor, isNotNull);
+    });
+
+    testWidgets('disappears_when_another_course_takes_over_the_map', (
+      tester,
+    ) async {
+      // 코스를 갈아타면 지도가 마커를 새로 그린다. 이전 코스에서 열어둔 카드가
+      // 그 위에 남아 있으면 지금 코스에 없는 장소를 안내하게 된다.
+      final container = await _pumpMap(tester);
+
+      await tester.tap(_marker(1));
+      await tester.pumpAndSettle();
+      expect(find.byType(PlaceInfoCard), findsOneWidget);
+
+      container.read(selectedCourseProvider.notifier).state = _longCourse;
+      await tester.pumpAndSettle();
+
+      expect(find.byType(PlaceInfoCard), findsNothing);
     });
   });
 
