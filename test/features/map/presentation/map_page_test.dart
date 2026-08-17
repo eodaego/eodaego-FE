@@ -3,6 +3,7 @@ import 'package:eodaego/core/providers/selected_course_provider.dart';
 import 'package:eodaego/features/course/domain/entities/course_entity.dart';
 import 'package:eodaego/features/course/domain/entities/course_options.dart';
 import 'package:eodaego/features/map/presentation/pages/map_page.dart';
+import 'package:eodaego/features/map/presentation/widgets/course_sheet.dart';
 import 'package:eodaego/features/map/presentation/widgets/map_marker.dart';
 import 'package:eodaego/features/map/presentation/widgets/park_schematic_map.dart';
 import 'package:eodaego/features/map/presentation/widgets/place_info_card.dart';
@@ -58,6 +59,25 @@ const _twoMarkerCourse = CourseEntity(
       name: '식물원',
       category: DogamCategory.plant,
     ),
+  ],
+);
+
+/// 시트를 펼쳐도 목록이 남아 스크롤될 만큼 긴 코스.
+final _longCourse = CourseEntity(
+  id: 'course-3',
+  title: '오래 걷는 길',
+  tagLabels: const [],
+  estimatedDurationMinutes: 180,
+  entrance: ParkGate.mainGate,
+  exit: ParkGate.southGate,
+  favorite: false,
+  places: [
+    for (var i = 1; i <= 20; i++)
+      CoursePlaceEntity(
+        visitOrder: i,
+        name: '장소$i',
+        category: DogamCategory.place,
+      ),
   ],
 );
 
@@ -179,5 +199,30 @@ void main() {
         findsOneWidget,
       );
     });
+  });
+
+  testWidgets('keeps_the_sheet_handle_in_place_while_the_list_scrolls', (
+    tester,
+  ) async {
+    // 핸들은 시트를 끄는 손잡이다. 목록과 같이 밀려 올라가면 손잡이가 사라진다.
+    await _pumpMap(tester, course: _longCourse);
+
+    final handle = find.byKey(CourseSheet.handleKey);
+    final sheet = find.byType(CustomScrollView);
+
+    // 손잡이를 끌어 펼친다 — 고정하려다 드래그를 잃어버리기 쉬운 자리다.
+    final collapsedHeight = tester.getSize(sheet).height;
+    await tester.drag(handle, const Offset(0, -250));
+    await tester.pumpAndSettle();
+    expect(tester.getSize(sheet).height, greaterThan(collapsedHeight));
+
+    final handleBefore = tester.getRect(handle);
+    final firstRowBefore = tester.getTopLeft(find.text('장소1')).dy;
+
+    await tester.drag(sheet, const Offset(0, -60));
+    await tester.pumpAndSettle();
+
+    expect(tester.getTopLeft(find.text('장소1')).dy, lessThan(firstRowBefore));
+    expect(tester.getRect(handle), handleBefore);
   });
 }

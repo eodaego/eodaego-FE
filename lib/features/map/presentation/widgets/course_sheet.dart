@@ -22,6 +22,9 @@ import 'map_marker.dart';
 class CourseSheet extends ConsumerWidget {
   const CourseSheet({super.key, this.onPlaceTap, this.selectedPlaceName});
 
+  /// 드래그 핸들. 고정돼 있는지를 어떻게 고정했는지와 무관하게 확인하려고 둔다.
+  static const handleKey = ValueKey('courseSheetHandle');
+
   /// 접힘·펼침 두 지점만 쓴다(snap).
   static const _collapsed = 0.22;
   static const _expanded = 0.5;
@@ -44,6 +47,8 @@ class CourseSheet extends ConsumerWidget {
       snapSizes: const [_collapsed, _expanded],
       builder: (context, scrollController) {
         return Container(
+          // 핸들 배경이 불투명해서, 안 자르면 둥근 위 모서리를 네모로 덮는다.
+          clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
             color: AppColors.surface,
             borderRadius: BorderRadius.vertical(
@@ -51,79 +56,103 @@ class CourseSheet extends ConsumerWidget {
             ),
             border: const Border(top: BorderSide(color: AppColors.line)),
           ),
-          child: ListView(
+          child: CustomScrollView(
             controller: scrollController,
-            padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg.w),
-            children: [
-              SizedBox(height: AppSpacing.md.h),
-              Center(
-                child: Container(
-                  width: 44.w,
-                  height: 5.h,
-                  decoration: BoxDecoration(
-                    color: AppColors.line,
-                    borderRadius: BorderRadius.circular(AppRadius.full),
+            slivers: [
+              // 핸들은 제자리에 박아 두되 스크롤뷰 안에 남긴다 — 시트를 끄는
+              // 손잡이라 스크롤 제스처를 받아야 접힘·펼침이 따라온다. 밖으로
+              // 빼면 고정은 되지만 정작 손잡이로 끌 수 없다.
+              PinnedHeaderSliver(
+                // 목록이 핸들 아래로 지나가야 한다. 투명하면 겹쳐 보인다.
+                child: ColoredBox(
+                  color: AppColors.surface,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: AppSpacing.md.h),
+                    child: Center(
+                      child: Container(
+                        key: handleKey,
+                        width: 44.w,
+                        height: 5.h,
+                        decoration: BoxDecoration(
+                          color: AppColors.line,
+                          borderRadius: BorderRadius.circular(AppRadius.full),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
-              SizedBox(height: AppSpacing.md.h),
-              if (course == null)
-                Text(
-                  '코스를 고르면 여기에 표시돼요',
-                  style: AppTextStyles.body15.copyWith(color: AppColors.muted),
-                )
-              else ...[
-                Row(
+              SliverPadding(
+                padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg.w),
+                sliver: SliverList.list(
                   children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                    if (course == null)
+                      Text(
+                        '코스를 고르면 여기에 표시돼요',
+                        style: AppTextStyles.body15.copyWith(
+                          color: AppColors.muted,
+                        ),
+                      )
+                    else ...[
+                      Row(
                         children: [
-                          Text(
-                            '지금 보는 코스',
-                            style: AppTextStyles.caption14.copyWith(
-                              color: AppColors.muted,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '지금 보는 코스',
+                                  style: AppTextStyles.caption14.copyWith(
+                                    color: AppColors.muted,
+                                  ),
+                                ),
+                                SizedBox(height: 6.h),
+                                Text(
+                                  course.title,
+                                  style: AppTextStyles.display16.copyWith(
+                                    color: AppColors.ink,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          SizedBox(height: 6.h),
-                          Text(
-                            course.title,
-                            style: AppTextStyles.display16.copyWith(
-                              color: AppColors.ink,
-                            ),
-                          ),
+                          // 즐겨찾기는 서버에 회원 기준으로 저장된다. 게스트에게 하트를
+                          // 주면 눌러도 401이 난다.
+                          if (!restricted) _FavoriteButton(course: course),
                         ],
                       ),
-                    ),
-                    // 즐겨찾기는 서버에 회원 기준으로 저장된다. 게스트에게 하트를
-                    // 주면 눌러도 401이 난다.
-                    if (!restricted) _FavoriteButton(course: course),
+                      SizedBox(height: AppSpacing.md.h),
+                      for (final (index, place) in course.places.indexed) ...[
+                        // 순서 사이만 끊는다. 첫 줄 위에 선이 붙으면 코스 제목과
+                        // 목록이 분리돼 딴 블록처럼 보인다.
+                        if (index > 0)
+                          Divider(
+                            height: 12.h,
+                            thickness: 1,
+                            color: AppColors.line,
+                          ),
+                        _PlaceRow(
+                          place: place,
+                          selected: place.name == selectedPlaceName,
+                          onTap: () => onPlaceTap?.call(place),
+                        ),
+                      ],
+                    ],
+                    SizedBox(height: AppSpacing.sm.h),
+                    if (restricted)
+                      const _GuestGate()
+                    else
+                      AppButton(
+                        text: '코스 추천 받기',
+                        width: double.infinity,
+                        height: 52.h,
+                        onPressed: () =>
+                            context.push(RoutePaths.courseRecommend),
+                      ),
+                    SizedBox(height: AppSpacing.xl.h),
                   ],
                 ),
-                SizedBox(height: AppSpacing.md.h),
-                for (final (index, place) in course.places.indexed) ...[
-                  // 순서 사이만 끊는다. 첫 줄 위에 선이 붙으면 코스 제목과
-                  // 목록이 분리돼 딴 블록처럼 보인다.
-                  if (index > 0)
-                    Divider(height: 12.h, thickness: 1, color: AppColors.line),
-                  _PlaceRow(
-                    place: place,
-                    selected: place.name == selectedPlaceName,
-                    onTap: () => onPlaceTap?.call(place),
-                  ),
-                ],
-              ],
-              SizedBox(height: AppSpacing.sm.h),
-              if (restricted)
-                const _GuestGate()
-              else
-                AppButton(
-                  text: '코스 추천 받기',
-                  width: double.infinity,
-                  height: 52.h,
-                  onPressed: () => context.push(RoutePaths.courseRecommend),
-                ),
-              SizedBox(height: AppSpacing.xl.h),
+              ),
             ],
           ),
         );
