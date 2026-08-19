@@ -250,7 +250,7 @@ final catalogSummaryProvider =
 // ignore: unused_element
 typedef CatalogSummaryRef = AutoDisposeFutureProviderRef<CatalogSummaryEntity>;
 String _$collectCatalogItemByCodeHash() =>
-    r'4254ccf5420e1f4c4bdb7d34a66c5b599fe18f1b';
+    r'0f3efc5c3123f45c920e5010e3050a826408a9ff';
 
 /// code(예: `A001`)로 도감 항목을 찾아 수집 처리하고, 요약·목록을 갱신한다.
 ///

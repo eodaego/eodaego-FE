@@ -25,23 +25,40 @@ class MapPage extends ConsumerStatefulWidget {
 class _MapPageState extends ConsumerState<MapPage> {
   var _mode = _MapViewMode.schematic;
 
-  /// 마커를 눌러 카드를 띄운 장소. null이면 카드가 없다.
-  CoursePlaceEntity? _tappedPlace;
+  /// 마커를 눌러 카드를 띄운 장소의 이름. null이면 카드가 없다.
+  ///
+  /// **주의**: [CoursePlaceEntity]를 그대로 들고 있으면 안 된다. 그건 탭한
+  /// 시점의 스냅숏이라, 앱에서 도감을 모아 코스가 갱신되면 마커에는 체크가
+  /// 붙는데 카드만 옛 수집 여부를 계속 그린다. 이름은 코스 안에서 장소를
+  /// 가리키는 식별자로 이미 쓰고 있다(`selectedPlaceName`).
+  String? _tappedPlaceName;
 
   /// 마커 탭과 시트 목록 탭이 모두 여기로 온다.
   void _openPlace(CoursePlaceEntity place) {
-    setState(() => _tappedPlace = place);
+    setState(() => _tappedPlaceName = place.name);
   }
 
   void _closePlace() {
-    setState(() => _tappedPlace = null);
+    setState(() => _tappedPlaceName = null);
+  }
+
+  /// 열어둔 카드가 가리키는 장소를 지금 코스에서 다시 찾는다.
+  ///
+  /// Returns: 지금 코스에 없으면 null — 코스를 갈아탔을 때 이전 코스의 카드가
+  /// 그대로 남지 않는다.
+  CoursePlaceEntity? _openPlaceIn(CourseEntity? course) {
+    final name = _tappedPlaceName;
+    if (course == null || name == null) return null;
+    for (final place in course.places) {
+      if (place.name == name) return place;
+    }
+    return null;
   }
 
   @override
   Widget build(BuildContext context) {
     final selected = ref.watch(selectedCourseProvider);
-    // 코스가 바뀌면 이전 코스의 장소 카드가 남지 않게 한다.
-    final tapped = selected == null ? null : _tappedPlace;
+    final tapped = _openPlaceIn(selected);
     // 시트 접힘 높이(body 기준 22%)에 대응해 풀스크린 기준 20%를 비워 마커·라벨 가림을 방지
     final sheetInset = MediaQuery.sizeOf(context).height * 0.20;
     return Scaffold(

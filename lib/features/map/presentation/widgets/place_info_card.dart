@@ -25,13 +25,14 @@ import 'map_marker.dart';
 ///
 /// 닫기 버튼은 없다 — 카드 바깥(지도)을 누르면 닫힌다. 그 판정은 카드를 띄우는
 /// `MapPage`가 한다.
-class PlaceInfoCard extends ConsumerWidget {
+/// 도감 조회는 [_CatalogBody]가 한다 — 카드 자체는 코스가 준 두 필드만 읽는다.
+class PlaceInfoCard extends StatelessWidget {
   const PlaceInfoCard({super.key, required this.place});
 
   final CoursePlaceEntity place;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     // ③ 도감에 없는 시설은 아래로 붙일 게 없다. 한 줄을 이름 밑에 끼워 카드를
     // 짧게 둔다 — 따로 떼면 흰 여백만 남은 큰 상자로 보인다.
     //
