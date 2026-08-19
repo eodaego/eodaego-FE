@@ -1,14 +1,62 @@
 {
   "metadata": {
-    "lastUpdated": "2026-08-10T11:18:03Z",
-    "currentVersion": "1.0.37",
+    "lastUpdated": "2026-08-19T06:42:30Z",
+    "currentVersion": "1.0.40",
     "projectType": "flutter",
     "projectTypes": [
       "flutter"
     ],
-    "totalReleases": 11
+    "totalReleases": 12
   },
   "releases": [
+    {
+      "version": "1.0.40",
+      "project_type": "flutter",
+      "project_types": [
+        "flutter"
+      ],
+      "date": "2026-08-19",
+      "pr_number": 38,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **새 기능**\n\n  * 장소 카드를 닫기 버튼 대신 바깥을 눌러 닫는다 #36\n  * 코스 장소 도감 연결 정보 연동과 수집 여부 표시 #36\n\n* **버그 수정**\n\n  * 장소 카드에서 촬영 화면으로 갈 때 돌아올 길을 남긴다 #36\n  * 앱에서 도감을 모으면 지금 보는 코스의 수집 여부도 맞춘다 #36\n\n* **문서**\n\n  * 코스 장소 도감 연결 API 정본 갱신 #36\n\n* **기타**\n\n  * Merge pull request #37 from eodaego/20260817_#36_코스장소_도감연결_연동과_수집여부_표시\n  * chore : 이슈·리포트·릴리즈노트를 docs 하위로 모은다 #36\n  * docs : 리포트 작성 #36\n  * chore : 코드 생성 파일을 지금 소스와 다시 맞춘다 #36\n  * refactor : 장소 카드에서 쓰지 않는 Ref 의존을 걷어낸다 #36\n  * test : 도감을 모을 때 지도 코스의 수집 여부가 맞춰지는지 검증한다 #36\n  * fix : 지도에서 도감을 모으면 열어둔 장소 카드도 같이 바뀐다 #36\n  * docs.: 리포트 작성 #36\n  * fix : 코스 시트 손잡이가 목록 스크롤에 밀려 사라지지 않게 고정한다 #36\n  * docs : 리포트 문서 작성 #36\n\n> 💡 더 정확한 릴리스 노트를 원한다면 Claude Code에서 `/github` 스킬로 PR 릴리스 노트를 업데이트할 수 있습니다.",
+      "parsed_changes": {
+        "새_기능": {
+          "title": "새 기능",
+          "items": [
+            "장소 카드를 닫기 버튼 대신 바깥을 눌러 닫는다 #36",
+            "코스 장소 도감 연결 정보 연동과 수집 여부 표시 #36"
+          ]
+        },
+        "버그_수정": {
+          "title": "버그 수정",
+          "items": [
+            "장소 카드에서 촬영 화면으로 갈 때 돌아올 길을 남긴다 #36",
+            "앱에서 도감을 모으면 지금 보는 코스의 수집 여부도 맞춘다 #36"
+          ]
+        },
+        "문서": {
+          "title": "문서",
+          "items": [
+            "코스 장소 도감 연결 API 정본 갱신 #36"
+          ]
+        },
+        "기타": {
+          "title": "기타",
+          "items": [
+            "Merge pull request #37 from eodaego/20260817_#36_코스장소_도감연결_연동과_수집여부_표시",
+            "chore : 이슈·리포트·릴리즈노트를 docs 하위로 모은다 #36",
+            "docs : 리포트 작성 #36",
+            "chore : 코드 생성 파일을 지금 소스와 다시 맞춘다 #36",
+            "refactor : 장소 카드에서 쓰지 않는 Ref 의존을 걷어낸다 #36",
+            "test : 도감을 모을 때 지도 코스의 수집 여부가 맞춰지는지 검증한다 #36",
+            "fix : 지도에서 도감을 모으면 열어둔 장소 카드도 같이 바뀐다 #36",
+            "docs.: 리포트 작성 #36",
+            "fix : 코스 시트 손잡이가 목록 스크롤에 밀려 사라지지 않게 고정한다 #36",
+            "docs : 리포트 문서 작성 #36"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "1.0.37",
       "project_type": "flutter",
