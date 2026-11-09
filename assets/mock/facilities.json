@@ -1,0 +1,200 @@
+{
+  "facilities": [
+    {
+      "id": 1,
+      "category": "편의시설",
+      "name": "고객안내센터",
+      "facilityType": "문화",
+      "openTime": "09:00",
+      "closeTime": "18:00"
+    },
+    {
+      "id": 2,
+      "category": "편의시설",
+      "name": "어린이 정원",
+      "facilityType": "문화"
+    },
+    {
+      "id": 3,
+      "category": "편의시설",
+      "name": "꿈마루",
+      "facilityType": "문화",
+      "intro": "옛 골프장 클럽하우스를 리모델링한 복합문화공간이에요.",
+      "openTime": "10:00",
+      "closeTime": "17:00",
+      "operatingNote": "매주 월요일 휴관"
+    },
+    {
+      "id": 4,
+      "category": "편의시설",
+      "name": "능동숲속의무대",
+      "facilityType": "문화"
+    },
+    {
+      "id": 5,
+      "category": "편의시설",
+      "name": "생태연못",
+      "facilityType": "문화"
+    },
+    {
+      "id": 6,
+      "category": "편의시설",
+      "name": "물놀이장",
+      "facilityType": "문화",
+      "operatingNote": "여름철 정해진 시간에만 운영해요"
+    },
+    {
+      "id": 7,
+      "category": "편의시설",
+      "name": "원숭이마을",
+      "facilityType": "문화"
+    },
+    {
+      "id": 8,
+      "category": "편의시설",
+      "name": "꿈틀꿈틀놀이터",
+      "facilityType": "문화"
+    },
+    {
+      "id": 9,
+      "category": "편의시설",
+      "name": "식물원",
+      "latitude": 37.54758,
+      "longitude": 127.08064,
+      "facilityType": "문화",
+      "intro": "사계절 푸른 식물을 만날 수 있어요.",
+      "description": "열대·아열대 식물을 한자리에서 볼 수 있는 온실이에요.",
+      "openTime": "09:00",
+      "closeTime": "18:00"
+    },
+    {
+      "id": 10,
+      "category": "편의시설",
+      "name": "식물원 카페테리아",
+      "facilityType": "문화"
+    },
+    {
+      "id": 11,
+      "category": "편의시설",
+      "name": "바다동물관",
+      "latitude": 37.54618,
+      "longitude": 127.08248,
+      "facilityType": "문화"
+    },
+    {
+      "id": 12,
+      "category": "편의시설",
+      "name": "구의문 카페테리아",
+      "facilityType": "문화"
+    },
+    {
+      "id": 13,
+      "category": "편의시설",
+      "name": "어린이 숲 체험장",
+      "facilityType": "문화"
+    },
+    {
+      "id": 14,
+      "category": "편의시설",
+      "name": "초식동물마을",
+      "latitude": 37.54682,
+      "longitude": 127.08266,
+      "facilityType": "문화"
+    },
+    {
+      "id": 15,
+      "category": "편의시설",
+      "name": "맹수마을",
+      "latitude": 37.54798,
+      "longitude": 127.08302,
+      "facilityType": "문화",
+      "intro": "사자와 호랑이를 가까이서 볼 수 있어요."
+    },
+    {
+      "id": 16,
+      "category": "편의시설",
+      "name": "물새장",
+      "facilityType": "문화"
+    },
+    {
+      "id": 17,
+      "category": "편의시설",
+      "name": "꼬마동물마을",
+      "latitude": 37.54812,
+      "longitude": 127.08188,
+      "facilityType": "문화"
+    },
+    {
+      "id": 18,
+      "category": "편의시설",
+      "name": "열대동물관",
+      "facilityType": "문화"
+    },
+    {
+      "id": 19,
+      "category": "편의시설",
+      "name": "팔각당",
+      "latitude": 37.54922,
+      "longitude": 127.08214,
+      "facilityType": "문화"
+    },
+    {
+      "id": 20,
+      "category": "편의시설",
+      "name": "무지개분수",
+      "facilityType": "문화"
+    },
+    {
+      "id": 21,
+      "category": "편의시설",
+      "name": "놀이동산",
+      "facilityType": "문화"
+    },
+    {
+      "id": 22,
+      "category": "편의시설",
+      "name": "맘껏놀이터",
+      "facilityType": "문화"
+    },
+    {
+      "id": 23,
+      "category": "편의시설",
+      "name": "키즈오토파크",
+      "facilityType": "문화"
+    },
+    {
+      "id": 24,
+      "category": "편의시설",
+      "name": "서울상상나라",
+      "facilityType": "문화"
+    },
+    {
+      "id": 25,
+      "category": "편의시설",
+      "name": "환경연못",
+      "facilityType": "문화"
+    },
+    {
+      "id": 26,
+      "category": "편의시설",
+      "name": "음악분수",
+      "latitude": 37.54902,
+      "longitude": 127.078,
+      "facilityType": "문화"
+    },
+    {
+      "id": 27,
+      "category": "출입문",
+      "name": "정문",
+      "latitude": 37.548042,
+      "longitude": 127.074766
+    },
+    {
+      "id": 28,
+      "category": "출입문",
+      "name": "구의문",
+      "latitude": 37.54595,
+      "longitude": 127.087362
+    }
+  ]
+}

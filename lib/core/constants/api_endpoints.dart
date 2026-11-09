@@ -50,4 +50,8 @@ class ApiEndpoints {
   // Course Favorite — 등록·삭제 모두 멱등이다.
   static const String favorites = '$_v1/favorites';
   static const String favoriteCourse = '$_v1/favorites/{courseId}';
+
+  // Facility — 공원 시설 목록·상세. 출입문도 시설로 내려온다(category '출입문').
+  static const String facilities = '$_v1/facilities';
+  static const String facilityDetail = '$_v1/facilities/{facilityId}';
 }
