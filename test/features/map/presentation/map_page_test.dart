@@ -165,6 +165,9 @@ Future<ProviderContainer> _pumpMap(
         courseRepository ?? _FakeCourseRepository(),
       ),
       mapFacilitiesProvider.overrideWith((ref) async => facilities),
+      // 시설 상세는 HTTP 경계 — 실제 provider가 EnvConfig를 읽지 않게 막는다.
+      for (final f in _facilities)
+        facilityDetailProvider(f.id).overrideWith((ref) async => null),
       ...overrides,
     ],
   );

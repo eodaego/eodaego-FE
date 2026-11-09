@@ -286,7 +286,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('구경하고 가는 곳이에요'), findsOneWidget);
-      expect(find.byType(Text), findsNWidgets(4));
+      expect(find.text('바다 친구들을 만나요.'), findsNothing);
+      expect(find.textContaining('운영'), findsNothing);
     });
   });
 }
