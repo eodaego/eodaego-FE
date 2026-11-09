@@ -1,21 +1,31 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/dogam_category.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../core/errors/app_exception.dart';
 import '../../../../core/widgets/app_back_app_bar.dart';
 import '../../../../core/widgets/app_badge.dart';
-import '../../../../core/widgets/app_skeleton.dart';
 import '../../../../core/widgets/catalog_image.dart';
 import '../../../../router/route_paths.dart';
-import '../../domain/entities/quiz_question_entity.dart';
-import '../providers/quiz_provider.dart';
+import '../../domain/entities/quiz_entity.dart';
+import '../providers/quiz_session_provider.dart';
+import '../quiz_messages.dart';
 
-/// 퀴즈 (QUIZ-02/03) — 3지선다. 오답은 해당 칸만 잠금, 해설 없음.
-/// 문항은 `assets/mock/quiz.json`에서 라운드에 맞게 순환한다(설계 문서 §7).
+String _questionOf(DogamCategory category) => switch (category) {
+  DogamCategory.animal => quizQuestionAnimal,
+  DogamCategory.plant => quizQuestionPlant,
+  DogamCategory.place => quizQuestionPlace,
+};
+
+/// 퀴즈 (QUIZ-02/03) — 서버가 낸 3지선다. 오답은 해당 칸만 잠금, 해설 없음.
+/// 세션이 없으면(앱 재시작 등) 촬영 화면으로 보낸다.
 class QuizPage extends ConsumerStatefulWidget {
   const QuizPage({super.key});
 
@@ -24,68 +34,72 @@ class QuizPage extends ConsumerStatefulWidget {
 }
 
 class _QuizPageState extends ConsumerState<QuizPage> {
-  final Set<int> _locked = {};
-  bool _answered = false;
+  bool _submitting = false;
 
-  void _select(int index, int answerIndex) {
-    if (_answered || _locked.contains(index)) return;
-    if (index == answerIndex) {
-      setState(() => _answered = true);
-      Future.delayed(const Duration(milliseconds: 250), () {
+  Future<void> _select(String catalogItemId) async {
+    if (_submitting) return;
+    setState(() => _submitting = true);
+    final category = ref.read(quizSessionProvider)?.category;
+    try {
+      final result = await ref
+          .read(quizSessionProvider.notifier)
+          .answer(catalogItemId);
+      if (!mounted) return;
+      if (result.correct) {
+        // 정답 강조를 잠깐 보여준 뒤 보상 화면으로
+        // Brief highlight of the correct choice before the reward screen
+        await Future<void>.delayed(const Duration(milliseconds: 250));
         if (mounted) context.pushReplacement(RoutePaths.quizReward);
-      });
-    } else {
-      setState(() => _locked.add(index));
+        return;
+      }
+    } catch (e) {
+      if (!mounted) return;
+      final messenger = ScaffoldMessenger.of(context);
+      messenger.showSnackBar(SnackBar(content: Text(answerErrorMessage(e))));
+      if (e is AppException && e.code == 'QUIZ_NOT_FOUND') {
+        ref.read(quizSessionProvider.notifier).clear();
+        context.go(RoutePaths.scanWith(category: category));
+        return;
+      }
     }
+    if (mounted) setState(() => _submitting = false);
   }
 
   @override
   Widget build(BuildContext context) {
-    final questionsAsync = ref.watch(quizQuestionsProvider);
+    final session = ref.watch(quizSessionProvider);
+    if (session == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) context.go(RoutePaths.scan);
+      });
+      return const Scaffold(backgroundColor: AppColors.canvas);
+    }
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
       appBar: const AppBackAppBar(title: '퀴즈'),
-      body: questionsAsync.when(
-        loading: () => const _LoadingBody(),
-        error: (_, _) => const _ErrorBody(),
-        data: (questions) {
-          if (questions.isEmpty) return const _ErrorBody();
-          final round = ref.watch(quizRoundProvider);
-          final question = quizQuestionAt(questions, round);
-          return _QuizBody(
-            question: question,
-            locked: _locked,
-            answered: _answered,
-            onSelect: (index) => _select(index, question.answerIndex),
-          );
-        },
-      ),
+      body: _QuizBody(session: session, busy: _submitting, onSelect: _select),
     );
   }
 }
 
-/// 카테고리 뱃지 → 질문 → 그림 → 3지선다(시안 A안).
-///
-/// 그림은 컨테이너 없이 크림 배경 위에 화면 폭의 약 70%로 놓는다. 카테고리
-/// 뱃지는 그림 위가 아니라 질문 위에 둔다 — 그림을 가리지 않으면서
-/// 색+아이콘+라벨 3중 표기를 만족한다.
+/// 카테고리 뱃지 → 질문 → 찍은 사진 → 3지선다(시안 A안).
 class _QuizBody extends StatelessWidget {
   const _QuizBody({
-    required this.question,
-    required this.locked,
-    required this.answered,
+    required this.session,
+    required this.busy,
     required this.onSelect,
   });
 
-  final QuizQuestionEntity question;
-  final Set<int> locked;
-  final bool answered;
-  final void Function(int index) onSelect;
+  final QuizSessionState session;
+  final bool busy;
+  final void Function(String catalogItemId) onSelect;
 
   @override
   Widget build(BuildContext context) {
     final imageSize = MediaQuery.sizeOf(context).width * 0.7;
+    final answered = session.result != null;
+    final path = session.imagePath;
 
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg.w),
@@ -93,23 +107,33 @@ class _QuizBody extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(height: AppSpacing.sm.h),
-          AppBadge.category(question.category),
+          AppBadge.category(session.category),
           SizedBox(height: AppSpacing.base.h),
           Text(
-            question.question,
+            _questionOf(session.category),
             style: AppTextStyles.display22.copyWith(color: AppColors.ink),
           ),
           SizedBox(height: AppSpacing.lg.h),
           Center(
-            child: CatalogImage(
-              code: question.code,
-              category: question.category,
-              size: imageSize,
-            ),
+            child: path == null
+                ? CatalogImage(category: session.category, size: imageSize)
+                : ClipRRect(
+                    borderRadius: BorderRadius.circular(AppRadius.lg.r),
+                    child: Image.file(
+                      File(path),
+                      width: imageSize,
+                      height: imageSize,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, _, _) => CatalogImage(
+                        category: session.category,
+                        size: imageSize,
+                      ),
+                    ),
+                  ),
           ),
           SizedBox(height: AppSpacing.xl.h),
-          for (var i = 0; i < question.choices.length; i++) _choice(i),
-          if (locked.isNotEmpty && !answered)
+          for (final choice in session.quiz.choices) _choice(choice, answered),
+          if (session.lockedChoiceIds.isNotEmpty && !answered)
             Center(
               child: Text(
                 '앗, 다시 골라 볼까요?',
@@ -122,9 +146,12 @@ class _QuizBody extends StatelessWidget {
     );
   }
 
-  Widget _choice(int index) {
-    final isLocked = locked.contains(index);
-    final correctSelected = answered && index == question.answerIndex;
+  Widget _choice(QuizChoiceEntity choice, bool answered) {
+    final index = session.quiz.choices.indexOf(choice);
+    final isLocked = session.lockedChoiceIds.contains(choice.catalogItemId);
+    final correctSelected =
+        answered &&
+        choice.catalogItemId == session.result!.collectedCatalogItemId;
     final background = isLocked
         ? AppColors.surfaceDim
         : (correctSelected ? AppColors.primaryTint : AppColors.surface);
@@ -150,7 +177,9 @@ class _QuizBody extends StatelessWidget {
           ),
           child: InkWell(
             borderRadius: BorderRadius.circular(AppRadius.md.r),
-            onTap: isLocked || answered ? null : () => onSelect(index),
+            onTap: isLocked || answered || busy
+                ? null
+                : () => onSelect(choice.catalogItemId),
             child: SizedBox(
               height: 60.h,
               child: Padding(
@@ -165,7 +194,7 @@ class _QuizBody extends StatelessWidget {
                     SizedBox(width: AppSpacing.sm.w),
                     Expanded(
                       child: Text(
-                        question.choices[index],
+                        choice.name,
                         style: AppTextStyles.label16Semibold.copyWith(
                           color: textColor,
                           decoration: isLocked
@@ -210,77 +239,6 @@ class _NumberCircle extends StatelessWidget {
       child: Text(
         '$number',
         style: AppTextStyles.tag13Bold.copyWith(color: textColor),
-      ),
-    );
-  }
-}
-
-/// 문항 로딩 중 스켈레톤 — 뱃지·질문·그림·보기 3개 자리를 흉내낸다.
-class _LoadingBody extends StatelessWidget {
-  const _LoadingBody();
-
-  @override
-  Widget build(BuildContext context) {
-    final imageSize = MediaQuery.sizeOf(context).width * 0.7;
-
-    return ListView(
-      padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg.w),
-      children: [
-        SizedBox(height: AppSpacing.sm.h),
-        AppSkeleton(
-          width: 72.w,
-          height: 24.h,
-          borderRadius: BorderRadius.circular(AppRadius.xs.r),
-        ),
-        SizedBox(height: AppSpacing.base.h),
-        AppSkeleton(width: double.infinity, height: 28.h),
-        SizedBox(height: AppSpacing.lg.h),
-        Center(
-          child: AppSkeleton(
-            width: imageSize,
-            height: imageSize,
-            borderRadius: BorderRadius.circular(AppRadius.lg.r),
-          ),
-        ),
-        SizedBox(height: AppSpacing.xl.h),
-        for (var i = 0; i < 3; i++) ...[
-          AppSkeleton(
-            width: double.infinity,
-            height: 60.h,
-            borderRadius: BorderRadius.circular(AppRadius.md.r),
-          ),
-          SizedBox(height: AppSpacing.md.h),
-        ],
-      ],
-    );
-  }
-}
-
-/// 문항 로딩 실패 — 화면이 비지 않게 안내 문구를 보인다.
-class _ErrorBody extends StatelessWidget {
-  const _ErrorBody();
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg.w),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.quiz_outlined, size: 44.w, color: AppColors.muted),
-            SizedBox(height: AppSpacing.base.h),
-            Text(
-              '퀴즈를 불러오지 못했어요',
-              style: AppTextStyles.display17.copyWith(color: AppColors.ink),
-            ),
-            SizedBox(height: AppSpacing.sm.h),
-            Text(
-              '잠시 후 다시 시도해 주세요',
-              style: AppTextStyles.body15.copyWith(color: AppColors.muted),
-            ),
-          ],
-        ),
       ),
     );
   }

@@ -22,3 +22,10 @@ String scanErrorMessage(Object error) => switch (_code(error)) {
 String answerErrorMessage(Object error) => _code(error) == 'QUIZ_NOT_FOUND'
     ? answerExpiredMessage
     : answerFailedMessage;
+
+// 퀴즈·보상 화면 문구
+const quizQuestionAnimal = '이 친구 이름이 뭘까요?';
+const quizQuestionPlant = '이 식물 이름이 뭘까요?';
+const quizQuestionPlace = '여기는 어디일까요?';
+const rewardNewMessage = '도감에 새 친구를 등록했어요';
+const rewardAgainMessage = '또 만났네요! 이미 도감에 있는 친구예요';
