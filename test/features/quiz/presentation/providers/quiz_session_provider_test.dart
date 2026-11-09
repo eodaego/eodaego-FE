@@ -131,21 +131,18 @@ void main() {
     },
   );
 
-  test(
-    'answer_correct_reports_new_when_catalog_list_not_loaded',
-    () async {
-      final c = _container(
-        _FakeQuizRepository(),
-        catalog: [_item('a', collected: true)],
-      );
-      // 도감을 읽지 않았으므로 스냅숏이 없다.
-      await _start(c);
+  test('answer_correct_reports_new_when_catalog_list_not_loaded', () async {
+    final c = _container(
+      _FakeQuizRepository(),
+      catalog: [_item('a', collected: true)],
+    );
+    // 도감을 읽지 않았으므로 스냅숏이 없다.
+    await _start(c);
 
-      await c.read(quizSessionProvider.notifier).answer('a');
+    await c.read(quizSessionProvider.notifier).answer('a');
 
-      expect(c.read(quizSessionProvider)!.alreadyCollected, isFalse);
-    },
-  );
+    expect(c.read(quizSessionProvider)!.alreadyCollected, isFalse);
+  });
 
   test('answer_called_twice_quickly_sends_one_request', () async {
     final gate = Completer<void>();
@@ -160,5 +157,35 @@ void main() {
     await Future.wait([first, second]);
 
     expect(fake.submitCalls, 1);
+  });
+
+  test('late_answer_after_clear_does_not_restore_session', () async {
+    final gate = Completer<void>();
+    final c = _container(_FakeQuizRepository(gate: gate));
+    await _start(c);
+    final notifier = c.read(quizSessionProvider.notifier);
+
+    final pending = notifier.answer('b');
+    notifier.clear();
+    gate.complete();
+    await pending;
+
+    expect(c.read(quizSessionProvider), isNull);
+  });
+
+  test('late_answer_after_new_start_does_not_overwrite_new_session', () async {
+    final gate = Completer<void>();
+    final c = _container(_FakeQuizRepository(gate: gate));
+    await _start(c);
+    final notifier = c.read(quizSessionProvider.notifier);
+
+    final pending = notifier.answer('b');
+    await _start(c);
+    final fresh = c.read(quizSessionProvider);
+    gate.complete();
+    await pending;
+
+    expect(c.read(quizSessionProvider), same(fresh));
+    expect(c.read(quizSessionProvider)!.lockedChoiceIds, isEmpty);
   });
 }
