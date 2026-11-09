@@ -36,6 +36,10 @@ class QuizPage extends ConsumerStatefulWidget {
 class _QuizPageState extends ConsumerState<QuizPage> {
   bool _submitting = false;
 
+  // 이미 촬영 화면으로 나가는 중이면 세션 없음 리다이렉트를 건너뛴다.
+  // Skip the no-session redirect once we are already leaving for scan.
+  bool _leaving = false;
+
   Future<void> _select(String catalogItemId) async {
     if (_submitting) return;
     setState(() => _submitting = true);
@@ -57,6 +61,7 @@ class _QuizPageState extends ConsumerState<QuizPage> {
       final messenger = ScaffoldMessenger.of(context);
       messenger.showSnackBar(SnackBar(content: Text(answerErrorMessage(e))));
       if (e is AppException && e.code == 'QUIZ_NOT_FOUND') {
+        _leaving = true;
         ref.read(quizSessionProvider.notifier).clear();
         context.go(RoutePaths.scanWith(category: category));
         return;
@@ -69,6 +74,7 @@ class _QuizPageState extends ConsumerState<QuizPage> {
   Widget build(BuildContext context) {
     final session = ref.watch(quizSessionProvider);
     if (session == null) {
+      if (_leaving) return const Scaffold(backgroundColor: AppColors.canvas);
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) context.go(RoutePaths.scan);
       });

@@ -16,13 +16,14 @@ void main() {
     }
   });
 
-  testWidgets('quiz_page_shows_taken_photo_or_category_icon_when_no_photo', (
-    tester,
-  ) async {
-    await pumpQuizApp(tester, repo: FakeQuizRepository(), imagePath: 'p.jpg');
-    expect(find.byType(Image), findsOneWidget);
-    expect(find.byIcon(Icons.pets), findsNothing);
-  });
+  testWidgets(
+    'quiz_page_shows_taken_photo_instead_of_category_icon_when_photo_exists',
+    (tester) async {
+      await pumpQuizApp(tester, repo: FakeQuizRepository(), imagePath: 'p.jpg');
+      expect(find.byType(Image), findsOneWidget);
+      expect(find.byIcon(Icons.pets), findsNothing);
+    },
+  );
 
   testWidgets('quiz_page_shows_category_icon_when_no_photo', (tester) async {
     await pumpQuizApp(tester, repo: FakeQuizRepository());
@@ -40,6 +41,8 @@ void main() {
     await tester.tap(find.text('너구리'));
     await tester.pump();
     expect(repo.submitted, ['b']);
+    final locked = tester.widget<Text>(find.text('너구리'));
+    expect(locked.style?.decoration, TextDecoration.lineThrough);
 
     await tester.tap(find.text('오소리'));
     await tester.pump();
@@ -66,7 +69,7 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
 
-    expect(find.text('SCAN_PAGE'), findsOneWidget);
+    expect(find.text('SCAN_PAGE animal'), findsOneWidget);
     expect(find.text(answerExpiredMessage), findsOneWidget);
   });
 
@@ -74,6 +77,6 @@ void main() {
     await pumpQuizApp(tester, repo: FakeQuizRepository(), startSession: false);
     await tester.pump();
 
-    expect(find.text('SCAN_PAGE'), findsOneWidget);
+    expect(find.text('SCAN_PAGE '), findsOneWidget);
   });
 }

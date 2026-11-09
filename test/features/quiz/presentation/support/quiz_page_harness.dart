@@ -88,7 +88,9 @@ Future<ProviderContainer> pumpQuizApp(
     routes: [
       GoRoute(
         path: RoutePaths.scan,
-        builder: (_, _) => const Scaffold(body: Text('SCAN_PAGE')),
+        builder: (_, s) => Scaffold(
+          body: Text('SCAN_PAGE ${s.uri.queryParameters['category'] ?? ''}'),
+        ),
       ),
       GoRoute(path: RoutePaths.quiz, builder: (_, _) => const QuizPage()),
       GoRoute(

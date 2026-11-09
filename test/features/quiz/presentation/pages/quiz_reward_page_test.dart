@@ -87,6 +87,6 @@ void main() {
     await tester.pump();
     await tester.pump();
 
-    expect(find.text('SCAN_PAGE'), findsOneWidget);
+    expect(find.text('SCAN_PAGE '), findsOneWidget);
   });
 }
