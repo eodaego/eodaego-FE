@@ -64,6 +64,8 @@ class _ScanPageState extends ConsumerState<ScanPage> {
       return;
     }
     final mockMode = ref.read(scanMockModeProvider);
+    // 실서버 모드에서 카메라가 준비되기 전에는 누름을 무시한다.
+    if (!mockMode && _cameraStatus.value != ScanCameraStatus.ready) return;
     setState(() {
       _busy = true;
       _error = null;
