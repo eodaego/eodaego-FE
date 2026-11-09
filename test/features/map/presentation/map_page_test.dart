@@ -13,6 +13,7 @@ import 'package:eodaego/features/map/domain/entities/facility_entity.dart';
 import 'package:eodaego/features/map/presentation/map_facility_layer.dart';
 import 'package:eodaego/features/map/presentation/park_map_data.dart';
 import 'package:eodaego/features/map/presentation/providers/facility_provider.dart';
+import 'package:eodaego/features/map/presentation/widgets/facility_info_card.dart';
 import 'package:eodaego/features/map/presentation/widgets/facility_marker.dart';
 import 'package:eodaego/features/map/presentation/pages/map_page.dart';
 import 'package:eodaego/features/map/presentation/widgets/course_sheet.dart';
@@ -464,6 +465,46 @@ void main() {
       );
 
       expect(_facilityMarkers(), findsNWidgets(_schematicFacilityCount - 1));
+    });
+  });
+
+  group('시설 카드', () {
+    Finder facilityMarkerOf(String name) => find.descendant(
+      of: find.byType(ParkSchematicMap),
+      matching: find.byWidgetPredicate(
+        (w) => w is FacilityMarker && w.name == name,
+      ),
+    );
+
+    testWidgets('facility_card_opens_closes_and_excludes_place_card', (
+      tester,
+    ) async {
+      await _pumpMap(tester, facilities: _facilities);
+
+      await tester.tap(_marker(1));
+      await tester.pumpAndSettle();
+      expect(find.byType(PlaceInfoCard), findsOneWidget);
+
+      await tester.tap(facilityMarkerOf('고객안내센터'));
+      await tester.pumpAndSettle();
+      expect(find.byType(FacilityInfoCard), findsOneWidget);
+      expect(find.byType(PlaceInfoCard), findsNothing);
+
+      await tester.tapAt(_emptySpotOnMap(tester));
+      await tester.pumpAndSettle();
+      expect(find.byType(FacilityInfoCard), findsNothing);
+    });
+
+    testWidgets('place_card_replaces_open_facility_card', (tester) async {
+      await _pumpMap(tester, facilities: _facilities);
+
+      await tester.tap(facilityMarkerOf('고객안내센터'));
+      await tester.pumpAndSettle();
+      await tester.tap(_marker(1));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(PlaceInfoCard), findsOneWidget);
+      expect(find.byType(FacilityInfoCard), findsNothing);
     });
   });
 

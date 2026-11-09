@@ -12,6 +12,7 @@ import '../../domain/entities/facility_entity.dart';
 import '../map_facility_layer.dart';
 import '../providers/facility_provider.dart';
 import '../widgets/course_sheet.dart';
+import '../widgets/facility_info_card.dart';
 import '../widgets/park_google_map.dart';
 import '../widgets/park_schematic_map.dart';
 import '../widgets/place_info_card.dart';
@@ -39,14 +40,20 @@ class _MapPageState extends ConsumerState<MapPage> {
 
   /// 마커 탭과 시트 목록 탭이 모두 여기로 온다.
   void _openPlace(CoursePlaceEntity place) {
-    setState(() => _tappedPlaceName = place.name);
+    setState(() {
+      _tappedPlaceName = place.name;
+      _tappedFacilityId = null;
+    });
   }
 
-  /// 눌러 둔 시설의 id. 시설 카드는 다음 작업에서 붙는다.
+  /// 눌러 둔 코스 밖 시설의 id. [_tappedPlaceName]과 동시에 열리지 않는다.
   int? _tappedFacilityId;
 
   void _openFacility(FacilityEntity facility) {
-    setState(() => _tappedFacilityId = facility.id);
+    setState(() {
+      _tappedFacilityId = facility.id;
+      _tappedPlaceName = null;
+    });
   }
 
   @override
@@ -59,7 +66,10 @@ class _MapPageState extends ConsumerState<MapPage> {
   }
 
   void _closePlace() {
-    setState(() => _tappedPlaceName = null);
+    setState(() {
+      _tappedPlaceName = null;
+      _tappedFacilityId = null;
+    });
   }
 
   /// 열어둔 카드가 가리키는 장소를 지금 코스에서 다시 찾는다.
@@ -89,6 +99,10 @@ class _MapPageState extends ConsumerState<MapPage> {
       course: selected,
     );
     final tapped = _openPlaceIn(selected);
+    final tappedFacility = facilities
+        .where((f) => f.id == _tappedFacilityId)
+        .firstOrNull;
+    final cardOpen = tapped != null || tappedFacility != null;
     // 시트 접힘 높이(body 기준 22%)에 대응해 풀스크린 기준 20%를 비워 마커·라벨 가림을 방지
     final sheetInset = MediaQuery.sizeOf(context).height * 0.20;
     return Scaffold(
@@ -182,7 +196,7 @@ class _MapPageState extends ConsumerState<MapPage> {
                                   selectedFacilityId: _tappedFacilityId,
                                 ),
                               // 카드가 떠 있으면 출입문 라벨과 겹친다. 라벨을 숨긴다.
-                              if (selected != null && tapped == null)
+                              if (selected != null && !cardOpen)
                                 // 지도 네 귀퉁이가 다 임자가 있다 — 좌하단은
                                 // Google 로고(가리면 약관 위반), 우하단은 내 위치
                                 // 버튼, 상단은 장소 카드. 라벨은 좌상단으로 간다.
@@ -215,7 +229,7 @@ class _MapPageState extends ConsumerState<MapPage> {
                               // 같은 탭이 지도까지 그대로 내려가, 카드를 닫자고
                               // 지도를 못 만지게 되는 일이 없다 — 다른 마커를
                               // 누르면 닫힘과 열림이 이어서 일어나 바로 갈아탄다.
-                              if (tapped != null)
+                              if (cardOpen)
                                 Positioned.fill(
                                   child: Listener(
                                     behavior: HitTestBehavior.translucent,
@@ -228,6 +242,15 @@ class _MapPageState extends ConsumerState<MapPage> {
                                   right: 14.w,
                                   top: 14.h,
                                   child: PlaceInfoCard(place: tapped),
+                                ),
+                              if (tappedFacility != null)
+                                Positioned(
+                                  left: 14.w,
+                                  right: 14.w,
+                                  top: 14.h,
+                                  child: FacilityInfoCard(
+                                    facility: tappedFacility,
+                                  ),
                                 ),
                             ],
                           ),

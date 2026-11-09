@@ -13,6 +13,7 @@ import '../../../../core/widgets/catalog_image.dart';
 import '../../../../router/route_paths.dart';
 import '../../../collection/presentation/providers/catalog_provider.dart';
 import '../../../course/domain/entities/course_entity.dart';
+import 'facility_intro_section.dart';
 import 'map_marker.dart';
 
 /// 마커를 누르면 지도 위에 뜨는 장소 카드.
@@ -116,6 +117,7 @@ class PlaceInfoCard extends StatelessWidget {
                   category: place.category,
                 ),
               ],
+              FacilityIntroSection(facilityId: place.facilityId),
             ],
           ),
         ),
