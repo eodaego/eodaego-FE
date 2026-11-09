@@ -7,6 +7,10 @@ import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/providers/selected_course_provider.dart';
 import '../../../course/domain/entities/course_entity.dart';
+import '../../../course/presentation/providers/course_provider.dart';
+import '../../domain/entities/facility_entity.dart';
+import '../map_facility_layer.dart';
+import '../providers/facility_provider.dart';
 import '../widgets/course_sheet.dart';
 import '../widgets/park_google_map.dart';
 import '../widgets/park_schematic_map.dart';
@@ -38,6 +42,22 @@ class _MapPageState extends ConsumerState<MapPage> {
     setState(() => _tappedPlaceName = place.name);
   }
 
+  /// 눌러 둔 시설의 id. 시설 카드는 다음 작업에서 붙는다.
+  int? _tappedFacilityId;
+
+  void _openFacility(FacilityEntity facility) {
+    setState(() => _tappedFacilityId = facility.id);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // '가기'로 들어온 코스를 서버 최신(도감 수집 여부)으로 맞춘다.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) ref.read(selectedCourseSyncProvider.notifier).sync();
+    });
+  }
+
   void _closePlace() {
     setState(() => _tappedPlaceName = null);
   }
@@ -58,6 +78,16 @@ class _MapPageState extends ConsumerState<MapPage> {
   @override
   Widget build(BuildContext context) {
     final selected = ref.watch(selectedCourseProvider);
+    // 코스를 갈아타면 새 코스도 최신으로 맞춘다.
+    ref.listen(selectedCourseProvider, (previous, next) {
+      if (next != null && previous?.id != next.id) {
+        ref.read(selectedCourseSyncProvider.notifier).sync();
+      }
+    });
+    final facilities = visibleFacilities(
+      all: ref.watch(mapFacilitiesProvider).valueOrNull ?? const [],
+      course: selected,
+    );
     final tapped = _openPlaceIn(selected);
     // 시트 접힘 높이(body 기준 22%)에 대응해 풀스크린 기준 20%를 비워 마커·라벨 가림을 방지
     final sheetInset = MediaQuery.sizeOf(context).height * 0.20;
@@ -138,12 +168,18 @@ class _MapPageState extends ConsumerState<MapPage> {
                                   course: selected,
                                   onPlaceTap: _openPlace,
                                   selectedPlaceName: tapped?.name,
+                                  facilities: facilities,
+                                  onFacilityTap: _openFacility,
+                                  selectedFacilityId: _tappedFacilityId,
                                 )
                               else
                                 ParkSchematicMap(
                                   course: selected,
                                   onPlaceTap: _openPlace,
                                   selectedPlaceName: tapped?.name,
+                                  facilities: facilities,
+                                  onFacilityTap: _openFacility,
+                                  selectedFacilityId: _tappedFacilityId,
                                 ),
                               // 카드가 떠 있으면 출입문 라벨과 겹친다. 라벨을 숨긴다.
                               if (selected != null && tapped == null)

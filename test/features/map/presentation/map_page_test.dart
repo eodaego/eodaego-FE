@@ -1,9 +1,19 @@
 import 'package:eodaego/core/constants/dogam_category.dart';
+import 'package:eodaego/core/providers/guest_mode_provider.dart';
 import 'package:eodaego/core/providers/selected_course_provider.dart';
 import 'package:eodaego/features/collection/domain/entities/catalog_item_detail_entity.dart';
 import 'package:eodaego/features/collection/presentation/providers/catalog_provider.dart';
 import 'package:eodaego/features/course/domain/entities/course_entity.dart';
 import 'package:eodaego/features/course/domain/entities/course_options.dart';
+import 'package:eodaego/features/course/domain/repositories/course_repository.dart';
+import 'package:eodaego/features/course/presentation/providers/course_provider.dart';
+import 'package:eodaego/features/map/data/datasources/facility_remote_datasource.dart';
+import 'package:eodaego/features/map/data/models/facility_model.dart';
+import 'package:eodaego/features/map/domain/entities/facility_entity.dart';
+import 'package:eodaego/features/map/presentation/map_facility_layer.dart';
+import 'package:eodaego/features/map/presentation/park_map_data.dart';
+import 'package:eodaego/features/map/presentation/providers/facility_provider.dart';
+import 'package:eodaego/features/map/presentation/widgets/facility_marker.dart';
 import 'package:eodaego/features/map/presentation/pages/map_page.dart';
 import 'package:eodaego/features/map/presentation/widgets/course_sheet.dart';
 import 'package:eodaego/features/map/presentation/widgets/map_marker.dart';
@@ -104,12 +114,59 @@ const _linkedCourse = CourseEntity(
   ],
 );
 
+/// 코스 상세 호출만 기록하는 페이크 리포지토리. 받은 id를 그대로 코스로 돌려준다.
+class _FakeCourseRepository implements CourseRepository {
+  _FakeCourseRepository([this.extra = const {}]);
+
+  /// 기본 코스 목록에 없는 코스(테스트 안에서 만든 것).
+  final Map<String, CourseEntity> extra;
+  final requestedIds = <String>[];
+
+  @override
+  Future<CourseEntity> getCourse(String courseId) async {
+    requestedIds.add(courseId);
+    return extra[courseId] ?? _courses[courseId]!;
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => throw UnimplementedError();
+}
+
+final _courses = {
+  for (final c in [_course, _twoMarkerCourse, _longCourse, _linkedCourse])
+    c.id: c,
+};
+
+/// 서버 시설 목록. 약도 좌표가 있는 것 둘, 약도 좌표가 null인 것, 약도에 없는 것,
+/// 출입문(제외 대상) 하나씩.
+const _facilities = [
+  FacilityEntity(id: 101, name: '고객안내센터', category: '편의시설'),
+  FacilityEntity(id: 102, name: '맹수마을', category: '동물'),
+  FacilityEntity(id: 103, name: '어린이 숲 체험장', category: '체험'),
+  FacilityEntity(id: 104, name: '약도에 없는 곳', category: '기타'),
+];
+
+/// 약도에 시설 점으로 그려져야 하는 시설 수 — 픽스처와 약도 데이터에서 계산한다.
+int get _schematicFacilityCount => _facilities
+    .where((f) => parkFacilitySchematicPositions[f.name] != null)
+    .length;
+
 Future<ProviderContainer> _pumpMap(
   WidgetTester tester, {
-  CourseEntity course = _course,
+  CourseEntity? course = _course,
   List<Override> overrides = const [],
+  List<FacilityEntity> facilities = const [],
+  _FakeCourseRepository? courseRepository,
 }) async {
-  final container = ProviderContainer(overrides: overrides);
+  final container = ProviderContainer(
+    overrides: [
+      courseRepositoryProvider.overrideWithValue(
+        courseRepository ?? _FakeCourseRepository(),
+      ),
+      mapFacilitiesProvider.overrideWith((ref) async => facilities),
+      ...overrides,
+    ],
+  );
   addTearDown(container.dispose);
   container.read(selectedCourseProvider.notifier).state = course;
 
@@ -142,6 +199,26 @@ Finder _marker(int visitOrder) => find.descendant(
     (w) => w is MapMarker && w.number == visitOrder,
   ),
 );
+
+/// 약도에 그려진 시설 점.
+Finder _facilityMarkers() => find.descendant(
+  of: find.byType(ParkSchematicMap),
+  matching: find.byType(FacilityMarker),
+);
+
+class _FakeFacilityDataSource implements FacilityRemoteDataSource {
+  var calls = 0;
+
+  @override
+  Future<List<FacilityModel>> getFacilities() async {
+    calls++;
+    return const [FacilityModel(id: 101, name: '고객안내센터', category: '편의시설')];
+  }
+
+  @override
+  Future<FacilityDetailModel> getFacility(int facilityId) =>
+      throw UnimplementedError();
+}
 
 void main() {
   testWidgets('shows_both_map_modes_and_only_mapped_schematic_places', (
@@ -306,5 +383,104 @@ void main() {
 
     expect(tester.getTopLeft(find.text('장소1')).dy, lessThan(firstRowBefore));
     expect(tester.getRect(handle), handleBefore);
+  });
+
+  group('시설 마커', () {
+    testWidgets('map_page_shows_facility_markers_without_course', (
+      tester,
+    ) async {
+      await _pumpMap(tester, course: null, facilities: _facilities);
+
+      expect(_schematicFacilityCount, greaterThan(0));
+      expect(_facilityMarkers(), findsNWidgets(_schematicFacilityCount));
+    });
+
+    testWidgets('map_page_dims_facility_markers_when_course_selected', (
+      tester,
+    ) async {
+      await _pumpMap(tester, facilities: _facilities);
+
+      final dimmed = find.ancestor(
+        of: _facilityMarkers(),
+        matching: find.byWidgetPredicate(
+          (w) => w is Opacity && w.opacity == dimmedFacilityOpacity,
+        ),
+      );
+      expect(dimmed, findsNWidgets(_schematicFacilityCount));
+    });
+
+    testWidgets('map_page_shows_no_facility_markers_for_guest', (tester) async {
+      final source = _FakeFacilityDataSource();
+      // 실제 mapFacilities를 태워 게스트면 API를 부르지 않는지까지 본다.
+      final container = ProviderContainer(
+        overrides: [
+          guestRestrictedProvider.overrideWithValue(true),
+          facilityRemoteDataSourceProvider.overrideWithValue(source),
+          courseRepositoryProvider.overrideWithValue(_FakeCourseRepository()),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: ScreenUtilInit(
+            designSize: const Size(390, 844),
+            child: const MaterialApp(home: MapPage()),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(_facilityMarkers(), findsNothing);
+      expect(source.calls, 0);
+    });
+
+    testWidgets('map_page_hides_facility_that_is_already_a_course_place', (
+      tester,
+    ) async {
+      const course = CourseEntity(
+        id: 'course-1',
+        title: '공원 한 바퀴',
+        tagLabels: [],
+        estimatedDurationMinutes: 60,
+        entrance: ParkGate.mainGate,
+        exit: ParkGate.southGate,
+        favorite: false,
+        places: [
+          CoursePlaceEntity(
+            visitOrder: 1,
+            name: '맹수마을',
+            category: DogamCategory.animal,
+            facilityId: 102,
+          ),
+        ],
+      );
+      await _pumpMap(
+        tester,
+        course: course,
+        facilities: _facilities,
+        courseRepository: _FakeCourseRepository({course.id: course}),
+      );
+
+      expect(_facilityMarkers(), findsNWidgets(_schematicFacilityCount - 1));
+    });
+  });
+
+  group('코스 동기화', () {
+    testWidgets('map_page_syncs_course_when_selected_course_changes', (
+      tester,
+    ) async {
+      final repository = _FakeCourseRepository();
+      final container = await _pumpMap(tester, courseRepository: repository);
+
+      // 지도에 들어올 때 이미 선택돼 있던 코스를 1회 맞춘다.
+      expect(repository.requestedIds, [_course.id]);
+
+      container.read(selectedCourseProvider.notifier).state = _longCourse;
+      await tester.pumpAndSettle();
+
+      expect(repository.requestedIds, [_course.id, _longCourse.id]);
+    });
   });
 }

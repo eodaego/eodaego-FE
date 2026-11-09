@@ -8,7 +8,10 @@ import '../../../../core/services/location/device_location_service.dart';
 import '../../../../core/services/permission/location_permission_service.dart';
 import '../../../../core/widgets/app_snackbar.dart';
 import '../../../course/domain/entities/course_entity.dart';
+import '../../domain/entities/facility_entity.dart';
+import '../map_facility_layer.dart';
 import '../park_map_data.dart';
+import 'facility_marker_icon.dart';
 import 'google_map_marker_icon.dart';
 
 class ParkGoogleMap extends StatefulWidget {
@@ -17,6 +20,9 @@ class ParkGoogleMap extends StatefulWidget {
     required this.course,
     this.onPlaceTap,
     this.selectedPlaceName,
+    this.facilities = const [],
+    this.onFacilityTap,
+    this.selectedFacilityId,
   });
 
   final CourseEntity? course;
@@ -27,6 +33,11 @@ class ParkGoogleMap extends StatefulWidget {
 
   /// 카드를 띄운 장소의 이름. 그 마커만 카테고리 dark로 굽고 위로 올린다.
   final String? selectedPlaceName;
+
+  /// 코스 장소와 겹치지 않게 걸러 넘긴 시설. 위경도가 없는 시설은 그리지 않는다.
+  final List<FacilityEntity> facilities;
+  final ValueChanged<FacilityEntity>? onFacilityTap;
+  final int? selectedFacilityId;
 
   @override
   State<ParkGoogleMap> createState() => _ParkGoogleMapState();
@@ -42,6 +53,9 @@ class _ParkGoogleMapState extends State<ParkGoogleMap> {
 
   late Future<Map<String, BitmapDescriptor>> _markerIcons;
 
+  /// 시설 아이콘. 선택 시설은 이름 라벨이 붙은 아이콘 하나를 따로 굽는다.
+  late Future<Map<String, FacilityMarkerIcon>> _facilityIcons;
+
   GoogleMapController? _controller;
 
   /// 파란 점 표시 여부. 권한이 있어야 켤 수 있다.
@@ -51,6 +65,7 @@ class _ParkGoogleMapState extends State<ParkGoogleMap> {
   void initState() {
     super.initState();
     _markerIcons = _loadMarkerIcons();
+    _facilityIcons = _loadFacilityIcons();
     _syncMyLocation();
   }
 
@@ -105,6 +120,22 @@ class _ParkGoogleMapState extends State<ParkGoogleMap> {
         oldWidget.selectedPlaceName != widget.selectedPlaceName) {
       _markerIcons = _loadMarkerIcons();
     }
+    if (oldWidget.facilities != widget.facilities ||
+        oldWidget.selectedFacilityId != widget.selectedFacilityId) {
+      _facilityIcons = _loadFacilityIcons();
+    }
+  }
+
+  Future<Map<String, FacilityMarkerIcon>> _loadFacilityIcons() async {
+    final selectedName = widget.facilities
+        .where((f) => f.id == widget.selectedFacilityId)
+        .map((f) => f.name)
+        .firstOrNull;
+    return {
+      'normal': await createFacilityMarkerIcon(),
+      if (selectedName != null)
+        'selected': await createFacilityMarkerIcon(selectedName: selectedName),
+    };
   }
 
   Future<Map<String, BitmapDescriptor>> _loadMarkerIcons() async {
@@ -146,9 +177,14 @@ class _ParkGoogleMapState extends State<ParkGoogleMap> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        FutureBuilder<Map<String, BitmapDescriptor>>(
-          future: _markerIcons,
+        FutureBuilder<List<Object>>(
+          future: Future.wait<Object>([_markerIcons, _facilityIcons]),
           builder: (context, snapshot) {
+            final data = snapshot.data;
+            final icons =
+                (data?[0] as Map<String, BitmapDescriptor>?) ?? const {};
+            final facilityIcons =
+                (data?[1] as Map<String, FacilityMarkerIcon>?) ?? const {};
             return GoogleMap(
               initialCameraPosition: const CameraPosition(
                 target: _parkCenter,
@@ -157,7 +193,10 @@ class _ParkGoogleMapState extends State<ParkGoogleMap> {
               onMapCreated: (controller) => _controller = controller,
               cameraTargetBounds: _parkCameraBounds,
               minMaxZoomPreference: const MinMaxZoomPreference(14, null),
-              markers: _buildMarkers(snapshot.data ?? const {}),
+              markers: {
+                ..._buildFacilityMarkers(facilityIcons),
+                ..._buildMarkers(icons),
+              },
               myLocationEnabled: _myLocationEnabled,
               mapToolbarEnabled: false,
               // 기본 버튼 대신 앱 스타일 버튼을 쓴다(플랫폼마다 모양이 다르다).
@@ -174,6 +213,34 @@ class _ParkGoogleMapState extends State<ParkGoogleMap> {
         ),
       ],
     );
+  }
+
+  /// 시설 마커. 코스 마커보다 아래(zIndex 0)에 깔고, 코스가 있으면 옅게 한다.
+  Set<Marker> _buildFacilityMarkers(Map<String, FacilityMarkerIcon> icons) {
+    final normal = icons['normal'];
+    if (normal == null) return const {};
+
+    final markers = <Marker>{};
+    for (final facility in widget.facilities) {
+      final latitude = facility.latitude;
+      final longitude = facility.longitude;
+      if (latitude == null || longitude == null) continue;
+
+      final isSelected = facility.id == widget.selectedFacilityId;
+      final icon = (isSelected ? icons['selected'] : null) ?? normal;
+      markers.add(
+        Marker(
+          markerId: MarkerId('facility_${facility.id}'),
+          position: LatLng(latitude, longitude),
+          icon: icon.descriptor,
+          anchor: icon.anchor,
+          alpha: widget.course == null ? 1 : dimmedFacilityOpacity,
+          zIndexInt: isSelected ? 1 : 0,
+          onTap: () => widget.onFacilityTap?.call(facility),
+        ),
+      );
+    }
+    return markers;
   }
 
   Set<Marker> _buildMarkers(Map<String, BitmapDescriptor> icons) {
@@ -193,7 +260,8 @@ class _ParkGoogleMapState extends State<ParkGoogleMap> {
           position: LatLng(latitude, longitude),
           icon: icons[markerId] ?? BitmapDescriptor.defaultMarker,
           // 선택한 마커는 겹친 무리 위로 올린다 — 어느 걸 눌렀는지 보여야 한다.
-          zIndex: place.name == widget.selectedPlaceName ? 1 : 0,
+          // 코스 마커(2~3)는 시설 마커(0~1) 위에 온다.
+          zIndexInt: place.name == widget.selectedPlaceName ? 3 : 2,
           // InfoWindow를 비워 둔다 — 네이티브 말풍선이 뜨면 우리 카드와 겹친다.
           onTap: () => widget.onPlaceTap?.call(place),
         ),
