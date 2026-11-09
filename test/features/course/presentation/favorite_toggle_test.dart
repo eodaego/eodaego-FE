@@ -30,6 +30,10 @@ class _FakeCourseDataSource implements CourseRemoteDataSource {
   }
 
   @override
+  Future<CourseModel> getCourse(String courseId) async =>
+      throw UnimplementedError();
+
+  @override
   Future<CourseFavoriteListModel> getFavorites(String? sort) async {
     fetchedSorts.add(sort);
     return const CourseFavoriteListModel();

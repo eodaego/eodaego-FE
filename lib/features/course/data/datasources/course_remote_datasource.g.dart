@@ -49,6 +49,33 @@ class _CourseRemoteDataSource implements CourseRemoteDataSource {
   }
 
   @override
+  Future<CourseModel> getCourse(String courseId) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<CourseModel>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/1/courses/${courseId}',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late CourseModel _value;
+    try {
+      _value = CourseModel.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
   Future<CourseFavoriteListModel> getFavorites(String? sort) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'sort': sort};

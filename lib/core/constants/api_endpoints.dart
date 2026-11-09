@@ -46,6 +46,7 @@ class ApiEndpoints {
   // Course — 추천은 백엔드가 내부망 AI 서버를 호출해 중계하고 결과를 저장한다.
   // 호출할 때마다 서버에 코스가 새로 생성된다.
   static const String courseRecommendations = '$_v1/courses/recommendations';
+  static const String courseDetail = '$_v1/courses/{courseId}';
 
   // Course Favorite — 등록·삭제 모두 멱등이다.
   static const String favorites = '$_v1/favorites';

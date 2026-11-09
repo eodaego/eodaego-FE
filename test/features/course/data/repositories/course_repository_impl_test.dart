@@ -15,11 +15,13 @@ class _FakeCourseDataSource implements CourseRemoteDataSource {
     this.courses = const <CourseModel>[],
     this.favorites = const CourseFavoriteListModel(),
     this.recommendError,
+    this.courseError,
   });
 
   final List<CourseModel> courses;
   final CourseFavoriteListModel favorites;
   final Object? recommendError;
+  final Object? courseError;
 
   /// 마지막 추천 요청 본문 — 관찰 가능한 경계 상태.
   CourseRecommendationRequestModel? lastRequest;
@@ -37,6 +39,12 @@ class _FakeCourseDataSource implements CourseRemoteDataSource {
     lastRequest = request;
     if (recommendError != null) throw recommendError!;
     return courses;
+  }
+
+  @override
+  Future<CourseModel> getCourse(String courseId) async {
+    if (courseError != null) throw courseError!;
+    return courses.firstWhere((c) => c.id == courseId);
   }
 
   @override
@@ -63,6 +71,39 @@ DioException _dioError(int statusCode) {
 }
 
 void main() {
+  test('getCourse_throws_app_exception_when_server_says_404', () async {
+    final fake = _FakeCourseDataSource(courseError: _dioError(404));
+
+    expect(
+      () => CourseRepositoryImpl(fake).getCourse('missing'),
+      throwsA(isA<AppException>()),
+    );
+  });
+
+  test('getCourse_maps_facilityId_and_collected', () async {
+    final fake = _FakeCourseDataSource(
+      courses: const [
+        CourseModel(
+          id: 'c1',
+          places: [
+            CoursePlaceModel(
+              name: '맹수마을',
+              category: 'ANIMAL',
+              facilityId: 11,
+              catalogItemId: 'item-1',
+              collected: true,
+            ),
+          ],
+        ),
+      ],
+    );
+
+    final course = await CourseRepositoryImpl(fake).getCourse('c1');
+
+    expect(course.places.single.facilityId, 11);
+    expect(course.places.single.collected, isTrue);
+  });
+
   group('recommendCourses', () {
     test('sends_selected_options_as_server_enum_strings', () async {
       final fake = _FakeCourseDataSource();

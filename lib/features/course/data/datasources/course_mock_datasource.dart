@@ -1,3 +1,5 @@
+import 'package:dio/dio.dart';
+
 import '../../../../core/mock/mock_asset_loader.dart';
 import '../../domain/entities/course_options.dart';
 import '../models/course_favorite_list_model.dart';
@@ -47,6 +49,22 @@ class CourseMockDataSource implements CourseRemoteDataSource {
       for (final course in courses)
         course.copyWith(favorite: _favoriteIds.contains(course.id)),
     ];
+  }
+
+  @override
+  Future<CourseModel> getCourse(String courseId) async {
+    final courses = await _loadCourses();
+    for (final course in courses) {
+      if (course.id == courseId) {
+        return course.copyWith(favorite: _favoriteIds.contains(course.id));
+      }
+    }
+    final request = RequestOptions(path: '/api/1/courses/$courseId');
+    throw DioException(
+      requestOptions: request,
+      type: DioExceptionType.badResponse,
+      response: Response(requestOptions: request, statusCode: 404),
+    );
   }
 
   @override

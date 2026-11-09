@@ -30,6 +30,9 @@ mixin _$CoursePlaceModel {
   /// 카테고리 원문 (`ANIMAL`/`PLANT`/`PLACE`)
   String? get category => throw _privateConstructorUsedError;
 
+  /// AI 서버 기준 시설 ID — 시설 상세·사진 퀴즈 연결에 쓴다
+  int? get facilityId => throw _privateConstructorUsedError;
+
   /// 연결된 도감 항목 ID. 도감에 동기화되지 않은 시설이면 null
   String? get catalogItemId => throw _privateConstructorUsedError;
 
@@ -63,6 +66,7 @@ abstract class $CoursePlaceModelCopyWith<$Res> {
     int visitOrder,
     String name,
     String? category,
+    int? facilityId,
     String? catalogItemId,
     bool collected,
     double? latitude,
@@ -88,6 +92,7 @@ class _$CoursePlaceModelCopyWithImpl<$Res, $Val extends CoursePlaceModel>
     Object? visitOrder = null,
     Object? name = null,
     Object? category = freezed,
+    Object? facilityId = freezed,
     Object? catalogItemId = freezed,
     Object? collected = null,
     Object? latitude = freezed,
@@ -107,6 +112,10 @@ class _$CoursePlaceModelCopyWithImpl<$Res, $Val extends CoursePlaceModel>
                 ? _value.category
                 : category // ignore: cast_nullable_to_non_nullable
                       as String?,
+            facilityId: freezed == facilityId
+                ? _value.facilityId
+                : facilityId // ignore: cast_nullable_to_non_nullable
+                      as int?,
             catalogItemId: freezed == catalogItemId
                 ? _value.catalogItemId
                 : catalogItemId // ignore: cast_nullable_to_non_nullable
@@ -142,6 +151,7 @@ abstract class _$$CoursePlaceModelImplCopyWith<$Res>
     int visitOrder,
     String name,
     String? category,
+    int? facilityId,
     String? catalogItemId,
     bool collected,
     double? latitude,
@@ -166,6 +176,7 @@ class __$$CoursePlaceModelImplCopyWithImpl<$Res>
     Object? visitOrder = null,
     Object? name = null,
     Object? category = freezed,
+    Object? facilityId = freezed,
     Object? catalogItemId = freezed,
     Object? collected = null,
     Object? latitude = freezed,
@@ -185,6 +196,10 @@ class __$$CoursePlaceModelImplCopyWithImpl<$Res>
             ? _value.category
             : category // ignore: cast_nullable_to_non_nullable
                   as String?,
+        facilityId: freezed == facilityId
+            ? _value.facilityId
+            : facilityId // ignore: cast_nullable_to_non_nullable
+                  as int?,
         catalogItemId: freezed == catalogItemId
             ? _value.catalogItemId
             : catalogItemId // ignore: cast_nullable_to_non_nullable
@@ -213,6 +228,7 @@ class _$CoursePlaceModelImpl implements _CoursePlaceModel {
     this.visitOrder = 0,
     this.name = '',
     this.category,
+    this.facilityId,
     this.catalogItemId,
     this.collected = false,
     this.latitude,
@@ -236,6 +252,10 @@ class _$CoursePlaceModelImpl implements _CoursePlaceModel {
   @override
   final String? category;
 
+  /// AI 서버 기준 시설 ID — 시설 상세·사진 퀴즈 연결에 쓴다
+  @override
+  final int? facilityId;
+
   /// 연결된 도감 항목 ID. 도감에 동기화되지 않은 시설이면 null
   @override
   final String? catalogItemId;
@@ -255,7 +275,7 @@ class _$CoursePlaceModelImpl implements _CoursePlaceModel {
 
   @override
   String toString() {
-    return 'CoursePlaceModel(visitOrder: $visitOrder, name: $name, category: $category, catalogItemId: $catalogItemId, collected: $collected, latitude: $latitude, longitude: $longitude)';
+    return 'CoursePlaceModel(visitOrder: $visitOrder, name: $name, category: $category, facilityId: $facilityId, catalogItemId: $catalogItemId, collected: $collected, latitude: $latitude, longitude: $longitude)';
   }
 
   @override
@@ -268,6 +288,8 @@ class _$CoursePlaceModelImpl implements _CoursePlaceModel {
             (identical(other.name, name) || other.name == name) &&
             (identical(other.category, category) ||
                 other.category == category) &&
+            (identical(other.facilityId, facilityId) ||
+                other.facilityId == facilityId) &&
             (identical(other.catalogItemId, catalogItemId) ||
                 other.catalogItemId == catalogItemId) &&
             (identical(other.collected, collected) ||
@@ -285,6 +307,7 @@ class _$CoursePlaceModelImpl implements _CoursePlaceModel {
     visitOrder,
     name,
     category,
+    facilityId,
     catalogItemId,
     collected,
     latitude,
@@ -313,6 +336,7 @@ abstract class _CoursePlaceModel implements CoursePlaceModel {
     final int visitOrder,
     final String name,
     final String? category,
+    final int? facilityId,
     final String? catalogItemId,
     final bool collected,
     final double? latitude,
@@ -333,6 +357,10 @@ abstract class _CoursePlaceModel implements CoursePlaceModel {
   /// 카테고리 원문 (`ANIMAL`/`PLANT`/`PLACE`)
   @override
   String? get category;
+
+  /// AI 서버 기준 시설 ID — 시설 상세·사진 퀴즈 연결에 쓴다
+  @override
+  int? get facilityId;
 
   /// 연결된 도감 항목 ID. 도감에 동기화되지 않은 시설이면 null
   @override

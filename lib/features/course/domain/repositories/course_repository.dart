@@ -18,6 +18,9 @@ abstract class CourseRepository {
     CompanionType? companionType,
   });
 
+  /// 코스 한 건을 서버 최신 상태(도감 수집 여부 포함)로 조회한다.
+  Future<CourseEntity> getCourse(String courseId);
+
   /// 즐겨찾기한 코스 목록을 [sort] 기준으로 정렬해 조회한다.
   Future<List<CourseEntity>> getFavorites(FavoriteSort sort);
 

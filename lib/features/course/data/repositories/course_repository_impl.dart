@@ -73,6 +73,22 @@ class CourseRepositoryImpl implements CourseRepository {
   }
 
   @override
+  Future<CourseEntity> getCourse(String courseId) async {
+    try {
+      return _toEntity(await _dataSource.getCourse(courseId));
+    } on DioException catch (e) {
+      throw DioExceptionHandler.handle(e);
+    } catch (e) {
+      if (e is AppException) rethrow;
+      throw ServerException(
+        message: '코스를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.',
+        messageKey: AppMessageKeys.errorCourseUnexpected,
+        originalException: e,
+      );
+    }
+  }
+
+  @override
   Future<List<CourseEntity>> getFavorites(FavoriteSort sort) async {
     try {
       final response = await _dataSource.getFavorites(sort.serverValue);
@@ -136,6 +152,7 @@ class CourseRepositoryImpl implements CourseRepository {
           visitOrder: place.visitOrder,
           name: place.name,
           category: category,
+          facilityId: place.facilityId,
           catalogItemId: place.catalogItemId,
           collected: place.collected,
           latitude: place.latitude,

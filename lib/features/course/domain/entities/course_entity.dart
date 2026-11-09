@@ -18,6 +18,7 @@ class CoursePlaceEntity {
     required this.visitOrder,
     required this.name,
     required this.category,
+    this.facilityId,
     this.catalogItemId,
     this.collected = false,
     this.latitude,
@@ -28,6 +29,9 @@ class CoursePlaceEntity {
   final int visitOrder;
   final String name;
   final DogamCategory category;
+
+  /// AI 서버 기준 시설 ID. 모르면 null이다.
+  final int? facilityId;
 
   /// 연결된 도감 항목 ID. 도감에 동기화되지 않은 시설이면 null이다.
   ///
@@ -51,6 +55,7 @@ class CoursePlaceEntity {
       visitOrder: visitOrder,
       name: name,
       category: category,
+      facilityId: facilityId,
       catalogItemId: catalogItemId,
       collected: collected ?? this.collected,
       latitude: latitude,
