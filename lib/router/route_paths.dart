@@ -1,3 +1,5 @@
+import '../core/constants/dogam_category.dart';
+
 /// 앱 라우트 경로 상수. (게임 라우트는 이번 포팅 범위 아님)
 class RoutePaths {
   RoutePaths._();
@@ -50,6 +52,10 @@ class RoutePaths {
   static const String mypageAgreementsName = 'mypageAgreements';
   static const String courseRecommendName = 'courseRecommend';
   static const String weatherName = 'weather';
+
+  /// 촬영 경로 생성. [category]를 주면 그 종류를 골라 둔 채 연다 (예: /scan?category=place)
+  static String scanWith({DogamCategory? category}) =>
+      category == null ? scan : '$scan?category=${category.name}';
 
   /// 도감 상세 경로 생성 (예: /collection/a1)
   static String collectionDetail(String id) => '$collection/$id';

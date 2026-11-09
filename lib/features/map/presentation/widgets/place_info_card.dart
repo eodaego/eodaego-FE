@@ -219,7 +219,10 @@ class _CatalogBody extends ConsumerWidget {
             borderRadius: BorderRadius.circular(AppRadius.sm.r),
             // push다 — go로 보내면 스택이 갈려 촬영 화면의 닫기(pop)가 터진다.
             // 탭바 중앙 카메라 버튼도 같은 이유로 push를 쓴다.
-            onPressed: () => context.push(RoutePaths.scan),
+            // 코스 장소의 도감 항목은 언제나 PLACE라 '장소'를 골라 둔다.
+            onPressed: () => context.push(
+              RoutePaths.scanWith(category: DogamCategory.place),
+            ),
           ),
       ],
     );

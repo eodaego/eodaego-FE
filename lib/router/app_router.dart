@@ -24,6 +24,7 @@ import '../features/scan/presentation/pages/scan_page.dart';
 import '../features/user/presentation/pages/agreements_page.dart';
 import '../features/user/presentation/pages/my_page.dart';
 import '../features/weather/presentation/pages/weather_detail_page.dart';
+import '../core/constants/dogam_category.dart';
 import '../core/providers/guest_mode_provider.dart';
 import '../core/widgets/main_tab_shell.dart';
 import '../core/widgets/pages/force_update_page.dart';
@@ -236,8 +237,15 @@ GoRouter router(Ref ref) {
       GoRoute(
         path: RoutePaths.scan,
         name: RoutePaths.scanName,
-        pageBuilder: (context, state) =>
-            NoTransitionPage(key: state.pageKey, child: const ScanPage()),
+        pageBuilder: (context, state) => NoTransitionPage(
+          key: state.pageKey,
+          child: ScanPage(
+            initialCategory:
+                DogamCategory.values
+                    .asNameMap()[state.uri.queryParameters['category']] ??
+                DogamCategory.animal,
+          ),
+        ),
       ),
       GoRoute(
         path: RoutePaths.quiz,
