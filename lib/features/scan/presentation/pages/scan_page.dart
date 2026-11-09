@@ -19,7 +19,7 @@ import '../widgets/scan_camera_view.dart';
 
 // 문구 상수 — ux-writing 검토로 문장이 바뀌면 여기만 고친다.
 const scanWaitingMessage = '사진을 보고 있어요';
-const scanCameraDeniedMessage = '사진을 찍으려면 카메라 권한이 필요해요';
+const scanCameraDeniedMessage = '카메라를 허용하면 사진을 찍을 수 있어요';
 const scanOpenSettingsLabel = '설정 열기';
 const scanCameraUnavailableMessage = '이 기기에서는 카메라를 쓸 수 없어요';
 const scanShutterLabel = '사진 찍기';

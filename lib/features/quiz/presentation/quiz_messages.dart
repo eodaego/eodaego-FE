@@ -3,7 +3,7 @@ import '../../../core/errors/app_exception.dart';
 // 문구 상수 — ux-writing 검토로 문장이 바뀌면 여기만 고친다.
 const scanRecognitionFailedMessage = '무엇인지 알아보지 못했어요. 종류를 바꿔서 다시 찍어볼까요?';
 const scanImageRejectedMessage = '사진을 보내지 못했어요. 다시 찍어주세요.';
-const scanUnavailableMessage = '지금은 사진을 볼 수 없어요. 잠시 후 다시 찍어주세요.';
+const scanUnavailableMessage = '지금은 사진을 보기 어려워요. 잠시 후 다시 찍어주세요.';
 const answerExpiredMessage = '퀴즈 시간이 지났어요. 다시 찍어볼까요?';
 const answerFailedMessage = '답을 보내지 못했어요. 다시 눌러주세요.';
 
