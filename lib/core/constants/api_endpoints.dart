@@ -55,4 +55,8 @@ class ApiEndpoints {
   // Facility — 공원 시설 목록·상세. 출입문도 시설로 내려온다(category '출입문').
   static const String facilities = '$_v1/facilities';
   static const String facilityDetail = '$_v1/facilities/{facilityId}';
+
+  // Quiz — 사진 인식 퀴즈. 생성은 multipart(image + catalogType 쿼리), 오답은 200 correct:false.
+  static const String quiz = '$_v1/quiz';
+  static const String quizAnswer = '$_v1/quiz/{quizId}/answer';
 }
