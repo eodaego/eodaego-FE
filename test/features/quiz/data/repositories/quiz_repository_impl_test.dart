@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:eodaego/core/constants/dogam_category.dart';
 import 'package:eodaego/core/errors/app_exception.dart';
+import 'package:eodaego/features/quiz/data/datasources/quiz_mock_datasource.dart';
 import 'package:eodaego/features/quiz/data/datasources/quiz_remote_datasource.dart';
 import 'package:eodaego/features/quiz/data/models/quiz_model.dart';
 import 'package:eodaego/features/quiz/data/repositories/quiz_repository_impl.dart';
@@ -76,13 +77,29 @@ void main() {
     expect(quiz.choices.first.catalogItemId, 'a');
   });
 
-  test('createQuiz_without_image_path_throws_validation_exception', () {
-    final repo = QuizRepositoryImpl(_FakeQuizDataSource(quiz: threeChoices));
-    expect(
-      repo.createQuiz(category: DogamCategory.animal, imagePath: null),
-      throwsA(isA<ValidationException>()),
-    );
+  test('createQuiz_without_image_path_sends_empty_image_list', () async {
+    final fake = _FakeQuizDataSource(quiz: threeChoices);
+
+    final quiz = await QuizRepositoryImpl(
+      fake,
+    ).createQuiz(category: DogamCategory.animal, imagePath: null);
+
+    expect(fake.image, isEmpty);
+    expect(quiz.quizId, 'q1');
   });
+
+  test(
+    'createQuiz_without_image_path_returns_quiz_from_mock_datasource',
+    () async {
+      TestWidgetsFlutterBinding.ensureInitialized();
+
+      final quiz = await QuizRepositoryImpl(
+        QuizMockDataSource(),
+      ).createQuiz(category: DogamCategory.animal, imagePath: null);
+
+      expect(quiz.choices, hasLength(3));
+    },
+  );
 
   test('createQuiz_surfaces_recognition_failed_code', () async {
     final request = RequestOptions(path: '/api/1/quiz');

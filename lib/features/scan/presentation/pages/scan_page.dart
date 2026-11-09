@@ -184,7 +184,10 @@ class _ScanPageState extends ConsumerState<ScanPage> {
                       Positioned(
                         left: 28.w,
                         child: IconButton(
-                          onPressed: () => context.pop(),
+                          // 퀴즈에서 go로 돌아온 경우 스택이 비어 있다 — 홈으로 보낸다.
+                          onPressed: () => context.canPop()
+                              ? context.pop()
+                              : context.go(RoutePaths.home),
                           tooltip: '닫기',
                           icon: Icon(
                             Icons.close,

@@ -54,6 +54,7 @@ Future<GoRouter> _pumpScan(
   required _FakeQuizRepository repo,
   bool guest = false,
   DogamCategory? category,
+  bool viaGo = false,
 }) async {
   tester.view.physicalSize = const Size(393, 852);
   tester.view.devicePixelRatio = 1.0;
@@ -62,7 +63,10 @@ Future<GoRouter> _pumpScan(
   final router = GoRouter(
     initialLocation: '/home',
     routes: [
-      GoRoute(path: '/home', builder: (context, state) => const SizedBox()),
+      GoRoute(
+        path: '/home',
+        builder: (context, state) => const Text('home-page'),
+      ),
       GoRoute(
         path: RoutePaths.scan,
         builder: (context, state) =>
@@ -91,7 +95,7 @@ Future<GoRouter> _pumpScan(
       ),
     ),
   );
-  router.push(RoutePaths.scan);
+  viaGo ? router.go(RoutePaths.scan) : router.push(RoutePaths.scan);
   await tester.pumpAndSettle();
   return router;
 }
@@ -102,6 +106,18 @@ Finder _guide(DogamCategory category) =>
 Finder _chip(DogamCategory category) => find.text(category.label);
 
 void main() {
+  testWidgets('close_button_goes_home_when_scan_has_no_back_stack', (
+    tester,
+  ) async {
+    await _pumpScan(tester, repo: _FakeQuizRepository(), viaGo: true);
+
+    await tester.tap(find.byTooltip('닫기'));
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('home-page'), findsOneWidget);
+  });
+
   testWidgets('scan_page_starts_with_animal_chip_selected', (tester) async {
     await _pumpScan(tester, repo: _FakeQuizRepository());
 

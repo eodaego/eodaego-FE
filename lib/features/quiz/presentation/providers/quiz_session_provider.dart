@@ -5,6 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../core/constants/dogam_category.dart';
 import '../../../../core/providers/selected_course_provider.dart';
+import '../../../collection/domain/entities/catalog_item_entity.dart';
 import '../../../collection/presentation/providers/catalog_provider.dart';
 import '../../../course/presentation/providers/course_provider.dart';
 import '../../domain/entities/quiz_entity.dart';
@@ -67,11 +68,15 @@ class QuizSession extends _$QuizSession {
     required DogamCategory category,
     required String? imagePath,
   }) async {
+    // 도감은 autoDispose라 아직 안 불러와졌을 수 있다 — 퀴즈 생성과 함께 기다린다.
+    // 실패하면 빈 집합 — 새로 모은 것으로 안내한다.
+    final catalogFuture = ref
+        .read(catalogItemsProvider.future)
+        .catchError((_) => const <CatalogItemEntity>[]);
     final quiz = await ref
         .read(quizRepositoryProvider)
         .createQuiz(category: category, imagePath: imagePath);
-    // 도감이 안 불러와졌으면 빈 집합 — 새로 모은 것으로 안내한다.
-    final items = ref.read(catalogItemsProvider).valueOrNull ?? const [];
+    final items = await catalogFuture;
     final collected = {
       for (final item in items)
         if (item.collected) item.id,

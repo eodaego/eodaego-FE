@@ -21,22 +21,21 @@ class QuizRepositoryImpl implements QuizRepository {
     required DogamCategory category,
     required String? imagePath,
   }) async {
-    if (imagePath == null) {
-      throw const ValidationException(
-        message: '사진을 찾지 못했어요. 다시 촬영해 주세요.',
-        messageKey: AppMessageKeys.errorTemporaryRetry,
-      );
-    }
     try {
       // 서버 허용 형식(jpeg/png/webp/heic/heif, 10MB)에 맞춰 jpeg로 고정해 보낸다.
-      final image = await MultipartFile.fromFile(
-        imagePath,
-        filename: 'quiz.jpg',
-        contentType: DioMediaType('image', 'jpeg'),
+      // 경로가 없으면(목 모드·카메라 없음) 빈 목록 — 실서버면 INVALID_REQUEST로 거절된다.
+      final images = [
+        if (imagePath != null)
+          await MultipartFile.fromFile(
+            imagePath,
+            filename: 'quiz.jpg',
+            contentType: DioMediaType('image', 'jpeg'),
+          ),
+      ];
+      final response = await _dataSource.createQuiz(
+        category.serverValue,
+        images,
       );
-      final response = await _dataSource.createQuiz(category.serverValue, [
-        image,
-      ]);
       if (kDebugMode) {
         debugPrint('[Quiz] ✅ 퀴즈 생성 (${category.serverValue})');
       }

@@ -73,6 +73,7 @@ CourseEntity _course() => const CourseEntity(
 ProviderContainer _container(
   _FakeQuizRepository fake, {
   List<CatalogItemEntity>? catalog,
+  bool catalogFails = false,
 }) {
   final container = ProviderContainer(
     overrides: [
@@ -81,6 +82,8 @@ ProviderContainer _container(
       guestRestrictedProvider.overrideWithValue(true),
       if (catalog != null)
         catalogItemsProvider.overrideWith((ref) async => catalog),
+      if (catalogFails)
+        catalogItemsProvider.overrideWith((ref) async => throw Exception('x')),
     ],
   );
   addTearDown(container.dispose);
@@ -131,12 +134,24 @@ void main() {
     },
   );
 
-  test('answer_correct_reports_new_when_catalog_list_not_loaded', () async {
-    final c = _container(
-      _FakeQuizRepository(),
-      catalog: [_item('a', collected: true)],
-    );
-    // 도감을 읽지 않았으므로 스냅숏이 없다.
+  test(
+    'answer_correct_reports_already_collected_when_catalog_loads_during_start',
+    () async {
+      final c = _container(
+        _FakeQuizRepository(),
+        catalog: [_item('a', collected: true)],
+      );
+      // 도감을 미리 읽지 않았다 — start가 직접 기다려야 한다.
+      await _start(c);
+
+      await c.read(quizSessionProvider.notifier).answer('a');
+
+      expect(c.read(quizSessionProvider)!.alreadyCollected, isTrue);
+    },
+  );
+
+  test('answer_correct_reports_new_when_catalog_list_fails_to_load', () async {
+    final c = _container(_FakeQuizRepository(), catalogFails: true);
     await _start(c);
 
     await c.read(quizSessionProvider.notifier).answer('a');
