@@ -1,14 +1,33 @@
 {
   "metadata": {
-    "lastUpdated": "2026-11-10T07:04:54Z",
-    "currentVersion": "1.0.42",
+    "lastUpdated": "2026-11-10T07:33:21Z",
+    "currentVersion": "1.0.43",
     "projectType": "flutter",
     "projectTypes": [
       "flutter"
     ],
-    "totalReleases": 14
+    "totalReleases": 15
   },
   "releases": [
+    {
+      "version": "1.0.43",
+      "project_type": "flutter",
+      "project_types": [
+        "flutter"
+      ],
+      "date": "2026-11-10",
+      "pr_number": 46,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **기타**\n  * Android 앱 배포가 안정적으로 되도록 배포 설정을 조정했어요",
+      "parsed_changes": {
+        "기타": {
+          "title": "기타",
+          "items": [
+            "Android 앱 배포가 안정적으로 되도록 배포 설정을 조정했어요"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "1.0.42",
       "project_type": "flutter",
