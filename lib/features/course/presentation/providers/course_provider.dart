@@ -6,12 +6,15 @@ import '../../../../core/config/env_config.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/providers/guest_mode_provider.dart';
 import '../../../../core/providers/selected_course_provider.dart';
+import '../../../../core/services/location/device_location_service.dart';
+import '../../../../core/services/permission/location_permission_service.dart';
 import '../../data/datasources/course_mock_datasource.dart';
 import '../../data/datasources/course_remote_datasource.dart';
 import '../../data/repositories/course_repository_impl.dart';
 import '../../domain/entities/course_entity.dart';
 import '../../domain/entities/course_options.dart';
 import '../../domain/repositories/course_repository.dart';
+import '../park_gate_positions.dart';
 
 part 'course_provider.g.dart';
 
@@ -90,6 +93,25 @@ class CourseRecommendation extends _$CourseRecommendation {
         else
           course,
     ]);
+  }
+}
+
+/// 지금 위치에서 가장 가까운 출입문 — 코스 추천의 입·출구 기본값.
+///
+/// **주의**: 권한 요청 팝업은 띄우지 않는다. 이미 허용된 경우에만 위치를 읽고,
+/// 위치를 쓸 수 없거나 공원에서 멀면 null을 돌려 사용자가 직접 고르게 한다.
+@riverpod
+Future<ParkGate?> nearestParkGate(Ref ref) async {
+  try {
+    if (!await LocationPermissionService.canAccessLocation()) return null;
+    final position = await DeviceLocationService.getCurrentPosition(
+      timeLimit: const Duration(seconds: 5),
+    );
+    if (position == null) return null;
+    return findNearestParkGate(position.latitude, position.longitude);
+  } catch (e) {
+    debugPrint('[Course] ⚠️ 가까운 출입문 찾기 실패, 직접 선택으로 진행: $e');
+    return null;
   }
 }
 

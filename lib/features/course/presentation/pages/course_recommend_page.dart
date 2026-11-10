@@ -1,10 +1,7 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_message_keys.dart';
@@ -22,58 +19,37 @@ import '../../domain/entities/course_entity.dart';
 import '../../domain/entities/course_options.dart';
 import '../providers/course_provider.dart';
 import '../providers/favorite_provider.dart';
-import '../widgets/option_grid.dart';
+import '../widgets/course_sheets.dart';
+import '../widgets/park_gate_map.dart';
 
-/// 희망 체류시간 선택지 — 서버에는 분(int)으로 보낸다.
-enum _StayDuration {
-  oneHour('1시간', Icons.hourglass_bottom_rounded, '가볍게 한 바퀴', 60),
-  twoHours('2시간', Icons.access_time_filled_rounded, '천천히 둘러보기', 120),
-  halfDay('반나절', Icons.wb_sunny_rounded, '구석구석 탐험', 240);
-
-  const _StayDuration(this.label, this.icon, this.subtitle, this.minutes);
-
-  final String label;
-  final IconData icon;
-  final String subtitle;
-  final int minutes;
-}
-
-/// 동행 유형 선택지 아이콘·보조설명
-const Map<CompanionType, (IconData, String)> _companionMeta = {
-  CompanionType.alone: (Icons.directions_walk_rounded, '내 속도로 걸어요'),
-  CompanionType.withChild: (Icons.child_care_rounded, '아이 눈높이로 골라요'),
-  CompanionType.withPartner: (Icons.favorite_rounded, '둘이 걷기 좋은 길로'),
-  CompanionType.withFriends: (Icons.groups_rounded, '같이 놀 거리 위주로'),
-  CompanionType.withElderly: (Icons.elderly_rounded, '쉬어갈 곳을 넉넉히'),
+/// 동행 유형 선택지 아이콘
+const Map<CompanionType, IconData> _companionIcons = {
+  CompanionType.alone: Icons.directions_walk_rounded,
+  CompanionType.withChild: Icons.child_care_rounded,
+  CompanionType.withPartner: Icons.favorite_rounded,
+  CompanionType.withFriends: Icons.groups_rounded,
+  CompanionType.withElderly: Icons.elderly_rounded,
 };
 
-/// 관심분야 선택지 아이콘
-const Map<InterestType, IconData> _interestIcons = {
-  InterestType.animal: Icons.pets_rounded,
-  InterestType.nature: Icons.park_rounded,
-  InterestType.activity: Icons.attractions_rounded,
-  InterestType.photoSpot: Icons.photo_camera_rounded,
-  InterestType.relaxation: Icons.deck_rounded,
-  InterestType.cultureEvent: Icons.festival_rounded,
-  InterestType.learning: Icons.menu_book_rounded,
-};
-
-/// 코스 추천 스텝별 하단 버튼 라벨과 활성 여부. 순수 함수 — 위젯 없이 단위 테스트 가능.
-({String label, bool enabled}) courseStepFooter(
-  int page, {
-  required bool selected,
-}) {
-  // 입구(0)·출구(1)는 필수라 고르기 전엔 넘어갈 수 없다.
-  if (page <= 1) return (label: '다음', enabled: selected);
-  // 동행(4)이 마지막 조건 스텝이라 여기서 바로 추천을 요청한다.
-  if (page == 4) {
-    return (label: selected ? '코스 추천받기' : '건너뛰기', enabled: true);
+/// 출입문 이름 뒤 조사 '으로/로'.
+///
+/// 받침 없음·ㄹ받침이면 '로', 그 외 받침은 '으로'. 숫자는 한자어 읽기(0 영, 3 삼, 6 육만 '으로').
+String directionParticle(String word) {
+  if (word.isEmpty) return '로';
+  final last = word.codeUnitAt(word.length - 1);
+  if (last >= 0x30 && last <= 0x39) {
+    return const {0x30, 0x33, 0x36}.contains(last) ? '으로' : '로';
   }
-  return (label: selected ? '다음' : '건너뛰기', enabled: true);
+  if (last < 0xAC00 || last > 0xD7A3) return '로';
+  final jong = (last - 0xAC00) % 28;
+  return jong == 0 || jong == 8 ? '로' : '으로';
 }
 
-/// 코스 추천 (스텝 인디케이터) — 5스텝 조건 + 결과 카드 스와이프.
-/// 입구·출구는 필수, 나머지는 건너뛰기 허용. 진입점(지도 시트 버튼)이 게스트 게이트를 담당.
+/// 코스 추천 — 한 화면에서 끝난다.
+///
+/// 입·출구는 지금 위치에서 가장 가까운 문으로 미리 채우고(못 찾으면 직접 고름),
+/// 동행 타일을 누르면 바로 추천을 요청한다. 시간·관심분야는 시트에서 고르는 선택 사항이다.
+/// 진입점(지도 시트 버튼)이 게스트 게이트를 담당.
 class CourseRecommendPage extends ConsumerStatefulWidget {
   const CourseRecommendPage({super.key});
 
@@ -83,53 +59,70 @@ class CourseRecommendPage extends ConsumerStatefulWidget {
 }
 
 class _CourseRecommendPageState extends ConsumerState<CourseRecommendPage> {
-  /// 결과 페이지 인덱스 — 조건 스텝 5개(0~4) 뒤.
-  static const _resultPageIndex = 5;
-
-  final PageController _pageController = PageController();
-  int _currentPage = 0;
-
   ParkGate? _entrance;
   ParkGate? _exit;
-  _StayDuration? _duration;
-  final Set<InterestType> _interests = {};
+
+  /// 입·출구를 위치로 채웠는지 — 안내 문구가 달라진다.
+  bool _gateFromLocation = false;
+  bool _locating = true;
+
+  StayDuration? _duration;
+  Set<InterestType> _interests = const {};
   CompanionType? _companion;
 
-  Timer? _advanceTimer;
+  /// 추천을 요청했는지. 결과에 온 뒤에는 조건 화면으로 되돌아가지 않는다.
+  bool _requested = false;
 
   @override
-  void dispose() {
-    _advanceTimer?.cancel();
-    _pageController.dispose();
-    super.dispose();
-  }
-
-  /// 선택 350ms 후 자동 진행. 재선택 시 앞선 예약을 취소한다.
-  void _scheduleAdvance(int fromPage, VoidCallback action) {
-    _advanceTimer?.cancel();
-    _advanceTimer = Timer(const Duration(milliseconds: 350), () {
-      if (!mounted || _currentPage != fromPage) return;
-      action();
+  void initState() {
+    super.initState();
+    ref.read(nearestParkGateProvider.future).then((gate) {
+      if (!mounted) return;
+      setState(() {
+        _locating = false;
+        // Keep a gate the user already picked while location was loading
+        // 위치를 찾는 동안 사용자가 이미 고른 문은 덮어쓰지 않는다
+        if (gate == null || _entrance != null) return;
+        _entrance = gate;
+        _exit = gate;
+        _gateFromLocation = true;
+      });
     });
   }
 
-  /// 다음 페이지로 넘긴다 (건너뛰기·확정 공용).
-  void _advanceFrom(int fromPage) {
-    // 버튼을 먼저 누른 경우 남은 예약이 한 번 더 넘기는 것을 막는다.
-    _advanceTimer?.cancel();
-    if (_currentPage != fromPage) return;
-    _pageController.nextPage(
-      duration: const Duration(milliseconds: 250),
-      curve: Curves.easeOut,
-    );
+  Future<void> _pickGates() async {
+    final picked = await showGatePickerSheet(context);
+    if (picked == null || !mounted) return;
+    setState(() {
+      _entrance = picked.entrance;
+      _exit = picked.exit;
+      _gateFromLocation = false;
+    });
   }
 
-  /// 마지막 조건 스텝에서 결과로 넘어가며 추천을 1회 요청한다.
-  void _goToResult() {
-    _advanceTimer?.cancel();
+  Future<void> _pickPreferences() async {
+    final picked = await showPreferenceSheet(
+      context,
+      duration: _duration,
+      interests: _interests,
+    );
+    if (picked == null || !mounted) return;
+    setState(() {
+      _duration = picked.duration;
+      _interests = picked.interests;
+    });
+  }
+
+  /// 동행 타일 — 고르는 즉시 추천을 1회 요청한다. [companion]이 null이면 '상관없어요'.
+  void _requestWith(CompanionType? companion) {
+    _companion = companion;
+    _request();
+  }
+
+  void _request() {
     final entrance = _entrance;
     final exit = _exit;
-    // 입구·출구는 필수라 여기 도달하면 반드시 채워져 있다. 방어적 가드다.
+    // 동행 타일은 입·출구가 있어야 눌린다. 방어적 가드다.
     if (entrance == null || exit == null) return;
 
     ref
@@ -141,21 +134,7 @@ class _CourseRecommendPageState extends ConsumerState<CourseRecommendPage> {
           stayDurationMinutes: _duration?.minutes,
           companionType: _companion,
         );
-    _advanceFrom(4);
-  }
-
-  void _back(BuildContext context) {
-    // 결과까지 왔으면 위저드로 되돌리지 않는다 — 코스에 들어오기 전 화면으로
-    // 바로 나간다. 추천은 호출할 때마다 AI 서버를 거치고 서버에 코스가 새로
-    // 저장되므로, 스텝으로 되돌아가 조건만 고치는 길을 열어두면 안 된다.
-    if (_currentPage > 0 && _currentPage < _resultPageIndex) {
-      _pageController.previousPage(
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.easeOut,
-      );
-    } else {
-      context.pop();
-    }
+    setState(() => _requested = true);
   }
 
   /// 하트 — 화면을 먼저 뒤집고, 서버가 실패하면 되돌린다.
@@ -185,181 +164,104 @@ class _CourseRecommendPageState extends ConsumerState<CourseRecommendPage> {
 
   @override
   Widget build(BuildContext context) {
+    // 결과에서도 뒤로가기는 조건 화면이 아니라 코스에 들어오기 전 화면으로 나간다.
+    // 추천은 호출할 때마다 AI 서버를 거치고 서버에 코스가 새로 저장되므로,
+    // 조건만 고쳐 다시 요청하는 길을 열어두지 않는다.
+    //
+    // 조건 화면에서도 구독한다 — autoDispose라 아무도 보지 않으면 요청 직후 결과가 버려진다.
+    final result = ref.watch(courseRecommendationProvider);
     return Scaffold(
       backgroundColor: AppColors.canvas,
-      appBar: AppBackAppBar(title: '코스 추천', onBack: () => _back(context)),
+      appBar: AppBackAppBar(title: '코스 추천', onBack: () => context.pop()),
       body: SafeArea(
-        child: Column(
-          children: [
-            SizedBox(height: AppSpacing.sm.h),
-            SmoothPageIndicator(
-              controller: _pageController,
-              count: 6,
-              effect: WormEffect(
-                dotHeight: 8.h,
-                dotWidth: 8.w,
-                activeDotColor: AppColors.primary,
-                dotColor: AppColors.line,
-              ),
-            ),
-            SizedBox(height: AppSpacing.base.h),
-            Expanded(
-              child: PageView(
-                controller: _pageController,
-                // 앱바 뒤로가기만 막으면 결과에서 오른쪽으로 밀어 위저드로
-                // 돌아갈 수 있다. 결과에서는 스와이프도 함께 막는다.
-                physics: _currentPage == _resultPageIndex
-                    ? const NeverScrollableScrollPhysics()
-                    : null,
-                onPageChanged: (i) => setState(() => _currentPage = i),
-                children: [
-                  _stepPage(
-                    question: '어느 문으로 들어왔어?',
-                    hint: '들어온 문과 나갈 문을 알려주면 동선을 맞춰 짜요',
-                    grid: _gateGrid(
-                      selected: _entrance,
-                      onSelect: (gate) {
-                        setState(() => _entrance = gate);
-                        _scheduleAdvance(0, () => _advanceFrom(0));
-                      },
-                    ),
-                  ),
-                  _stepPage(
-                    question: '어느 문으로 나갈까?',
-                    hint: '들어온 문과 나갈 문을 알려주면 동선을 맞춰 짜요',
-                    grid: _gateGrid(
-                      selected: _exit,
-                      onSelect: (gate) {
-                        setState(() => _exit = gate);
-                        _scheduleAdvance(1, () => _advanceFrom(1));
-                      },
-                    ),
-                  ),
-                  _stepPage(
-                    question: '얼마나 놀다 갈까?',
-                    hint: '건너뛰면 전체에서 골라 추천해요',
-                    grid: OptionGrid(
-                      columns: 2,
-                      aspectRatio: 1.85,
-                      children: [
-                        for (final d in _StayDuration.values)
-                          OptionTile(
-                            icon: d.icon,
-                            label: d.label,
-                            subtitle: d.subtitle,
-                            selected: _duration == d,
-                            onTap: () {
-                              setState(
-                                () => _duration = _duration == d ? null : d,
-                              );
-                              // 선택을 풀면 예약도 함께 걷어낸다.
-                              _advanceTimer?.cancel();
-                              if (_duration != null) {
-                                _scheduleAdvance(2, () => _advanceFrom(2));
-                              }
-                            },
-                          ),
-                      ],
-                    ),
-                  ),
-                  // 관심분야는 복수 선택이라 자동 넘김 없이 하단 버튼으로만 확정한다.
-                  _stepPage(
-                    question: '뭐가 제일 좋아?',
-                    hint: '여러 개 골라도 좋아요. 건너뛰면 전체에서 골라 추천해요',
-                    grid: OptionGrid(
-                      columns: 3,
-                      aspectRatio: 1.3,
-                      children: [
-                        for (final type in InterestType.values)
-                          OptionTile(
-                            icon: _interestIcons[type],
-                            label: type.label,
-                            selected: _interests.contains(type),
-                            onTap: () => setState(() {
-                              _interests.contains(type)
-                                  ? _interests.remove(type)
-                                  : _interests.add(type);
-                            }),
-                          ),
-                      ],
-                    ),
-                  ),
-                  _stepPage(
-                    question: '누구랑 왔어?',
-                    hint: '건너뛰면 전체에서 골라 추천해요',
-                    grid: OptionGrid(
-                      columns: 2,
-                      aspectRatio: 1.85,
-                      children: [
-                        for (final entry in _companionMeta.entries)
-                          OptionTile(
-                            icon: entry.value.$1,
-                            label: entry.key.label,
-                            subtitle: entry.value.$2,
-                            selected: _companion == entry.key,
-                            onTap: () {
-                              setState(
-                                () => _companion = _companion == entry.key
-                                    ? null
-                                    : entry.key,
-                              );
-                              _advanceTimer?.cancel();
-                              if (_companion != null) {
-                                _scheduleAdvance(4, _goToResult);
-                              }
-                            },
-                          ),
-                      ],
-                    ),
-                  ),
-                  _resultPage(),
-                ],
-              ),
-            ),
-            _footer(),
-          ],
-        ),
+        child: _requested ? _resultPage(result) : _conditionPage(),
       ),
     );
   }
 
-  /// 하단 고정 버튼 — 스텝마다 자리가 같아야 레이아웃이 흔들리지 않는다.
-  /// 결과 스텝은 코스 카드 안에 CTA가 있어 버튼을 두지 않는다.
-  Widget _footer() {
-    final page = _currentPage;
-    if (page == _resultPageIndex) return const SizedBox.shrink();
+  // ============================================
+  // Conditions (조건)
+  // ============================================
 
-    final selected = switch (page) {
-      0 => _entrance != null,
-      1 => _exit != null,
-      2 => _duration != null,
-      3 => _interests.isNotEmpty,
-      _ => _companion != null,
-    };
-    final footer = courseStepFooter(page, selected: selected);
+  Widget _conditionPage() {
+    final entrance = _entrance;
+    final exit = _exit;
+    final hasGates = entrance != null && exit != null;
+    final preferences = [
+      ?_duration?.label,
+      for (final type in _interests) type.label,
+    ];
 
-    return Padding(
-      padding: EdgeInsets.only(
-        left: AppSpacing.lg.w,
-        right: AppSpacing.lg.w,
-        bottom: AppSpacing.md.h,
-      ),
-      child: AppButton(
-        text: footer.label,
-        onPressed: !footer.enabled
-            ? null
-            : (page == 4 ? _goToResult : () => _advanceFrom(page)),
+    final String gateHint;
+    if (_locating && !hasGates) {
+      gateHint = '가까운 문을 찾고 있어요';
+    } else if (!hasGates) {
+      gateHint = '들어온 문을 알려 주세요';
+    } else if (_gateFromLocation) {
+      gateHint = '지금 위치에서 가장 가까운 문으로 골랐어요';
+    } else {
+      gateHint = '직접 고른 문이에요';
+    }
+
+    return SingleChildScrollView(
+      padding: EdgeInsets.only(bottom: AppSpacing.xl.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _section(
+            question: '어디로 들어왔어?',
+            hint: gateHint,
+            child: _RouteCard(
+              entrance: entrance,
+              exit: exit,
+              onChange: _pickGates,
+            ),
+          ),
+          // Full-bleed band separating the two sections
+          // 두 영역을 나누는 화면 폭 전체의 띠
+          Container(
+            height: AppSpacing.sm.h,
+            margin: EdgeInsets.only(top: 28.h, bottom: AppSpacing.xl.h),
+            color: AppColors.surfaceDim,
+          ),
+          _section(
+            question: '누구랑 왔어?',
+            hint: '누르면 바로 코스를 짜 드려요',
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _companionGrid(enabled: hasGates),
+                SizedBox(height: AppSpacing.base.h),
+                Center(
+                  child: TextButton(
+                    onPressed: _pickPreferences,
+                    child: Text(
+                      preferences.isEmpty
+                          ? '시간·관심도 고르기'
+                          : '시간·관심도 고르기 (${preferences.join('·')})',
+                      style: AppTextStyles.caption14.copyWith(
+                        color: AppColors.muted,
+                        decoration: TextDecoration.underline,
+                        decorationColor: AppColors.muted,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  /// 스텝 본문 껍데기 — 질문 + 안내 + 선택지 격자.
-  Widget _stepPage({
+  /// 질문 + 안내 + 본문. 좌우 패딩은 여기서만 준다 — 구분 띠는 화면 끝까지 닿아야 한다.
+  Widget _section({
     required String question,
     required String hint,
-    required Widget grid,
+    required Widget child,
   }) {
-    return SingleChildScrollView(
+    return Padding(
       padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -374,36 +276,44 @@ class _CourseRecommendPageState extends ConsumerState<CourseRecommendPage> {
             hint,
             style: AppTextStyles.caption14.copyWith(color: AppColors.muted),
           ),
-          SizedBox(height: AppSpacing.xl.h),
-          grid,
-          SizedBox(height: AppSpacing.xl.h),
+          SizedBox(height: AppSpacing.base.h),
+          child,
         ],
       ),
     );
   }
 
-  /// 출입문 격자 — 11개가 전부 '문'이라 아이콘 없이 라벨만 둔다.
-  Widget _gateGrid({
-    required ParkGate? selected,
-    required void Function(ParkGate) onSelect,
-  }) {
-    return OptionGrid(
-      columns: 3,
-      aspectRatio: 2.0,
-      children: [
-        for (final gate in ParkGate.values)
-          OptionTile(
-            label: gate.label,
-            selected: selected == gate,
-            onTap: () => onSelect(gate),
-          ),
-      ],
+  Widget _companionGrid({required bool enabled}) {
+    final tiles = [
+      for (final MapEntry(key: type, value: icon) in _companionIcons.entries)
+        _CompanionTile(
+          icon: icon,
+          label: type.label,
+          onTap: enabled ? () => _requestWith(type) : null,
+        ),
+      _CompanionTile(
+        icon: Icons.shuffle_rounded,
+        label: '상관없어요',
+        onTap: enabled ? () => _requestWith(null) : null,
+      ),
+    ];
+    return GridView.count(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.zero,
+      crossAxisCount: 2,
+      childAspectRatio: 2.3,
+      crossAxisSpacing: AppSpacing.sm.w,
+      mainAxisSpacing: AppSpacing.sm.h,
+      children: tiles,
     );
   }
 
-  Widget _resultPage() {
-    final state = ref.watch(courseRecommendationProvider);
+  // ============================================
+  // Result (결과)
+  // ============================================
 
+  Widget _resultPage(AsyncValue<List<CourseEntity>?> state) {
     return state.when(
       loading: () => const Center(child: LoadingCat(title: '코스를 만들고 있어요')),
       error: (error, _) {
@@ -417,7 +327,7 @@ class _CourseRecommendPageState extends ConsumerState<CourseRecommendPage> {
         return _ResultNotice(
           message: aiDown ? '지금은 코스를 만들지 못했어요\n잠시 후 다시 시도해 주세요' : message,
           buttonText: '다시 시도',
-          onPressed: _goToResult,
+          onPressed: _request,
         );
       },
       data: (courses) {
@@ -426,11 +336,7 @@ class _CourseRecommendPageState extends ConsumerState<CourseRecommendPage> {
           return _ResultNotice(
             message: '조건을 바꾸면 코스를 찾을 수 있어요',
             buttonText: '조건 다시 고르기',
-            onPressed: () => _pageController.animateToPage(
-              0,
-              duration: const Duration(milliseconds: 250),
-              curve: Curves.easeOut,
-            ),
+            onPressed: () => setState(() => _requested = false),
           );
         }
         return _ResultCards(
@@ -444,7 +350,153 @@ class _CourseRecommendPageState extends ConsumerState<CourseRecommendPage> {
   }
 }
 
-/// 결과 스텝의 안내 — 실패·결과 없음이 같은 껍데기를 쓰고 문구·버튼만 다르다.
+/// 입·출구 요약 — 약도 썸네일 + "정문 → 정문" + 바꾸기. 문이 없으면 카드 전체가 고르기 버튼이다.
+class _RouteCard extends StatelessWidget {
+  const _RouteCard({
+    required this.entrance,
+    required this.exit,
+    required this.onChange,
+  });
+
+  final ParkGate? entrance;
+  final ParkGate? exit;
+  final VoidCallback onChange;
+
+  @override
+  Widget build(BuildContext context) {
+    final from = entrance;
+    final to = exit;
+    final hasGates = from != null && to != null;
+    final radius = BorderRadius.circular(AppRadius.lg.r);
+
+    final titleStyle = AppTextStyles.display17.copyWith(
+      color: hasGates ? AppColors.ink : AppColors.muted,
+      height: 1.4,
+    );
+    final Widget title;
+    final String description;
+    if (hasGates) {
+      // Ssurround has no arrow glyph, so the arrow is an icon
+      // Ssurround에 화살표 글리프가 없어 아이콘으로 그린다
+      title = Row(
+        children: [
+          Text(from.label, style: titleStyle),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: AppSpacing.xs.w),
+            child: Icon(
+              Icons.arrow_forward_rounded,
+              size: 18.w,
+              color: AppColors.muted,
+            ),
+          ),
+          Text(to.label, style: titleStyle),
+        ],
+      );
+      description = from == to
+          ? '${to.label}${directionParticle(to.label)} 돌아오는 코스'
+          : '${to.label}${directionParticle(to.label)} 나가는 코스';
+    } else {
+      title = Text('들어온 문을 골라 주세요', style: titleStyle);
+      description = '약도에서 눌러서 골라요';
+    }
+
+    return Material(
+      color: AppColors.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: radius,
+        side: const BorderSide(color: AppColors.line),
+      ),
+      child: InkWell(
+        borderRadius: radius,
+        onTap: onChange,
+        child: Padding(
+          padding: EdgeInsets.all(AppSpacing.md.w),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 110.w,
+                child: ParkGateMap(entrance: from, exit: to),
+              ),
+              SizedBox(width: AppSpacing.md.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    title,
+                    SizedBox(height: AppSpacing.xs.h),
+                    Text(
+                      description,
+                      style: AppTextStyles.caption14.copyWith(
+                        color: AppColors.muted,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (hasGates)
+                Padding(
+                  padding: EdgeInsets.only(left: AppSpacing.xs.w),
+                  child: Text(
+                    '바꾸기',
+                    style: AppTextStyles.label16Semibold.copyWith(
+                      color: AppColors.primaryDark,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 동행 타일 — 아이콘 + 라벨 한 줄. 누르면 바로 추천한다. [onTap]이 null이면 비활성.
+class _CompanionTile extends StatelessWidget {
+  const _CompanionTile({required this.icon, required this.label, this.onTap});
+
+  final IconData icon;
+  final String label;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final radius = BorderRadius.circular(AppRadius.sm.r);
+    final enabled = onTap != null;
+
+    return Opacity(
+      opacity: enabled ? 1 : 0.4,
+      child: Material(
+        color: AppColors.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: radius,
+          side: const BorderSide(color: AppColors.line, width: 2),
+        ),
+        child: InkWell(
+          borderRadius: radius,
+          onTap: onTap,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: AppSpacing.base.w),
+            child: Row(
+              children: [
+                Icon(icon, size: 24.w, color: AppColors.muted),
+                SizedBox(width: 10.w),
+                Text(
+                  label,
+                  style: AppTextStyles.label16Semibold.copyWith(
+                    color: AppColors.ink,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 결과의 안내 — 실패·결과 없음이 같은 껍데기를 쓰고 문구·버튼만 다르다.
 class _ResultNotice extends StatelessWidget {
   const _ResultNotice({
     required this.message,
@@ -488,7 +540,7 @@ class _ResultNotice extends StatelessWidget {
   }
 }
 
-/// 결과 카드 스와이프 — 내부 PageView가 가로 제스처를 소비 (외부 스텝과 충돌 없음).
+/// 결과 카드 목록 — 세로 스크롤.
 class _ResultCards extends StatelessWidget {
   const _ResultCards({
     super.key,
@@ -503,7 +555,6 @@ class _ResultCards extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 세로 스크롤이라 바깥 스텝 PageView(가로)와 제스처가 겹치지 않는다.
     return ListView.separated(
       padding: EdgeInsets.symmetric(
         horizontal: AppSpacing.lg.w,
