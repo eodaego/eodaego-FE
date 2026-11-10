@@ -1,7 +1,7 @@
 name: eodaego
 description: "A new Flutter project."
 publish_to: "none"
-version: 1.0.43+42
+version: 1.0.44+43
 environment:
   sdk: ^3.9.2
 dependencies:
