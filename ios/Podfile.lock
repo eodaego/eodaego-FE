@@ -15,6 +15,8 @@ PODS:
     - PromisesObjC (~> 2.4)
     - PromisesSwift (~> 2.4)
     - RecaptchaInterop (~> 101.0)
+  - camera_avfoundation (0.0.1):
+    - Flutter
   - connectivity_plus (0.0.1):
     - Flutter
   - device_info_plus (0.0.1):
@@ -269,6 +271,7 @@ PODS:
 DEPENDENCIES:
   - app_links (from `.symlinks/plugins/app_links/ios`)
   - app_settings (from `.symlinks/plugins/app_settings/ios`)
+  - camera_avfoundation (from `.symlinks/plugins/camera_avfoundation/ios`)
   - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - firebase_analytics (from `.symlinks/plugins/firebase_analytics/ios`)
@@ -331,6 +334,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/app_links/ios"
   app_settings:
     :path: ".symlinks/plugins/app_settings/ios"
+  camera_avfoundation:
+    :path: ".symlinks/plugins/camera_avfoundation/ios"
   connectivity_plus:
     :path: ".symlinks/plugins/connectivity_plus/ios"
   device_info_plus:
@@ -381,6 +386,7 @@ SPEC CHECKSUMS:
   app_settings: 9217ccbe946aa9a3751b5459dcf50dabc87517b2
   AppAuth: d4f13a8fe0baf391b2108511793e4b479691fb73
   AppCheckCore: 214137f5c378d1dec88a68425c467fe65aaff637
+  camera_avfoundation: 769d252259fa21e39ada7399c9dc9c0921af8165
   connectivity_plus: 2a701ffec2c0ae28a48cf7540e279787e77c447d
   device_info_plus: 97af1d7e84681a90d0693e63169a5d50e0839a0d
   Firebase: d99ac19b909cd2c548339c2241ecd0d1599ab02e
