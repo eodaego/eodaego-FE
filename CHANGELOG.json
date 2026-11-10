@@ -1,14 +1,39 @@
 {
   "metadata": {
-    "lastUpdated": "2026-11-10T16:55:09Z",
-    "currentVersion": "1.0.45",
+    "lastUpdated": "2026-11-10T17:12:25Z",
+    "currentVersion": "1.0.47",
     "projectType": "flutter",
     "projectTypes": [
       "flutter"
     ],
-    "totalReleases": 16
+    "totalReleases": 17
   },
   "releases": [
+    {
+      "version": "1.0.47",
+      "project_type": "flutter",
+      "project_types": [
+        "flutter"
+      ],
+      "date": "2026-11-10",
+      "pr_number": 52,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **버그 수정**\n\n  * 코스 카드 뱃지 줄이 하트 옆에서 넘치지 않게 줄바꿈한다\n\n* **기타**\n\n  * 카메라 Pod 잠금 갱신과 작업 리포트·산출물 ignore 추가\n\n> 💡 더 정확한 릴리스 노트를 원한다면 Claude Code에서 `/github` 스킬로 PR 릴리스 노트를 업데이트할 수 있습니다.",
+      "parsed_changes": {
+        "버그_수정": {
+          "title": "버그 수정",
+          "items": [
+            "코스 카드 뱃지 줄이 하트 옆에서 넘치지 않게 줄바꿈한다"
+          ]
+        },
+        "기타": {
+          "title": "기타",
+          "items": [
+            "카메라 Pod 잠금 갱신과 작업 리포트·산출물 ignore 추가"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "1.0.45",
       "project_type": "flutter",
