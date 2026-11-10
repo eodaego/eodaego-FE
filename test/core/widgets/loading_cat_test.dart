@@ -1,10 +1,12 @@
 import 'dart:math' as math;
 
-import 'package:eodaego/features/course/presentation/widgets/course_loading_cat.dart';
+import 'package:eodaego/core/widgets/loading_cat.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lottie/lottie.dart';
+
+const _title = '코스를 만들고 있어요';
 
 Widget _wrap(Widget child) => ScreenUtilInit(
   designSize: const Size(393, 852),
@@ -16,13 +18,13 @@ Widget _wrap(Widget child) => ScreenUtilInit(
 /// 지금 고양이가 실제로 그려지고 있는 배율 (목표값이 아니라 진행 중인 값).
 double _scale(WidgetTester tester) => tester
     .renderObject(find.byType(LottieBuilder))
-    .getTransformTo(tester.renderObject(find.byType(CourseLoadingCat)))
+    .getTransformTo(tester.renderObject(find.byType(LoadingCat)))
     .getMaxScaleOnAxis();
 
 /// 좌우로 기운 정도 — 회전이 없으면 0이다.
 double _tilt(WidgetTester tester) => tester
     .renderObject(find.byType(LottieBuilder))
-    .getTransformTo(tester.renderObject(find.byType(CourseLoadingCat)))
+    .getTransformTo(tester.renderObject(find.byType(LoadingCat)))
     .storage[1];
 
 /// 흔들림은 왕복이라 한 순간만 재면 0을 지나칠 수 있다.
@@ -37,7 +39,7 @@ Future<double> _maxTiltOverTime(WidgetTester tester) async {
 }
 
 void main() {
-  group('CourseLoadingCat', () {
+  group('LoadingCat', () {
     // 기본 테스트 화면(800x600)에는 360.w 고양이가 들어가지 않는다.
     setUp(() {
       final view = TestWidgetsFlutterBinding.ensureInitialized()
@@ -50,7 +52,7 @@ void main() {
     });
 
     testWidgets('누르고 있는 동안 일정한 속도로 커진다', (tester) async {
-      await tester.pumpWidget(_wrap(const CourseLoadingCat()));
+      await tester.pumpWidget(_wrap(const LoadingCat(title: _title)));
       await tester.pump();
 
       expect(_scale(tester), 1.0);
@@ -74,7 +76,7 @@ void main() {
     });
 
     testWidgets('한계에 가까워져야 흔들리기 시작한다', (tester) async {
-      await tester.pumpWidget(_wrap(const CourseLoadingCat()));
+      await tester.pumpWidget(_wrap(const LoadingCat(title: _title)));
       await tester.pump(const Duration(milliseconds: 500));
 
       // 가만히 있을 때는 기울지 않는다
@@ -93,7 +95,7 @@ void main() {
     });
 
     testWidgets('놓으면 통통 튀며 돌아오고, 흔들림이 크기보다 오래 남는다', (tester) async {
-      await tester.pumpWidget(_wrap(const CourseLoadingCat()));
+      await tester.pumpWidget(_wrap(const LoadingCat(title: _title)));
       await tester.pump();
 
       final gesture = await tester.press(find.byType(LottieBuilder));
@@ -118,7 +120,7 @@ void main() {
     });
 
     testWidgets('탭이 취소돼도 원래 크기로 돌아온다', (tester) async {
-      await tester.pumpWidget(_wrap(const CourseLoadingCat()));
+      await tester.pumpWidget(_wrap(const LoadingCat(title: _title)));
       await tester.pump();
 
       final gesture = await tester.press(find.byType(LottieBuilder));

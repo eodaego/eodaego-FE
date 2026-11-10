@@ -11,6 +11,7 @@ import '../../../../core/providers/guest_mode_provider.dart';
 import '../../../../core/services/permission/location_permission_service.dart';
 import '../../../../core/widgets/category_chip.dart';
 import '../../../../core/widgets/dialogs/login_gate_dialog.dart';
+import '../../../../core/widgets/loading_cat.dart';
 import '../../../../router/route_paths.dart';
 import '../../../quiz/presentation/providers/quiz_session_provider.dart';
 import '../../../quiz/presentation/quiz_messages.dart';
@@ -88,6 +89,10 @@ class _ScanPageState extends ConsumerState<ScanPage> {
     }
   }
 
+  // 퀴즈에서 go로 돌아온 경우 스택이 비어 있다 — 홈으로 보낸다.
+  void _close() =>
+      context.canPop() ? context.pop() : context.go(RoutePaths.home);
+
   void _select(DogamCategory category) => setState(() {
     _category = category;
     _error = null;
@@ -106,104 +111,135 @@ class _ScanPageState extends ConsumerState<ScanPage> {
           Positioned.fill(
             child: ScanCameraView(key: _cameraKey, status: _cameraStatus),
           ),
-          SafeArea(
-            child: Column(
-              children: [
-                Expanded(
-                  child: Center(
-                    child: SizedBox(
-                      width: 260.w,
-                      height: 260.w,
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          CustomPaint(
-                            painter: _CornerBracketsPainter(color: color),
-                          ),
-                          Center(
-                            child: ValueListenableBuilder(
-                              valueListenable: _cameraStatus,
-                              builder: (context, status, _) =>
-                                  _FrameCenter(status: status),
+          if (_busy)
+            Positioned.fill(child: _WaitingOverlay(onClose: _close))
+          else
+            SafeArea(
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Center(
+                      child: SizedBox(
+                        width: 260.w,
+                        height: 260.w,
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            CustomPaint(
+                              painter: _CornerBracketsPainter(color: color),
                             ),
-                          ),
-                        ],
+                            Center(
+                              child: ValueListenableBuilder(
+                                valueListenable: _cameraStatus,
+                                builder: (context, status, _) =>
+                                    _FrameCenter(status: status),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg.w),
-                  child: _busy || _error != null
-                      ? Text(
-                          _busy ? scanWaitingMessage : _error!,
-                          textAlign: TextAlign.center,
-                          style: guideStyle,
-                        )
-                      : Text.rich(
-                          TextSpan(
-                            children: [
-                              const TextSpan(text: '네모 안에 '),
-                              TextSpan(
-                                text: _subject(_category),
-                                style: TextStyle(
-                                  color: color,
-                                  fontWeight: FontWeight.w700,
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg.w),
+                    child: _error != null
+                        ? Text(
+                            _error!,
+                            textAlign: TextAlign.center,
+                            style: guideStyle,
+                          )
+                        : Text.rich(
+                            TextSpan(
+                              children: [
+                                const TextSpan(text: '네모 안에 '),
+                                TextSpan(
+                                  text: _subject(_category),
+                                  style: TextStyle(
+                                    color: color,
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                 ),
-                              ),
-                              const TextSpan(text: ' 들어오게 찍어주세요'),
-                            ],
+                                const TextSpan(text: ' 들어오게 찍어주세요'),
+                              ],
+                            ),
+                            textAlign: TextAlign.center,
+                            style: guideStyle,
                           ),
-                          textAlign: TextAlign.center,
-                          style: guideStyle,
-                        ),
-                ),
-                SizedBox(height: 28.h),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    for (final (i, c) in DogamCategory.values.indexed) ...[
-                      if (i > 0) SizedBox(width: AppSpacing.sm.w),
-                      CategoryChip(
-                        label: c.label,
-                        color: c.color,
-                        selected: c == _category,
-                        onTap: _busy ? null : () => _select(c),
-                      ),
-                    ],
-                  ],
-                ),
-                SizedBox(height: AppSpacing.base.h),
-                // 전체 폭 Stack — 셔터는 중앙, 닫기는 왼쪽 끝 (셔터 크기로 잡히면 겹침)
-                SizedBox(
-                  width: double.infinity,
-                  child: Stack(
-                    alignment: Alignment.center,
+                  ),
+                  SizedBox(height: 28.h),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _Shutter(color: color, busy: _busy, onTap: _onShutter),
-                      Positioned(
-                        left: 28.w,
-                        child: IconButton(
-                          // 퀴즈에서 go로 돌아온 경우 스택이 비어 있다 — 홈으로 보낸다.
-                          onPressed: () => context.canPop()
-                              ? context.pop()
-                              : context.go(RoutePaths.home),
-                          tooltip: '닫기',
-                          icon: Icon(
-                            Icons.close,
-                            size: 28.w,
-                            color: AppColors.onPrimary,
-                          ),
+                      for (final (i, c) in DogamCategory.values.indexed) ...[
+                        if (i > 0) SizedBox(width: AppSpacing.sm.w),
+                        CategoryChip(
+                          label: c.label,
+                          color: c.color,
+                          selected: c == _category,
+                          onTap: () => _select(c),
                         ),
-                      ),
+                      ],
                     ],
                   ),
-                ),
-                SizedBox(height: AppSpacing.xl.h),
-              ],
+                  SizedBox(height: AppSpacing.base.h),
+                  // 전체 폭 Stack — 셔터는 중앙, 닫기는 왼쪽 끝 (셔터 크기로 잡히면 겹침)
+                  SizedBox(
+                    width: double.infinity,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        _Shutter(color: color, onTap: _onShutter),
+                        Positioned(
+                          left: 28.w,
+                          child: IconButton(
+                            onPressed: _close,
+                            tooltip: '닫기',
+                            icon: Icon(
+                              Icons.close,
+                              size: 28.w,
+                              color: AppColors.onPrimary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: AppSpacing.xl.h),
+                ],
+              ),
             ),
-          ),
         ],
+      ),
+    );
+  }
+}
+
+/// 사진 인식 대기 — 카메라 화면을 밝은 배경으로 덮고 고양이를 보여준다.
+/// 기다리다 그만둘 수 있게 닫기만 남긴다.
+class _WaitingOverlay extends StatelessWidget {
+  const _WaitingOverlay({required this.onClose});
+
+  final VoidCallback onClose;
+
+  @override
+  Widget build(BuildContext context) {
+    return ColoredBox(
+      color: AppColors.canvas,
+      child: SafeArea(
+        child: Stack(
+          children: [
+            const Center(child: LoadingCat(title: scanWaitingMessage)),
+            Positioned(
+              top: AppSpacing.sm.h,
+              left: AppSpacing.sm.w,
+              child: IconButton(
+                onPressed: onClose,
+                tooltip: '닫기',
+                icon: Icon(Icons.close, size: 28.w, color: AppColors.ink),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -259,16 +295,11 @@ class _FrameCenter extends StatelessWidget {
   }
 }
 
-/// 셔터 78 — 링 색은 고른 종류 색. 기다리는 동안은 눌리지 않고 진행 표시를 보인다.
+/// 셔터 78 — 링 색은 고른 종류 색.
 class _Shutter extends StatelessWidget {
-  const _Shutter({
-    required this.color,
-    required this.busy,
-    required this.onTap,
-  });
+  const _Shutter({required this.color, required this.onTap});
 
   final Color color;
-  final bool busy;
   final VoidCallback onTap;
 
   @override
@@ -286,20 +317,11 @@ class _Shutter extends StatelessWidget {
             shape: BoxShape.circle,
             border: Border.all(color: color, width: 4),
           ),
-          child: DecoratedBox(
-            decoration: const BoxDecoration(
+          child: const DecoratedBox(
+            decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: AppColors.onPrimary,
             ),
-            child: busy
-                ? Padding(
-                    padding: EdgeInsets.all(18.w),
-                    child: CircularProgressIndicator(
-                      strokeWidth: 3,
-                      color: color,
-                    ),
-                  )
-                : null,
           ),
         ),
       ),

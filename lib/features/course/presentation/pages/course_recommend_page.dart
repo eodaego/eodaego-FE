@@ -16,12 +16,12 @@ import '../../../../core/widgets/app_back_app_bar.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_snackbar.dart';
 import '../../../../core/widgets/course_card.dart';
+import '../../../../core/widgets/loading_cat.dart';
 import '../../../../router/route_paths.dart';
 import '../../domain/entities/course_entity.dart';
 import '../../domain/entities/course_options.dart';
 import '../providers/course_provider.dart';
 import '../providers/favorite_provider.dart';
-import '../widgets/course_loading_cat.dart';
 import '../widgets/option_grid.dart';
 
 /// 희망 체류시간 선택지 — 서버에는 분(int)으로 보낸다.
@@ -405,7 +405,7 @@ class _CourseRecommendPageState extends ConsumerState<CourseRecommendPage> {
     final state = ref.watch(courseRecommendationProvider);
 
     return state.when(
-      loading: () => const Center(child: CourseLoadingCat()),
+      loading: () => const Center(child: LoadingCat(title: '코스를 만들고 있어요')),
       error: (error, _) {
         // AI 서버 장애는 조건 문제가 아니다. 조건을 바꾸라고 하면 헛수고를 시킨다.
         final aiDown =
