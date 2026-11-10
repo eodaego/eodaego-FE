@@ -39,23 +39,30 @@ class CourseCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              AppBadge.category(
-                course.dominantCategory,
-                label: course.badgeLabel,
+              // Badges wrap to the next line instead of overflowing next to the heart
+              // 뱃지가 하트 옆에서 넘치지 않고 다음 줄로 내려간다
+              Expanded(
+                child: Wrap(
+                  spacing: AppSpacing.sm.w,
+                  runSpacing: AppSpacing.xs.h,
+                  children: [
+                    AppBadge.category(
+                      course.dominantCategory,
+                      label: course.badgeLabel,
+                    ),
+                    AppBadge(
+                      label: course.durationLabel,
+                      background: AppColors.surfaceDim,
+                      foreground: AppColors.muted,
+                    ),
+                    AppBadge(
+                      label: course.gateLabel,
+                      background: AppColors.surfaceDim,
+                      foreground: AppColors.muted,
+                    ),
+                  ],
+                ),
               ),
-              SizedBox(width: AppSpacing.sm.w),
-              AppBadge(
-                label: course.durationLabel,
-                background: AppColors.surfaceDim,
-                foreground: AppColors.muted,
-              ),
-              SizedBox(width: AppSpacing.sm.w),
-              AppBadge(
-                label: course.gateLabel,
-                background: AppColors.surfaceDim,
-                foreground: AppColors.muted,
-              ),
-              const Spacer(),
               IconButton(
                 onPressed: onToggleSaved,
                 tooltip: saved ? '저장 지우기' : '저장',
