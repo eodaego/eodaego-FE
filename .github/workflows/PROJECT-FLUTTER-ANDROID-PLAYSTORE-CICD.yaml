@@ -522,7 +522,8 @@ jobs:
 
   deploy-playstore:
     name: Play Store 내부 테스트 배포
-    runs-on: ubuntu-latest
+    # ubuntu-26.04 이미지에는 setup-ruby가 받을 Ruby 3.4.1이 없어 24.04로 고정한다
+    runs-on: ubuntu-24.04
     needs: [prepare-build, build-android]
     defaults:
       run:
