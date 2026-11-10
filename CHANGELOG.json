@@ -1,14 +1,41 @@
 {
   "metadata": {
-    "lastUpdated": "2026-11-10T07:33:21Z",
-    "currentVersion": "1.0.43",
+    "lastUpdated": "2026-11-10T16:55:09Z",
+    "currentVersion": "1.0.45",
     "projectType": "flutter",
     "projectTypes": [
       "flutter"
     ],
-    "totalReleases": 15
+    "totalReleases": 16
   },
   "releases": [
+    {
+      "version": "1.0.45",
+      "project_type": "flutter",
+      "project_types": [
+        "flutter"
+      ],
+      "date": "2026-11-10",
+      "pr_number": 51,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **새 기능**\n\n  * 코스 추천을 위치 기반 입구 자동 선택과 동행 1탭 추천으로 줄인다 https://github.com/eodaego/eodaego-FE/issues/49\n  * 사진 인식을 기다리는 동안 고양이 대기 화면을 보여주고 고양이 위젯을 공용으로 옮긴다 https://github.com/eodaego/eodaego-FE/issues/47\n\n* **기타**\n\n  * Merge pull request #50 from eodaego/20261111_#49_기능개선_코스추천_코스_추천_단계_축소\n  * Merge pull request #48 from eodaego/20261110_#47_기능개선_촬영_사진_인식_대기_화면에_고양이_애니메이션_추가\n\n> 💡 더 정확한 릴리스 노트를 원한다면 Claude Code에서 `/github` 스킬로 PR 릴리스 노트를 업데이트할 수 있습니다.",
+      "parsed_changes": {
+        "새_기능": {
+          "title": "새 기능",
+          "items": [
+            "코스 추천을 위치 기반 입구 자동 선택과 동행 1탭 추천으로 줄인다 https://github.com/eodaego/eodaego-FE/issues/49",
+            "사진 인식을 기다리는 동안 고양이 대기 화면을 보여주고 고양이 위젯을 공용으로 옮긴다 https://github.com/eodaego/eodaego-FE/issues/47"
+          ]
+        },
+        "기타": {
+          "title": "기타",
+          "items": [
+            "Merge pull request #50 from eodaego/20261111_#49_기능개선_코스추천_코스_추천_단계_축소",
+            "Merge pull request #48 from eodaego/20261110_#47_기능개선_촬영_사진_인식_대기_화면에_고양이_애니메이션_추가"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "1.0.43",
       "project_type": "flutter",
