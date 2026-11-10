@@ -5,21 +5,24 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lottie/lottie.dart';
 
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_haptics.dart';
-import '../../../../core/constants/spacing_and_radius.dart';
-import '../../../../core/constants/text_styles.dart';
+import '../constants/app_colors.dart';
+import '../constants/app_haptics.dart';
+import '../constants/spacing_and_radius.dart';
+import '../constants/text_styles.dart';
 
-/// 코스 생성 대기 화면.
+/// AI 응답 대기 화면 (코스 생성, 사진 인식).
 ///
 /// AI 응답까지 기다리는 시간이 길어 고양이를 눌러볼 수 있게 뒀다.
 /// 풍선처럼 동작한다 — 누르고 있으면 부풀고, 한계에 가까워지면
 /// 떨림이 빨라지며, 놓으면 통통 튀면서 제자리로 돌아온다.
-class CourseLoadingCat extends StatefulWidget {
-  const CourseLoadingCat({super.key});
+class LoadingCat extends StatefulWidget {
+  const LoadingCat({super.key, required this.title});
+
+  /// 무엇을 기다리는지 알리는 문구 (예: '코스를 만들고 있어요').
+  final String title;
 
   @override
-  State<CourseLoadingCat> createState() => _CourseLoadingCatState();
+  State<LoadingCat> createState() => _LoadingCatState();
 }
 
 /// 누르고 있을 때 도달하는 최대 배율 — 화면을 넘길 만큼 크다.
@@ -49,8 +52,7 @@ const double _squashAmount = 0.07;
 
 const double _twoPi = 2 * math.pi;
 
-class _CourseLoadingCatState extends State<CourseLoadingCat>
-    with TickerProviderStateMixin {
+class _LoadingCatState extends State<LoadingCat> with TickerProviderStateMixin {
   /// 0이면 원래 크기, 1이면 [_maxScale].
   late final AnimationController _inflate =
       AnimationController(vsync: this, duration: _growDuration)
@@ -176,7 +178,7 @@ class _CourseLoadingCatState extends State<CourseLoadingCat>
         ),
         SizedBox(height: AppSpacing.base.h),
         Text(
-          '코스를 만들고 있어요',
+          widget.title,
           style: AppTextStyles.body15.copyWith(color: AppColors.muted),
         ),
         SizedBox(height: AppSpacing.xs.h),

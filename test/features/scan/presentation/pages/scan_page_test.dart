@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:eodaego/core/constants/dogam_category.dart';
 import 'package:eodaego/core/errors/app_exception.dart';
 import 'package:eodaego/core/providers/guest_mode_provider.dart';
+import 'package:eodaego/core/widgets/loading_cat.dart';
 import 'package:eodaego/features/collection/presentation/providers/catalog_provider.dart';
 import 'package:eodaego/features/quiz/domain/entities/quiz_entity.dart';
 import 'package:eodaego/features/quiz/domain/repositories/quiz_repository.dart';
@@ -174,14 +175,50 @@ void main() {
     await tester.tap(find.bySemanticsLabel(scanShutterLabel));
     await tester.pump();
     expect(find.text(scanWaitingMessage), findsOneWidget);
-    await tester.tap(find.bySemanticsLabel(scanShutterLabel));
-    await tester.pump();
+    // 기다리는 동안은 셔터가 없어 다시 누를 수 없다.
+    expect(find.bySemanticsLabel(scanShutterLabel), findsNothing);
 
     gate.complete();
     await tester.pumpAndSettle();
 
     expect(repo.createCalls, 1);
     expect(find.text(_quizPageText), findsOneWidget);
+  });
+
+  testWidgets('scan_page_shows_loading_cat_while_waiting_for_quiz', (
+    tester,
+  ) async {
+    final gate = Completer<void>();
+    final repo = _FakeQuizRepository(gate: gate);
+    await _pumpScan(tester, repo: repo);
+
+    expect(find.byType(LoadingCat), findsNothing);
+
+    await tester.tap(find.bySemanticsLabel(scanShutterLabel));
+    await tester.pump();
+    expect(find.byType(LoadingCat), findsOneWidget);
+
+    gate.complete();
+    await tester.pumpAndSettle();
+    expect(find.text(_quizPageText), findsOneWidget);
+  });
+
+  testWidgets('recognition_failure_hides_loading_cat', (tester) async {
+    final gate = Completer<void>();
+    final repo = _FakeQuizRepository(
+      gate: gate,
+      error: const ServerException(message: 'x', code: 'RECOGNITION_FAILED'),
+    );
+    await _pumpScan(tester, repo: repo);
+
+    await tester.tap(find.bySemanticsLabel(scanShutterLabel));
+    await tester.pump();
+    gate.complete();
+    await tester.pumpAndSettle();
+
+    expect(find.byType(LoadingCat), findsNothing);
+    expect(find.text(scanRecognitionFailedMessage), findsOneWidget);
+    expect(find.bySemanticsLabel(scanShutterLabel), findsOneWidget);
   });
 
   testWidgets('recognition_failure_stays_on_scan_page_with_message', (
