@@ -4,6 +4,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../core/config/env_config.dart';
 import '../../../../core/network/dio_client.dart';
+import '../../../../core/providers/guest_mode_provider.dart';
+import '../../../../core/providers/selected_course_provider.dart';
 import '../../data/datasources/course_mock_datasource.dart';
 import '../../data/datasources/course_remote_datasource.dart';
 import '../../data/repositories/course_repository_impl.dart';
@@ -88,5 +90,33 @@ class CourseRecommendation extends _$CourseRecommendation {
         else
           course,
     ]);
+  }
+}
+
+/// 지도가 들고 있는 선택 코스를 서버 최신 상태로 맞춘다.
+///
+/// 추천 응답의 수집 여부는 스냅숏이라, 지도에 들어올 때 상세를 다시 받아 교체한다.
+///
+/// **주의**: 응답이 늦게 와도 그 사이 선택 코스가 바뀌었으면 버린다.
+/// 게스트는 호출하지 않고, 실패하면 기존 코스를 그대로 둔다.
+@Riverpod(keepAlive: true)
+class SelectedCourseSync extends _$SelectedCourseSync {
+  @override
+  void build() {}
+
+  Future<void> sync() async {
+    if (ref.read(guestRestrictedProvider)) return;
+    final selected = ref.read(selectedCourseProvider);
+    if (selected == null) return;
+
+    try {
+      final fresh = await ref
+          .read(courseRepositoryProvider)
+          .getCourse(selected.id);
+      if (ref.read(selectedCourseProvider)?.id != selected.id) return;
+      ref.read(selectedCourseProvider.notifier).state = fresh;
+    } catch (e) {
+      debugPrint('[Course] ⚠️ 코스 상세 동기화 실패, 기존 코스 유지: $e');
+    }
   }
 }

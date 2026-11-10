@@ -44,7 +44,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>공원 곳곳의 QR 코드를 스캔해 도감을 수집하기 위해 카메라를 사용합니다.</string>
+	<string>동물·식물·장소 사진을 찍어 퀴즈를 풀고 도감을 모으기 위해 카메라를 사용합니다.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>지도에서 현재 위치를 표시하고 주변 도감 장소를 안내하기 위해 위치 정보를 사용합니다.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>

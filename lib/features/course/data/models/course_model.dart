@@ -7,8 +7,7 @@ part 'course_model.g.dart';
 ///
 /// `CourseResponse.places[]` 원소.
 ///
-/// **주의**: 응답의 `facilityId`는 현재 사용하지 않는다.
-/// `mapX`·`mapY`는 문서상 항상 null이라 약도 좌표는 프론트에서 관리한다.
+/// **주의**: `mapX`·`mapY`는 문서상 항상 null이라 약도 좌표는 프론트에서 관리한다.
 @freezed
 class CoursePlaceModel with _$CoursePlaceModel {
   const factory CoursePlaceModel({
@@ -20,6 +19,9 @@ class CoursePlaceModel with _$CoursePlaceModel {
 
     /// 카테고리 원문 (`ANIMAL`/`PLANT`/`PLACE`)
     String? category,
+
+    /// AI 서버 기준 시설 ID — 시설 상세·사진 퀴즈 연결에 쓴다
+    int? facilityId,
 
     /// 연결된 도감 항목 ID. 도감에 동기화되지 않은 시설이면 null
     String? catalogItemId,

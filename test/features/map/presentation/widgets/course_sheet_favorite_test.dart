@@ -53,6 +53,10 @@ class _FakeCourseRepository implements CourseRepository {
   }
 
   @override
+  Future<CourseEntity> getCourse(String courseId) async =>
+      throw UnimplementedError();
+
+  @override
   Future<List<CourseEntity>> getFavorites(FavoriteSort sort) async => const [];
 
   @override

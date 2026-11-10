@@ -12,12 +12,10 @@ part 'course_remote_datasource.g.dart';
 ///
 /// **엔드포인트**:
 /// - `POST /api/1/courses/recommendations` - 코스 추천 (JWT 필요)
+/// - `GET /api/1/courses/{courseId}` - 코스 상세 (JWT 필요)
 /// - `GET /api/1/favorites` - 즐겨찾기 목록 (JWT 필요)
 /// - `POST /api/1/favorites/{courseId}` - 즐겨찾기 등록 (JWT 필요, 멱등)
 /// - `DELETE /api/1/favorites/{courseId}` - 즐겨찾기 삭제 (JWT 필요, 멱등, 204)
-///
-/// **주의**: `GET /api/1/courses/{courseId}`는 호출할 곳이 없어 선언하지 않는다.
-/// 추천 응답과 즐겨찾기 목록이 코스 전체 정보를 준다.
 @RestApi()
 abstract class CourseRemoteDataSource {
   factory CourseRemoteDataSource(Dio dio) = _CourseRemoteDataSource;
@@ -33,6 +31,13 @@ abstract class CourseRemoteDataSource {
   Future<List<CourseModel>> recommendCourses(
     @Body() CourseRecommendationRequestModel request,
   );
+
+  /// 코스 상세 조회 — 현재 회원의 도감 수집 상태가 반영된 최신 코스
+  ///
+  /// - 200: 코스 1건
+  /// - 404: 없는 코스
+  @GET(ApiEndpoints.courseDetail)
+  Future<CourseModel> getCourse(@Path('courseId') String courseId);
 
   /// 즐겨찾기 목록 조회
   ///

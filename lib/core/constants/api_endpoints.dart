@@ -46,8 +46,17 @@ class ApiEndpoints {
   // Course — 추천은 백엔드가 내부망 AI 서버를 호출해 중계하고 결과를 저장한다.
   // 호출할 때마다 서버에 코스가 새로 생성된다.
   static const String courseRecommendations = '$_v1/courses/recommendations';
+  static const String courseDetail = '$_v1/courses/{courseId}';
 
   // Course Favorite — 등록·삭제 모두 멱등이다.
   static const String favorites = '$_v1/favorites';
   static const String favoriteCourse = '$_v1/favorites/{courseId}';
+
+  // Facility — 공원 시설 목록·상세. 출입문도 시설로 내려온다(category '출입문').
+  static const String facilities = '$_v1/facilities';
+  static const String facilityDetail = '$_v1/facilities/{facilityId}';
+
+  // Quiz — 사진 인식 퀴즈. 생성은 multipart(image + catalogType 쿼리), 오답은 200 correct:false.
+  static const String quiz = '$_v1/quiz';
+  static const String quizAnswer = '$_v1/quiz/{quizId}/answer';
 }

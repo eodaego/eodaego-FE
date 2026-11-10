@@ -5,7 +5,10 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../course/domain/entities/course_entity.dart';
 import '../../../course/domain/entities/course_options.dart';
+import '../../domain/entities/facility_entity.dart';
+import '../map_facility_layer.dart';
 import '../park_map_data.dart';
+import 'facility_marker.dart';
 import 'map_marker.dart';
 
 class ParkSchematicMap extends StatelessWidget {
@@ -14,6 +17,9 @@ class ParkSchematicMap extends StatelessWidget {
     required this.course,
     this.onPlaceTap,
     this.selectedPlaceName,
+    this.facilities = const [],
+    this.onFacilityTap,
+    this.selectedFacilityId,
   });
 
   static const _aspectRatio = 1010 / 619;
@@ -25,6 +31,11 @@ class ParkSchematicMap extends StatelessWidget {
 
   /// 카드를 띄운 장소의 이름. 그 마커만 카테고리 dark로 칠하고 위로 올린다.
   final String? selectedPlaceName;
+
+  /// 코스 장소와 겹치지 않게 걸러 넘긴 시설. 약도 좌표가 없는 시설은 그리지 않는다.
+  final List<FacilityEntity> facilities;
+  final ValueChanged<FacilityEntity>? onFacilityTap;
+  final int? selectedFacilityId;
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +51,8 @@ class ParkSchematicMap extends StatelessWidget {
                   'assets/images/course/map_v6.jpg',
                   fit: BoxFit.fill,
                 ),
+                // 시설은 코스 마커 아래에 깐다.
+                ..._facilityMarkers(constraints),
                 if (course != null) ..._placeMarkers(constraints),
                 if (course != null) ..._gateMarkers(constraints),
               ],
@@ -48,6 +61,40 @@ class ParkSchematicMap extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  List<Widget> _facilityMarkers(BoxConstraints constraints) {
+    final markers = <Widget>[];
+    Widget? selectedMarker;
+
+    for (final facility in facilities) {
+      final position = parkFacilitySchematicPositions[facility.name];
+      if (position == null) continue;
+
+      final isSelected = facility.id == selectedFacilityId;
+      Widget dot = FacilityMarker(name: facility.name, selected: isSelected);
+      if (course != null) {
+        dot = Opacity(opacity: dimmedFacilityOpacity, child: dot);
+      }
+      final marker = _positionedMarker(
+        position: position,
+        constraints: constraints,
+        size: 48.w,
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => onFacilityTap?.call(facility),
+          child: SizedBox(width: 48.w, height: 48.w, child: Center(child: dot)),
+        ),
+      );
+
+      if (isSelected) {
+        selectedMarker = marker;
+      } else {
+        markers.add(marker);
+      }
+    }
+    if (selectedMarker != null) markers.add(selectedMarker);
+    return markers;
   }
 
   List<Widget> _placeMarkers(BoxConstraints constraints) {

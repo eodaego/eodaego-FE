@@ -13,6 +13,7 @@ import '../../../../core/widgets/catalog_image.dart';
 import '../../../../router/route_paths.dart';
 import '../../../collection/presentation/providers/catalog_provider.dart';
 import '../../../course/domain/entities/course_entity.dart';
+import 'facility_intro_section.dart';
 import 'map_marker.dart';
 
 /// 마커를 누르면 지도 위에 뜨는 장소 카드.
@@ -116,6 +117,7 @@ class PlaceInfoCard extends StatelessWidget {
                   category: place.category,
                 ),
               ],
+              FacilityIntroSection(facilityId: place.facilityId),
             ],
           ),
         ),
@@ -217,7 +219,10 @@ class _CatalogBody extends ConsumerWidget {
             borderRadius: BorderRadius.circular(AppRadius.sm.r),
             // push다 — go로 보내면 스택이 갈려 촬영 화면의 닫기(pop)가 터진다.
             // 탭바 중앙 카메라 버튼도 같은 이유로 push를 쓴다.
-            onPressed: () => context.push(RoutePaths.scan),
+            // 코스 장소의 도감 항목은 언제나 PLACE라 '장소'를 골라 둔다.
+            onPressed: () => context.push(
+              RoutePaths.scanWith(category: DogamCategory.place),
+            ),
           ),
       ],
     );

@@ -5,6 +5,8 @@ import 'package:eodaego/features/collection/domain/entities/catalog_summary_enti
 import 'package:eodaego/features/collection/domain/repositories/catalog_repository.dart';
 import 'package:eodaego/features/collection/presentation/providers/catalog_provider.dart';
 import 'package:eodaego/features/course/domain/entities/course_entity.dart';
+import 'package:eodaego/features/map/domain/entities/facility_entity.dart';
+import 'package:eodaego/features/map/presentation/providers/facility_provider.dart';
 import 'package:eodaego/features/map/presentation/widgets/place_info_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -67,6 +69,7 @@ Future<void> _pumpCard(
   WidgetTester tester,
   CoursePlaceEntity place, {
   _FakeCatalogRepository? repository,
+  FacilityDetailEntity? facilityDetail,
 }) {
   tester.view.physicalSize = const Size(393, 852);
   tester.view.devicePixelRatio = 1.0;
@@ -78,6 +81,10 @@ Future<void> _pumpCard(
         catalogRepositoryProvider.overrideWith(
           (ref) => repository ?? _FakeCatalogRepository(),
         ),
+        if (place.facilityId != null)
+          facilityDetailProvider(
+            place.facilityId!,
+          ).overrideWith((ref) async => facilityDetail),
       ],
       child: ScreenUtilInit(
         designSize: const Size(393, 852),
@@ -239,6 +246,48 @@ void main() {
       );
 
       expect(find.text('여기서 찍기'), findsOneWidget);
+    });
+
+    testWidgets('place_card_adds_intro_for_course_place_with_facilityId', (
+      tester,
+    ) async {
+      await _pumpCard(
+        tester,
+        const CoursePlaceEntity(
+          visitOrder: 3,
+          name: '바다동물관',
+          category: DogamCategory.animal,
+          facilityId: 7,
+        ),
+        facilityDetail: const FacilityDetailEntity(
+          summary: FacilityEntity(id: 7, name: '바다동물관', category: '동물'),
+          intro: '바다 친구들을 만나요.',
+          operatingNote: '오전 10시부터',
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('바다 친구들을 만나요.'), findsOneWidget);
+      expect(find.text('오전 10시부터'), findsOneWidget);
+      expect(find.text('구경하고 가는 곳이에요'), findsOneWidget);
+    });
+
+    testWidgets('place_card_without_facilityId_renders_as_before', (
+      tester,
+    ) async {
+      await _pumpCard(
+        tester,
+        const CoursePlaceEntity(
+          visitOrder: 3,
+          name: '바다동물관',
+          category: DogamCategory.animal,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('구경하고 가는 곳이에요'), findsOneWidget);
+      expect(find.text('바다 친구들을 만나요.'), findsNothing);
+      expect(find.textContaining('운영'), findsNothing);
     });
   });
 }

@@ -78,5 +78,29 @@ final courseRecommendationProvider =
     );
 
 typedef _$CourseRecommendation = AutoDisposeAsyncNotifier<List<CourseEntity>?>;
+String _$selectedCourseSyncHash() =>
+    r'396d139d5454353fe89d7ec11d0d46fe7daac682';
+
+/// 지도가 들고 있는 선택 코스를 서버 최신 상태로 맞춘다.
+///
+/// 추천 응답의 수집 여부는 스냅숏이라, 지도에 들어올 때 상세를 다시 받아 교체한다.
+///
+/// **주의**: 응답이 늦게 와도 그 사이 선택 코스가 바뀌었으면 버린다.
+/// 게스트는 호출하지 않고, 실패하면 기존 코스를 그대로 둔다.
+///
+/// Copied from [SelectedCourseSync].
+@ProviderFor(SelectedCourseSync)
+final selectedCourseSyncProvider =
+    NotifierProvider<SelectedCourseSync, void>.internal(
+      SelectedCourseSync.new,
+      name: r'selectedCourseSyncProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$selectedCourseSyncHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+typedef _$SelectedCourseSync = Notifier<void>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
