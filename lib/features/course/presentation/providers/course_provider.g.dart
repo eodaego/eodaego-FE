@@ -51,6 +51,28 @@ final courseRepositoryProvider = Provider<CourseRepository>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef CourseRepositoryRef = ProviderRef<CourseRepository>;
+String _$nearestParkGateHash() => r'd0c485964bc44a2200a3c1271914bf87d42f6ea8';
+
+/// 지금 위치에서 가장 가까운 출입문 — 코스 추천의 입·출구 기본값.
+///
+/// **주의**: 권한 요청 팝업은 띄우지 않는다. 이미 허용된 경우에만 위치를 읽고,
+/// 위치를 쓸 수 없거나 공원에서 멀면 null을 돌려 사용자가 직접 고르게 한다.
+///
+/// Copied from [nearestParkGate].
+@ProviderFor(nearestParkGate)
+final nearestParkGateProvider = AutoDisposeFutureProvider<ParkGate?>.internal(
+  nearestParkGate,
+  name: r'nearestParkGateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$nearestParkGateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef NearestParkGateRef = AutoDisposeFutureProviderRef<ParkGate?>;
 String _$courseRecommendationHash() =>
     r'498315dd1ad8c451dfc3c760f38dc7c8a01b8cf1';
 

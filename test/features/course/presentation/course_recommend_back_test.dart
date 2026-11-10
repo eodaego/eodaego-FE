@@ -12,7 +12,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
 /// 추천은 호출할 때마다 AI 서버를 거치고 서버에 코스가 새로 저장된다. 그래서
-/// 결과까지 온 뒤에는 위저드로 되돌아가는 길이 없어야 한다 — 앱바 뒤로가기도,
+/// 결과까지 온 뒤에는 조건 화면으로 되돌아가는 길이 없어야 한다 — 앱바 뒤로가기도,
 /// 오른쪽 스와이프도. 뒤로가기는 코스에 들어오기 전 화면으로 나간다.
 
 const _course = CourseEntity(
@@ -86,6 +86,8 @@ Widget _wrap() {
   return ProviderScope(
     overrides: [
       courseRepositoryProvider.overrideWithValue(_FakeCourseRepository()),
+      // 위치는 플랫폼 경계라 대체한다 — 공원 정문 근처에 있다고 본다.
+      nearestParkGateProvider.overrideWith((ref) async => ParkGate.mainGate),
     ],
     child: ScreenUtilInit(
       designSize: const Size(393, 852),
@@ -94,26 +96,19 @@ Widget _wrap() {
   );
 }
 
-/// 진입 화면에서 위저드 5스텝을 실제로 눌러 결과 화면까지 간다.
+/// 진입 화면에서 동행 타일을 눌러 결과 화면까지 간다.
 Future<void> _walkToResult(WidgetTester tester) async {
   await tester.tap(find.text(_entryText));
   await tester.pumpAndSettle();
 
-  // 입구(0)·출구(1)는 고르면 350ms 뒤 자동으로 넘어간다.
-  for (var i = 0; i < 2; i++) {
-    await tester.tap(find.text(ParkGate.mainGate.label).first);
-    await tester.pumpAndSettle();
-  }
-  // 체류시간(2)·관심분야(3)·동행(4)은 고르지 않고 하단 버튼으로 넘긴다.
-  for (var i = 0; i < 3; i++) {
-    await tester.tap(find.text('건너뛰기'));
-    await tester.pumpAndSettle();
-  }
+  // 입·출구는 위치로 채워져 있어 동행만 누르면 바로 추천한다.
+  await tester.tap(find.text(CompanionType.withChild.label));
+  await tester.pumpAndSettle();
 }
 
 void main() {
   group('코스 추천 결과 화면 뒤로가기', () {
-    testWidgets('앱바 뒤로가기를 누르면 위저드가 아니라 코스 진입 전 화면으로 나간다', (tester) async {
+    testWidgets('앱바 뒤로가기를 누르면 조건 화면이 아니라 코스 진입 전 화면으로 나간다', (tester) async {
       tester.view.physicalSize = const Size(393, 852);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.reset);
@@ -128,12 +123,12 @@ void main() {
       await tester.tap(find.byType(PreviousButton));
       await tester.pumpAndSettle();
 
-      // 위저드 마지막 스텝이 아니라 진입 전 화면으로 나왔다.
+      // 조건 화면이 아니라 진입 전 화면으로 나왔다.
       expect(find.text('누구랑 왔어?'), findsNothing);
       expect(find.text(_entryText), findsOneWidget);
     });
 
-    testWidgets('결과에서 오른쪽으로 밀어도 위저드로 돌아가지 않는다', (tester) async {
+    testWidgets('결과에서 오른쪽으로 밀어도 조건 화면으로 돌아가지 않는다', (tester) async {
       tester.view.physicalSize = const Size(393, 852);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.reset);
